@@ -17,7 +17,7 @@ Rules
 - `remove`: built-in exercises are hidden (they can be restored in the Library); your own are deleted. Routines are deleted.
 - The whole pack is validated first. If anything is wrong, **nothing** is applied and the error names the field, e.g. `exercises[0].muscles.primary[0]: Invalid option`.
 - A bare exercise object, a bare array of exercises, or a single routine object are also accepted.
-- Full backups (Settings → Export) use the same format plus `settings`, `logs` and `hiddenBundled` (ids of built-in routines you deleted).
+- Full backups (Settings → Export) use the same format plus `settings`, `logs` (workouts, with `sets[].weightKg` when weights were logged), `body` (`{ id, date: "yyyy-mm-dd", weightKg?, waistCm? }`, one per day) and `hiddenBundled` (ids of built-in routines you deleted).
 - `id`s are kebab-case: `cable-lateral-raise`.
 
 ## Exercise

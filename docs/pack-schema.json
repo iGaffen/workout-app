@@ -525,6 +525,14 @@
           "exclusiveMinimum": 0,
           "maximum": 9007199254740991
         },
+        "phaseAuto": {
+          "type": "boolean"
+        },
+        "weeklyGoal": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
         "defaultRest": {
           "type": "integer",
           "minimum": 0,
@@ -604,6 +612,37 @@
           "date",
           "routineId",
           "sessionId"
+        ]
+      }
+    },
+    "body": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "weightKg": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "waistCm": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "id",
+          "date"
         ]
       }
     },

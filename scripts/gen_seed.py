@@ -195,6 +195,20 @@ R = [{"schemaVersion": 1, "id": "full-body-ab", "name": "Full body A/B", "sessio
      b("dumbbell-romanian-deadlift", "10"), b("plank", "30 sec hold"), b("standing-calf-raise", "12–15 slow", 2), b("tibialis-raise", "12–15 slow", 2), FIN]},
   {"id": "b", "name": "Session B", "blocks": [WARM, b("goblet-squat", "10–12"), b("chest-supported-row", "10–12"), b("cable-chest-fly", "10–12"), b("face-pull", "12–15"),
      b("glute-bridge", "10–12"), b("dead-bug", "10 per side"), b("standing-calf-raise", "12–15 slow", 2), b("tibialis-raise", "12–15 slow", 2), FIN]},
-]}]
+]},
+ {"schemaVersion": 1, "id": "cardio-days", "name": "Cardio days", "sessions": [
+  {"id": "incline-walk", "name": "Incline walk", "blocks": [
+    {"type": "text", "title": "Warm-up", "lines": ["Easy walk on the treadmill, 5 min"]},
+    {"type": "text", "title": "Incline walk", "icon": "stairs", "lines": ["Incline 8–12%, speed 4.5–5.5 km/h, 30–40 min", "Breathing harder but you can still talk", "Do not hold the handrails"]},
+    {"type": "text", "title": "Cool-down", "lines": ["Flat walk, 5 min", "Stretch calves and hips"]}]},
+  {"id": "stairs-intervals", "name": "Stairs", "blocks": [
+    {"type": "text", "title": "Warm-up", "lines": ["Easy stairmaster pace, 5 min"]},
+    {"type": "text", "title": "Intervals", "icon": "stairs", "lines": ["1 min faster, 2 min easy, repeat 6–8 times", "Stand tall, light hands on the rails"]},
+    {"type": "text", "title": "Cool-down", "lines": ["Easy pace, 5 min"]}]},
+  {"id": "walk-outdoors", "name": "Long walk", "blocks": [
+    {"type": "text", "title": "Brisk walk", "lines": ["45–60 min outdoors at a brisk pace", "Hills are a bonus"]}]},
+  {"id": "swim-or-elliptical", "name": "Swim or elliptical", "blocks": [
+    {"type": "text", "title": "Steady cardio", "lines": ["Swim or elliptical, 30–40 min", "Moderate pace you can hold the whole time"]}]},
+ ]}]
 json.dump(R, open(os.path.join(OUT, "routines.json"), "w"), indent=1, ensure_ascii=False)
 print("wrote", len(E), "exercises")

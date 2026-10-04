@@ -1,13 +1,17 @@
 import { useState } from "react";
-import type { Exercise, Session, Settings } from "../model/schema";
+import type { Exercise, Session, Settings, WorkoutLog } from "../model/schema";
+import { lastWeight, takesWeight } from "../model/progress";
+import { WeightInput } from "../components/WeightInput";
 import { holdFor, repsFor, restFor, setsFor, step, type RunState } from "../model/plan";
 import { ExerciseView } from "../components/ExerciseView";
 import { useTimer } from "../components/Timer";
 import { TextBlock } from "./Today";
 
-interface Props { session: Session; settings: Settings; exMap: Map<string, Exercise>; onFinish: () => Promise<void>; onExit: () => void }
+interface Props { session: Session; settings: Settings; exMap: Map<string, Exercise>; logs: WorkoutLog[]; onFinish: (sets: NonNullable<WorkoutLog["sets"]>) => Promise<void>; onExit: () => void }
 
-export function Runner({ session, settings, exMap, onFinish, onExit }: Props) {
+export function Runner({ session, settings, exMap, logs, onFinish, onExit }: Props) {
+  const [weights, setWeights] = useState<Record<string, number | undefined>>({});
+  const [sets, setSets] = useState<NonNullable<WorkoutLog["sets"]>>([]);
   const [st, setSt] = useState<RunState>({ idx: 0, set: 1 });
   const [done, setDone] = useState(false);
   const timer = useTimer();
@@ -17,11 +21,18 @@ export function Runner({ session, settings, exMap, onFinish, onExit }: Props) {
   const act = (a: "setDone" | "next" | "back" | "skip") => {
     const b = blocks[st.idx];
     const r = step(session, settings, st, a);
+    let logged = sets;
+    if (a === "setDone" && b.exerciseId) {
+      const ex = exMap.get(b.exerciseId);
+      const w = weights[b.exerciseId] ?? (ex && takesWeight(ex) ? lastWeight(logs, b.exerciseId)?.weightKg : undefined);
+      logged = [...sets.filter((x) => !(x.exerciseId === b.exerciseId && x.setIndex === st.set)), { exerciseId: b.exerciseId, setIndex: st.set, ...(w !== undefined ? { weightKg: w } : {}) }];
+      setSets(logged);
+    }
     setSt(r.state);
     if (r.state.idx !== st.idx) scrollTo(0, 0);
     if (r.rest === "set") timer.start(restFor(b, settings), `Rest, then set ${r.state.set}`);
     if (r.rest === "exercise") timer.start(restFor(b, settings), "Rest, move to the next exercise");
-    if (r.finished) { setDone(true); timer.stop(); onFinish(); }
+    if (r.finished) { setDone(true); timer.stop(); onFinish(logged); }
   };
 
   const dots = (
@@ -67,7 +78,8 @@ export function Runner({ session, settings, exMap, onFinish, onExit }: Props) {
     <>{header}{dots}
       <div className="card">
         <div className="blockhead"><h2>Exercise {n} of {exBlocks.length}</h2><span className="sub">{total} sets, rest {restFor(b, settings)} sec between</span></div>
-        {ex ? <ExerciseView ex={ex} reps={repsFor(b, ex)} hold={holdFor(b, ex)} large /> : <p>Exercise “{b.exerciseId}” is missing. Skip ahead.</p>}
+        {ex ? <ExerciseView ex={ex} reps={repsFor(b, ex)} hold={holdFor(b, ex)} large
+          weight={takesWeight(ex) ? <WeightInput key={ex.id} value={weights[ex.id]} last={lastWeight(logs, ex.id)} onChange={(v) => setWeights((w) => ({ ...w, [ex.id]: v }))} /> : undefined} /> : <p>Exercise “{b.exerciseId}” is missing. Skip ahead.</p>}
         <div className="rounds">
           <span className="big">Set {st.set} of {total}</span>
           <span className="rdots">{Array.from({ length: total }, (_, i) => <i key={i} className={i < st.set - 1 ? "done" : ""} />)}</span>

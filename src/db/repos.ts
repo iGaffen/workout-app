@@ -3,7 +3,7 @@ import seedRoutines from "../data/routines.json";
 import { db } from "./db";
 import { migrate } from "../model/migrations";
 import { DEFAULT_SETTINGS } from "../model/plan";
-import { PackSchema, SCHEMA_VERSION, type Exercise, type Pack, type Routine, type Settings, type WorkoutLog } from "../model/schema";
+import { PackSchema, SCHEMA_VERSION, type Exercise, type BodyLog, type Pack, type Routine, type Settings, type WorkoutLog } from "../model/schema";
 
 const BUNDLED_EX = seedExercises as Exercise[];
 const BUNDLED_RO = seedRoutines as Routine[];
@@ -87,6 +87,24 @@ export const LogRepo = {
   },
 };
 
+export const BodyRepo = {
+  all: async () => (await db.body.toArray()).sort((a, b) => a.date.localeCompare(b.date)),
+  /** One entry per day: saving again on the same day updates it. */
+  async put(date: string, v: { weightKg?: number; waistCm?: number }) {
+    const prev = await db.body.get(date);
+    await db.body.put(stamp({ ...prev, id: date, date, ...v }));
+    changed();
+  },
+  async remove(id: string) { await db.body.delete(id); changed(); },
+};
+
+export const RemindersRepo = {
+  lastExport: () => getMeta<string | null>("lastExport", null),
+  markExported: async () => { await setMeta("lastExport", new Date().toISOString()); changed(); },
+  lastPhoto: () => getMeta<string | null>("lastPhoto", null),
+  markPhoto: async () => { await setMeta("lastPhoto", new Date().toISOString()); changed(); },
+};
+
 /** First run: ask the browser to keep our data. */
 export async function init() {
   if (!(await getMeta("initialised", false))) {
@@ -98,7 +116,7 @@ export async function init() {
 /** Apply a validated pack in one transaction: all or nothing. */
 export async function applyPack(p: Pack) {
   const checked = PackSchema.parse(p);
-  await db.transaction("rw", [db.exercises, db.routines, db.settings, db.logs, db.meta], async () => {
+  await db.transaction("rw", [db.exercises, db.routines, db.settings, db.logs, db.meta, db.body], async () => {
     for (const e of checked.exercises ?? []) await db.exercises.put(stamp(e) as Exercise);
     for (const r of checked.routines ?? []) await RoutineRepo.put(r as Routine);
     for (const id of checked.remove ?? []) {
@@ -108,6 +126,7 @@ export async function applyPack(p: Pack) {
     }
     if (checked.settings) await db.settings.put({ ...stamp(checked.settings), key: "settings" });
     for (const l of checked.logs ?? []) await db.logs.put(stamp(l));
+    for (const b of checked.body ?? []) await db.body.put(stamp(b));
     if (checked.hiddenBundled) await setMeta("removedRoutines", checked.hiddenBundled);
   });
   changed();
@@ -121,13 +140,14 @@ export async function exportAll(): Promise<Pack> {
     routines: await db.routines.toArray(),
     settings: await SettingsRepo.get(),
     logs: await db.logs.toArray(),
+    body: await db.body.toArray(),
     hiddenBundled: await getMeta<string[]>("removedRoutines", []),
   };
 }
 
 export async function wipeAll() {
-  await db.transaction("rw", [db.exercises, db.routines, db.settings, db.logs, db.meta], async () => {
-    await Promise.all([db.exercises.clear(), db.routines.clear(), db.settings.clear(), db.logs.clear(), db.meta.clear()]);
+  await db.transaction("rw", [db.exercises, db.routines, db.settings, db.logs, db.meta, db.body], async () => {
+    await Promise.all([db.exercises.clear(), db.routines.clear(), db.settings.clear(), db.logs.clear(), db.meta.clear(), db.body.clear()]);
     await setMeta("initialised", true);
   });
   changed();

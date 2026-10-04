@@ -23,7 +23,7 @@ The format is described in [`docs/pack-schema.md`](docs/pack-schema.md) and [`do
 - `src/db/`: IndexedDB (Dexie) and the repository layer (`ExerciseRepo`, `RoutineRepo`, `SettingsRepo`, `LogRepo`). The UI only talks to the repos.
 - `src/anim/`: joint-angle skeleton solver, equipment drawing, and the shared animation loop
 - `src/muscles/`: front and back body diagram
-- `src/screens/`: Today, workout runner, Routines, Library, Settings
+- `src/screens/`: Today, workout runner, Routines, Library, Progress, Settings
 - `tests/`: Vitest tests (schema, plan/phase logic, pose solver, import/export)
 - `scripts/anim-preview.html`: with `npm run dev`, open `/scripts/anim-preview.html` to see every keyframe of every animation
 
@@ -41,6 +41,18 @@ The format is described in [`docs/pack-schema.md`](docs/pack-schema.md) and [`do
 - **Wake lock:** on whenever a workout is running, and taken again when you come back to the app.
 - **Icons:** the prototype's two emoji are replaced with simple bike and stairs line icons.
 - **Base path:** the workflow builds with `BASE_PATH=/<repo-name>/`, as GitHub Pages expects.
+
+## Added after first use (v1.1)
+- **Weight per exercise:** a kg field on each exercise card (walk-through and full workout) with "Last time: X kg". If you leave it empty, last time's weight is logged for you. Bodyweight-only moves (plank, glute bridge, dead bug, tibialis raise) have no weight field.
+- **Auto phase** (default): 2 sets in weeks 1–3, 3 sets from week 4, counted from your first logged workout. Settings → Phase still lets you pick 2 or 3 sets by hand.
+- **Progress tab:**
+  - Workouts this week against a weekly goal (default 5, weeks start on Sunday).
+  - Body weight and waist logging (one entry per day), each with a weekly-average trend chart. Tap a point to read it, or use "Show as table". Weight and waist are separate charts, never sharing one axis.
+  - A progress-photo reminder every 28 days. Photos stay in your gallery.
+  - Workout history.
+- **Cardio days routine:** incline walk, stairs intervals, long walk, swim or elliptical (no cycling). Switch routines with the dropdown on the Today tab. Cardio sessions count toward the weekly goal.
+- **Backup reminder:** shown in Settings and Progress when you have workouts and haven't exported for 30 days.
+- **Lighthouse (mobile):** accessibility 100, best practices 100, performance about 79 on first visit from a local test server without compression. After install, the app loads from the phone.
 
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.

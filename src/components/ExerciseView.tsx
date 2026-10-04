@@ -4,7 +4,7 @@ import type { Exercise } from "../model/schema";
 import { useTimer } from "./Timer";
 
 /** Animation, name, reps, muscles, cues. Used by the runner, full view and library. */
-export function ExerciseView({ ex, reps, hold, meta, large }: { ex: Exercise; reps?: string; hold?: number; meta?: string; large?: boolean }) {
+export function ExerciseView({ ex, reps, hold, meta, large, weight }: { ex: Exercise; reps?: string; hold?: number; meta?: string; large?: boolean; weight?: React.ReactNode }) {
   const timer = useTimer();
   return (
     <div className="exview">
@@ -14,6 +14,7 @@ export function ExerciseView({ ex, reps, hold, meta, large }: { ex: Exercise; re
         {reps && <span className="reps">{reps}</span>}
         {meta && <span className="sub">{meta}</span>}
       </div>
+      {weight}
       <MuscleMap primary={ex.muscles.primary} secondary={ex.muscles.secondary} name={ex.name} />
       <ul className="cues">{ex.cues.slice(0, 3).map((c) => <li key={c}>{c}</li>)}</ul>
       {ex.notes && <p className="note">{ex.notes}</p>}
