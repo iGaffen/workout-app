@@ -1,5 +1,5 @@
 import Dexie, { type Table } from "dexie";
-import type { Exercise, Routine, Settings, WorkoutLog } from "../model/schema";
+import type { BodyLog, Exercise, Routine, Settings, WorkoutLog } from "../model/schema";
 
 export interface Meta { key: string; value: unknown }
 
@@ -10,9 +10,11 @@ export class GymDB extends Dexie {
   settings!: Table<Settings & { key: string }, string>;
   logs!: Table<WorkoutLog, string>;
   meta!: Table<Meta, string>;
+  body!: Table<BodyLog, string>;
   constructor(name = "gym-plan") {
     super(name);
     this.version(1).stores({ exercises: "id", routines: "id", settings: "key", logs: "id, date, routineId", meta: "key" });
+    this.version(2).stores({ body: "id, date" });
   }
 }
 

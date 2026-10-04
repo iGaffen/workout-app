@@ -1,17 +1,20 @@
 import { useRef, useState } from "react";
-import { ExerciseRepo, RoutineRepo, SettingsRepo, applyPack, exportAll, wipeAll } from "../db/repos";
+import { ExerciseRepo, LogRepo, RemindersRepo, RoutineRepo, SettingsRepo, applyPack, exportAll, wipeAll } from "../db/repos";
+import { daysUntilDue, effectiveSettings } from "../model/progress";
 import { useData } from "../components/hooks";
 import { parsePack, previewPack, summary, type PackPreview } from "../model/pack";
 import type { Pack, Settings as S } from "../model/schema";
 
 export function Settings() {
-  const s = useData(() => SettingsRepo.get());
+  const d = useData(async () => ({ s: await SettingsRepo.get(), logs: await LogRepo.all(), lastExport: await RemindersRepo.lastExport() }));
+  const s = d?.s;
   const [text, setText] = useState("");
   const [err, setErr] = useState("");
   const [msg, setMsg] = useState("");
   const [pending, setPending] = useState<{ pack: Pack; pv: PackPreview } | null>(null);
   const file = useRef<HTMLInputElement>(null);
-  if (!s) return <p className="sub">Loading…</p>;
+  if (!d || !s) return <p className="sub">Loading…</p>;
+  const backupDue = daysUntilDue(d.lastExport, 30) <= 0 && d.logs.length > 0;
   const put = (p: Partial<S>) => SettingsRepo.put({ ...s, ...p });
 
   const check = async (t: string) => {
@@ -32,17 +35,24 @@ export function Settings() {
     const a = document.createElement("a");
     a.href = url; a.download = `gym-plan-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
+    await RemindersRepo.markExported();
   };
 
   return (
     <>
       <div className="top"><h1>Settings</h1></div>
+      {backupDue && <div className="card"><p className="due">Backup due. Scroll down and tap Export all data.</p></div>}
       <div className="card">
         <h2>Phase</h2>
-        <p className="sub">Sets for the main lifts. Calves and shins stay at 2.</p>
+        <p className="sub">Sets for the main lifts. Calves and shins stay at 2. Auto switches to 3 sets in week 4 (now: {effectiveSettings(s, d.logs).phaseSets} sets).</p>
         <div className="seg" role="group" aria-label="Phase">
-          <button aria-pressed={s.phaseSets === 2} onClick={() => put({ phaseSets: 2 })}>Weeks 1–3 (2 sets)</button>
-          <button aria-pressed={s.phaseSets === 3} onClick={() => put({ phaseSets: 3 })}>Week 4+ (3 sets)</button>
+          <button aria-pressed={!!s.phaseAuto} onClick={() => put({ phaseAuto: true })}>Auto</button>
+          <button aria-pressed={!s.phaseAuto && s.phaseSets === 2} onClick={() => put({ phaseAuto: false, phaseSets: 2 })}>2 sets</button>
+          <button aria-pressed={!s.phaseAuto && s.phaseSets === 3} onClick={() => put({ phaseAuto: false, phaseSets: 3 })}>3 sets</button>
+        </div>
+        <h2>Weekly goal</h2>
+        <div className="seg" role="group" aria-label="Workouts per week">
+          {[3, 4, 5, 6].map((n) => <button key={n} aria-pressed={(s.weeklyGoal ?? 5) === n} onClick={() => put({ weeklyGoal: n })}>{n} days</button>)}
         </div>
         <h2>Default rest</h2>
         <div className="seg" role="group" aria-label="Default rest">
@@ -85,6 +95,8 @@ export function Settings() {
 
       <div className="card">
         <h2>Backup</h2>
+        {backupDue && <p className="due" role="status">{d.lastExport ? "Backup due: last one was over 30 days ago." : "You have not backed up yet."}</p>}
+        {d.lastExport && !backupDue && <p className="sub">Last backup: {new Date(d.lastExport).toLocaleDateString()}</p>}
         <p className="sub">Your data lives only on this phone. Clearing Chrome's site data deletes it, so export a backup now and then.</p>
         <button className="cta" onClick={doExport}>Export all data</button>
         <button className="secondary danger" onClick={async () => {

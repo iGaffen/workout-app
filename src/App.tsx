@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, lazy, useCallback, useEffect, useState } from "react";
 import { Today } from "./screens/Today";
-import { Routines } from "./screens/Routines";
-import { Library } from "./screens/Library";
-import { Settings } from "./screens/Settings";
+const Routines = lazy(() => import("./screens/Routines").then((m) => ({ default: m.Routines })));
+const Library = lazy(() => import("./screens/Library").then((m) => ({ default: m.Library })));
+const Settings = lazy(() => import("./screens/Settings").then((m) => ({ default: m.Settings })));
+const Progress = lazy(() => import("./screens/Progress").then((m) => ({ default: m.Progress })));
 import { Icon } from "./components/Icons";
 import { TimerProvider, useTimer } from "./components/Timer";
 import { useData } from "./components/hooks";
@@ -12,6 +13,7 @@ const TABS = [
   { id: "today", label: "Today", icon: Icon.today },
   { id: "routines", label: "Routines", icon: Icon.routines },
   { id: "library", label: "Library", icon: Icon.library },
+  { id: "progress", label: "Progress", icon: Icon.progress },
   { id: "settings", label: "Settings", icon: Icon.settings },
 ] as const;
 type Tab = (typeof TABS)[number]["id"];
@@ -34,9 +36,12 @@ function Shell() {
       <main className="wrap">
         {/* Today stays mounted so a workout in progress survives switching tabs. */}
         <div hidden={tab !== "today"}><Today onRunning={onRunning} /></div>
+        <Suspense fallback={<p className="sub">Loading…</p>}>
         {tab === "routines" && <Routines />}
         {tab === "library" && <Library />}
+        {tab === "progress" && <Progress />}
         {tab === "settings" && <Settings />}
+        </Suspense>
       </main>
       <nav className="tabs" aria-label="Main">
         {TABS.map((t) => (

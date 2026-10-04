@@ -119,6 +119,10 @@ export type Routine = z.infer<typeof RoutineSchema> & { schemaVersion: number };
 export const SettingsSchema = z.object({
   schemaVersion: z.number().int().optional(),
   phaseSets: z.number().int().positive(),
+  /** Auto: 2 sets in weeks 1-3, 3 sets from week 4, counted from the first logged workout. */
+  phaseAuto: z.boolean().optional(),
+  /** Workouts per week the Progress tab counts toward (gym and cardio). */
+  weeklyGoal: z.number().int().positive().optional(),
   defaultRest: z.number().int().nonnegative(),
   theme: z.enum(["system", "light", "dark"]),
   activeRoutineId: z.string(),
@@ -136,6 +140,15 @@ export const WorkoutLogSchema = z.object({
 });
 export type WorkoutLog = z.infer<typeof WorkoutLogSchema> & { schemaVersion?: number };
 
+export const BodyLogSchema = z.object({
+  schemaVersion: z.number().int().optional(),
+  id: z.string(),
+  date: z.string(),            // ISO date, yyyy-mm-dd
+  weightKg: z.number().positive().optional(),
+  waistCm: z.number().positive().optional(),
+});
+export type BodyLog = z.infer<typeof BodyLogSchema> & { schemaVersion?: number };
+
 /** A pack: what Claude chat generates and what Export produces. */
 export const PackSchema = z.object({
   schemaVersion: z.number().int().optional(),
@@ -144,6 +157,7 @@ export const PackSchema = z.object({
   remove: z.array(z.string()).optional(),
   settings: SettingsSchema.optional(),
   logs: z.array(WorkoutLogSchema).optional(),
+  body: z.array(BodyLogSchema).optional(),
   /** Only present in full backups: ids of bundled exercises the user deleted/hid. */
   hiddenBundled: z.array(z.string()).optional(),
 }).strict();
