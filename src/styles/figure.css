@@ -1,0 +1,12 @@
+.fig .floor{stroke:var(--floor,#C4CAD3);stroke-width:2}
+.fig .body{fill:var(--fig,#172033)}
+.fig .far{fill:var(--figfar,#9AA3B2)}
+.fig .eq{fill:var(--prop,#B6BDC9)}
+.fig .eqframe{fill:var(--prop,#B6BDC9);opacity:.7}
+.fig .eqline,.fig .eqframe-line{stroke:var(--prop,#B6BDC9);stroke-width:3;stroke-linecap:round}
+.fig .eqline-fill{fill:var(--prop,#B6BDC9)}
+.fig .hub{fill:var(--card,#fff)}
+.fig .hubline{stroke:var(--card,#fff);stroke-width:1}
+.fig .load{fill:var(--accent,#2457F5)}
+.fig .load-dark{fill:var(--ink,#172033)}
+.fig .cable{stroke:var(--muted,#5B6578);stroke-width:1.4}
