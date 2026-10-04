@@ -1,0 +1,17 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+body{font-family:sans-serif;background:#E8EAEC;margin:8px;--fig:#172033}
+.row{display:flex;gap:6px;align-items:center;margin-bottom:6px}.row b{width:120px;font-size:12px}
+svg{width:240px;height:170px;background:#fff}
+</style><link rel="stylesheet" href="/src/styles/figure.css"></head><body><div id="out"></div>
+<script type="module">
+import { solve, dist } from "/src/anim/solver.ts";
+import { scene } from "/src/anim/draw.ts";
+import ex from "/src/data/exercises.json";
+let h = "";
+for (const e of ex) {
+  h += `<div class="row"><b>${e.id}</b>`;
+  for (const k of e.animation.keyframes) h += `<svg viewBox="0 0 240 170">${scene(solve(k.pose), e.animation.equipment)}<text x="4" y="12" font-size="10">${k.name}</text></svg>`;
+  h += "</div>";
+}
+document.getElementById("out").innerHTML = h;
+</script></body></html>

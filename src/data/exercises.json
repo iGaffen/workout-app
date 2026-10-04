@@ -1,0 +1,1827 @@
+[
+ {
+  "schemaVersion": 1,
+  "id": "leg-press",
+  "name": "Leg press",
+  "equipment": [
+   "machine"
+  ],
+  "muscles": {
+   "primary": [
+    "quads",
+    "glutes"
+   ],
+   "secondary": [
+    "hamstrings",
+    "adductors",
+    "calves"
+   ]
+  },
+  "cues": [
+   "Feet shoulder-width, middle of the plate",
+   "Lower until knees are about 90°, push through heels",
+   "Do not lock your knees at the top"
+  ],
+  "defaultReps": "10–12",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "backpad",
+     "at": [
+      36,
+      108
+     ],
+     "to": [
+      78,
+      136
+     ]
+    },
+    {
+     "kind": "frame",
+     "at": [
+      70,
+      140
+     ],
+     "to": [
+      70,
+      152
+     ]
+    },
+    {
+     "kind": "frame",
+     "at": [
+      40,
+      120
+     ],
+     "to": [
+      40,
+      152
+     ]
+    },
+    {
+     "kind": "legpress",
+     "attach": "foot",
+     "at": [
+      2,
+      2
+     ],
+     "from": [
+      112,
+      128
+     ],
+     "to": [
+      204,
+      50
+     ]
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Push",
+     "durationMs": 1200,
+     "pose": {
+      "torso": -55,
+      "near": {
+       "shoulder": 25,
+       "elbow": 35,
+       "hip": 80,
+       "knee": 10,
+       "ankle": -5
+      },
+      "far": {
+       "hip": 76,
+       "knee": 10
+      },
+      "root": [
+       84,
+       128
+      ]
+     }
+    },
+    {
+     "name": "Lower",
+     "durationMs": 1700,
+     "pose": {
+      "torso": -55,
+      "near": {
+       "shoulder": 25,
+       "elbow": 35,
+       "hip": 121,
+       "knee": 92,
+       "ankle": -46
+      },
+      "far": {
+       "hip": 117,
+       "knee": 92
+      },
+      "root": [
+       84,
+       128
+      ]
+     }
+    },
+    {
+     "name": "Pause",
+     "durationMs": 300,
+     "pose": {
+      "torso": -55,
+      "near": {
+       "shoulder": 25,
+       "elbow": 35,
+       "hip": 121,
+       "knee": 92,
+       "ankle": -46
+      },
+      "far": {
+       "hip": 117,
+       "knee": 92
+      },
+      "root": [
+       84,
+       128
+      ]
+     }
+    }
+   ],
+   "loop": "cycle"
+  }
+ },
+ {
+  "schemaVersion": 1,
+  "id": "seated-cable-row",
+  "name": "Seated cable row",
+  "equipment": [
+   "cable"
+  ],
+  "muscles": {
+   "primary": [
+    "lats",
+    "upper_back"
+   ],
+   "secondary": [
+    "rear_delts",
+    "biceps",
+    "forearms"
+   ]
+  },
+  "cues": [
+   "Chest tall, pull the handle to your belly button",
+   "Squeeze shoulder blades together, 1-second pause",
+   "Return slowly without rounding forward"
+  ],
+  "defaultReps": "10–12",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "bench",
+     "at": [
+      52,
+      134
+     ],
+     "to": [
+      180,
+      134
+     ]
+    },
+    {
+     "kind": "pad",
+     "at": [
+      150,
+      120
+     ],
+     "angle": 70
+    },
+    {
+     "kind": "pulley",
+     "at": [
+      226,
+      104
+     ]
+    },
+    {
+     "kind": "cable",
+     "attach": "hand",
+     "from": [
+      226,
+      104
+     ]
+    },
+    {
+     "kind": "handle",
+     "attach": "hand"
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Return",
+     "durationMs": 1600,
+     "pose": {
+      "torso": 14,
+      "near": {
+       "shoulder": 82,
+       "elbow": 4,
+       "hip": 102,
+       "knee": 28,
+       "ankle": -18
+      },
+      "far": {
+       "shoulder": 84,
+       "elbow": 4
+      },
+      "root": [
+       78,
+       128
+      ]
+     }
+    },
+    {
+     "name": "Pull",
+     "durationMs": 1000,
+     "pose": {
+      "torso": -4,
+      "near": {
+       "shoulder": -38,
+       "elbow": 118,
+       "hip": 84,
+       "knee": 28,
+       "ankle": -18
+      },
+      "far": {
+       "shoulder": -36,
+       "elbow": 118
+      },
+      "root": [
+       78,
+       128
+      ]
+     }
+    },
+    {
+     "name": "Squeeze",
+     "durationMs": 700,
+     "pose": {
+      "torso": -4,
+      "near": {
+       "shoulder": -40,
+       "elbow": 120,
+       "hip": 84,
+       "knee": 28,
+       "ankle": -18
+      },
+      "far": {
+       "shoulder": -38,
+       "elbow": 120
+      },
+      "root": [
+       78,
+       128
+      ]
+     }
+    }
+   ],
+   "loop": "cycle"
+  }
+ },
+ {
+  "schemaVersion": 1,
+  "id": "pec-deck",
+  "name": "Pec deck (chest fly machine)",
+  "equipment": [
+   "machine"
+  ],
+  "muscles": {
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "front_delts"
+   ]
+  },
+  "cues": [
+   "Back flat on the pad, slight bend in the elbows",
+   "Bring the pads together in front of your chest",
+   "Do not let arms go far back at the stretch (left shoulder)"
+  ],
+  "defaultReps": "10–12",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "seat",
+     "at": [
+      88,
+      125
+     ]
+    },
+    {
+     "kind": "backpad",
+     "at": [
+      76,
+      120
+     ],
+     "to": [
+      76,
+      64
+     ]
+    },
+    {
+     "kind": "frame",
+     "at": [
+      64,
+      20
+     ],
+     "to": [
+      64,
+      152
+     ]
+    },
+    {
+     "kind": "frame",
+     "at": [
+      64,
+      22
+     ],
+     "to": [
+      100,
+      22
+     ]
+    },
+    {
+     "kind": "pad",
+     "attach": "hand",
+     "angle": 90,
+     "size": 0.9
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Open",
+     "durationMs": 1700,
+     "pose": {
+      "torso": 0,
+      "near": {
+       "shoulder": 82,
+       "armYaw": 68,
+       "elbow": 18,
+       "hip": 90,
+       "knee": 88,
+       "ankle": -2
+      },
+      "far": {
+       "hip": 86,
+       "knee": 84
+      },
+      "root": [
+       86,
+       118
+      ]
+     }
+    },
+    {
+     "name": "Squeeze",
+     "durationMs": 1200,
+     "pose": {
+      "torso": 0,
+      "near": {
+       "shoulder": 82,
+       "armYaw": 0,
+       "elbow": 18,
+       "hip": 90,
+       "knee": 88,
+       "ankle": -2
+      },
+      "far": {
+       "hip": 86,
+       "knee": 84
+      },
+      "root": [
+       86,
+       118
+      ]
+     }
+    },
+    {
+     "name": "Hold",
+     "durationMs": 500,
+     "pose": {
+      "torso": 0,
+      "near": {
+       "shoulder": 82,
+       "armYaw": 0,
+       "elbow": 18,
+       "hip": 90,
+       "knee": 88,
+       "ankle": -2
+      },
+      "far": {
+       "hip": 86,
+       "knee": 84
+      },
+      "root": [
+       86,
+       118
+      ]
+     }
+    }
+   ],
+   "loop": "cycle"
+  },
+  "notes": "Keep a slight elbow bend and avoid a deep stretch behind the body (sensitive left shoulder)"
+ },
+ {
+  "schemaVersion": 1,
+  "id": "lat-pulldown",
+  "name": "Lat pulldown",
+  "equipment": [
+   "cable",
+   "machine"
+  ],
+  "muscles": {
+   "primary": [
+    "lats"
+   ],
+   "secondary": [
+    "biceps",
+    "rear_delts",
+    "upper_back"
+   ]
+  },
+  "cues": [
+   "Lean back slightly, pull the bar to your upper chest",
+   "Drive elbows down toward your ribs",
+   "Control the bar on the way up"
+  ],
+  "defaultReps": "10–12",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "seat",
+     "at": [
+      90,
+      127
+     ]
+    },
+    {
+     "kind": "pad",
+     "at": [
+      120,
+      106
+     ],
+     "angle": 0,
+     "size": 1.0
+    },
+    {
+     "kind": "frame",
+     "at": [
+      138,
+      106
+     ],
+     "to": [
+      138,
+      152
+     ]
+    },
+    {
+     "kind": "frame",
+     "at": [
+      138,
+      4
+     ],
+     "to": [
+      138,
+      106
+     ]
+    },
+    {
+     "kind": "pulley",
+     "at": [
+      111,
+      6
+     ]
+    },
+    {
+     "kind": "cable",
+     "attach": "hand",
+     "from": [
+      111,
+      6
+     ]
+    },
+    {
+     "kind": "bar",
+     "attach": "hand"
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Return",
+     "durationMs": 1600,
+     "pose": {
+      "torso": -4,
+      "near": {
+       "shoulder": 166,
+       "elbow": 10,
+       "hip": 86,
+       "knee": 85,
+       "ankle": -5
+      },
+      "far": {
+       "shoulder": 166,
+       "elbow": 10,
+       "hip": 82,
+       "knee": 82
+      },
+      "root": [
+       90,
+       120
+      ]
+     }
+    },
+    {
+     "name": "Pull",
+     "durationMs": 1100,
+     "pose": {
+      "torso": -14,
+      "near": {
+       "shoulder": 22,
+       "elbow": 132,
+       "hip": 76,
+       "knee": 85,
+       "ankle": -5
+      },
+      "far": {
+       "shoulder": 22,
+       "elbow": 132,
+       "hip": 72,
+       "knee": 82
+      },
+      "root": [
+       90,
+       120
+      ]
+     }
+    },
+    {
+     "name": "Squeeze",
+     "durationMs": 500,
+     "pose": {
+      "torso": -14,
+      "near": {
+       "shoulder": 20,
+       "elbow": 134,
+       "hip": 76,
+       "knee": 85,
+       "ankle": -5
+      },
+      "far": {
+       "shoulder": 20,
+       "elbow": 134,
+       "hip": 72,
+       "knee": 82
+      },
+      "root": [
+       90,
+       120
+      ]
+     }
+    }
+   ],
+   "loop": "cycle"
+  }
+ },
+ {
+  "schemaVersion": 1,
+  "id": "dumbbell-romanian-deadlift",
+  "name": "Dumbbell Romanian deadlift",
+  "equipment": [
+   "dumbbell"
+  ],
+  "muscles": {
+   "primary": [
+    "hamstrings",
+    "glutes"
+   ],
+   "secondary": [
+    "lower_back",
+    "forearms",
+    "traps"
+   ]
+  },
+  "cues": [
+   "Soft knees, push hips straight back",
+   "Dumbbells slide along your thighs, back flat",
+   "Stand up by squeezing your glutes"
+  ],
+  "defaultReps": "10",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "dumbbell",
+     "attach": "hand"
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Stand",
+     "durationMs": 1300,
+     "pose": {
+      "torso": 0,
+      "near": {
+       "shoulder": 0,
+       "elbow": 0,
+       "hip": 0,
+       "knee": 6,
+       "ankle": -6
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        134,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Hinge",
+     "durationMs": 1800,
+     "pose": {
+      "torso": 72,
+      "near": {
+       "shoulder": 72,
+       "elbow": 0,
+       "hip": 90,
+       "knee": 24,
+       "ankle": -6
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        134,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Pause",
+     "durationMs": 300,
+     "pose": {
+      "torso": 72,
+      "near": {
+       "shoulder": 72,
+       "elbow": 0,
+       "hip": 90,
+       "knee": 24,
+       "ankle": -6
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        134,
+        149
+       ]
+      }
+     }
+    }
+   ],
+   "loop": "cycle"
+  }
+ },
+ {
+  "schemaVersion": 1,
+  "id": "plank",
+  "name": "Plank",
+  "equipment": [
+   "bodyweight"
+  ],
+  "muscles": {
+   "primary": [
+    "abs"
+   ],
+   "secondary": [
+    "obliques",
+    "glutes",
+    "front_delts",
+    "lower_back"
+   ]
+  },
+  "cues": [
+   "Elbows under shoulders, body in one straight line",
+   "Squeeze glutes and abs, keep breathing",
+   "Hold, do not let hips sag"
+  ],
+  "defaultReps": "30 sec hold",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "mat",
+     "at": [
+      20,
+      0
+     ],
+     "to": [
+      214,
+      0
+     ]
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Brace",
+     "durationMs": 1600,
+     "pose": {
+      "torso": 79,
+      "near": {
+       "shoulder": 79,
+       "elbow": 92,
+       "hip": 0,
+       "knee": 0,
+       "ankle": 10
+      },
+      "far": {
+       "shoulder": 79,
+       "elbow": 92,
+       "hip": 0
+      },
+      "anchor": {
+       "joint": "elbow",
+       "at": [
+        176,
+        142
+       ]
+      }
+     }
+    },
+    {
+     "name": "Breathe",
+     "durationMs": 1600,
+     "pose": {
+      "torso": 80,
+      "near": {
+       "shoulder": 80,
+       "elbow": 92,
+       "hip": -2,
+       "knee": 0,
+       "ankle": 10
+      },
+      "far": {
+       "shoulder": 80,
+       "elbow": 92,
+       "hip": -2
+      },
+      "anchor": {
+       "joint": "elbow",
+       "at": [
+        176,
+        142
+       ]
+      }
+     }
+    }
+   ],
+   "loop": "pingpong"
+  },
+  "holdSeconds": 30
+ },
+ {
+  "schemaVersion": 1,
+  "id": "standing-calf-raise",
+  "name": "Standing calf raise",
+  "equipment": [
+   "bodyweight",
+   "dumbbell"
+  ],
+  "muscles": {
+   "primary": [
+    "calves"
+   ],
+   "secondary": []
+  },
+  "cues": [
+   "Slow: 3 seconds up, 3 seconds down",
+   "Full range, pause at the top",
+   "Bodyweight first, add dumbbells once 2×15 feels easy"
+  ],
+  "defaultReps": "12–15 slow",
+  "animation": {
+   "view": "side",
+   "equipment": [],
+   "keyframes": [
+    {
+     "name": "Lower",
+     "durationMs": 3000,
+     "pose": {
+      "torso": 0,
+      "near": {
+       "shoulder": 4,
+       "elbow": 6,
+       "hip": 0,
+       "knee": 2,
+       "ankle": 0
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        134,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Rise",
+     "durationMs": 3000,
+     "pose": {
+      "torso": 0,
+      "near": {
+       "shoulder": 4,
+       "elbow": 6,
+       "hip": 0,
+       "knee": 2,
+       "ankle": 38
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        134,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Pause",
+     "durationMs": 800,
+     "pose": {
+      "torso": 0,
+      "near": {
+       "shoulder": 4,
+       "elbow": 6,
+       "hip": 0,
+       "knee": 2,
+       "ankle": 38
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        134,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Lower",
+     "durationMs": 3000,
+     "pose": {
+      "torso": 0,
+      "near": {
+       "shoulder": 4,
+       "elbow": 6,
+       "hip": 0,
+       "knee": 2,
+       "ankle": 0
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        134,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Pause",
+     "durationMs": 400,
+     "pose": {
+      "torso": 0,
+      "near": {
+       "shoulder": 4,
+       "elbow": 6,
+       "hip": 0,
+       "knee": 2,
+       "ankle": 0
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        134,
+        149
+       ]
+      }
+     }
+    }
+   ],
+   "loop": "cycle"
+  },
+  "notes": "Slow tempo, bodyweight first"
+ },
+ {
+  "schemaVersion": 1,
+  "id": "tibialis-raise",
+  "name": "Tibialis raise",
+  "equipment": [
+   "bodyweight",
+   "wall"
+  ],
+  "muscles": {
+   "primary": [
+    "tibialis"
+   ],
+   "secondary": []
+  },
+  "cues": [
+   "Back against a wall, heels about 30 cm out",
+   "Lift your toes toward your shins, slowly",
+   "Sharp or lingering shin pain: go lighter"
+  ],
+  "defaultReps": "12–15 slow",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "wall",
+     "at": [
+      79,
+      0
+     ]
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Lower",
+     "durationMs": 3000,
+     "pose": {
+      "torso": -13,
+      "near": {
+       "shoulder": -10,
+       "elbow": 8,
+       "hip": 0,
+       "knee": 0,
+       "ankle": 13
+      },
+      "far": {
+       "shoulder": -14,
+       "elbow": 8
+      },
+      "anchor": {
+       "joint": "heel",
+       "at": [
+        112,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Lift toes",
+     "durationMs": 3000,
+     "pose": {
+      "torso": -13,
+      "near": {
+       "shoulder": -10,
+       "elbow": 8,
+       "hip": 0,
+       "knee": 0,
+       "ankle": -24
+      },
+      "far": {
+       "shoulder": -14,
+       "elbow": 8
+      },
+      "anchor": {
+       "joint": "heel",
+       "at": [
+        112,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Pause",
+     "durationMs": 600,
+     "pose": {
+      "torso": -13,
+      "near": {
+       "shoulder": -10,
+       "elbow": 8,
+       "hip": 0,
+       "knee": 0,
+       "ankle": -24
+      },
+      "far": {
+       "shoulder": -14,
+       "elbow": 8
+      },
+      "anchor": {
+       "joint": "heel",
+       "at": [
+        112,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Lower",
+     "durationMs": 3000,
+     "pose": {
+      "torso": -13,
+      "near": {
+       "shoulder": -10,
+       "elbow": 8,
+       "hip": 0,
+       "knee": 0,
+       "ankle": 13
+      },
+      "far": {
+       "shoulder": -14,
+       "elbow": 8
+      },
+      "anchor": {
+       "joint": "heel",
+       "at": [
+        112,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Pause",
+     "durationMs": 400,
+     "pose": {
+      "torso": -13,
+      "near": {
+       "shoulder": -10,
+       "elbow": 8,
+       "hip": 0,
+       "knee": 0,
+       "ankle": 13
+      },
+      "far": {
+       "shoulder": -14,
+       "elbow": 8
+      },
+      "anchor": {
+       "joint": "heel",
+       "at": [
+        112,
+        149
+       ]
+      }
+     }
+    }
+   ],
+   "loop": "cycle"
+  },
+  "notes": "Sharp or lingering shin pain means go lighter"
+ },
+ {
+  "schemaVersion": 1,
+  "id": "goblet-squat",
+  "name": "Goblet squat",
+  "equipment": [
+   "dumbbell"
+  ],
+  "muscles": {
+   "primary": [
+    "quads",
+    "glutes"
+   ],
+   "secondary": [
+    "adductors",
+    "abs",
+    "upper_back"
+   ]
+  },
+  "cues": [
+   "Dumbbell held at your chest, elbows inside your knees",
+   "Sit down between your hips, chest tall",
+   "Drive up through the middle of your foot"
+  ],
+  "defaultReps": "10–12",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "dumbbell",
+     "attach": "hand",
+     "at": [
+      3,
+      -3
+     ],
+     "size": 1.15
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Stand",
+     "durationMs": 1300,
+     "pose": {
+      "torso": 0,
+      "near": {
+       "shoulder": 22,
+       "elbow": 135,
+       "hip": 0,
+       "knee": 0,
+       "ankle": 0
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        140,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Sit down",
+     "durationMs": 1800,
+     "pose": {
+      "torso": 32,
+      "near": {
+       "shoulder": 52,
+       "elbow": 135,
+       "hip": 114,
+       "knee": 116,
+       "ankle": -34
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        140,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Pause",
+     "durationMs": 300,
+     "pose": {
+      "torso": 32,
+      "near": {
+       "shoulder": 52,
+       "elbow": 135,
+       "hip": 114,
+       "knee": 116,
+       "ankle": -34
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        140,
+        149
+       ]
+      }
+     }
+    }
+   ],
+   "loop": "cycle"
+  }
+ },
+ {
+  "schemaVersion": 1,
+  "id": "chest-supported-row",
+  "name": "Chest-supported row machine",
+  "equipment": [
+   "machine"
+  ],
+  "muscles": {
+   "primary": [
+    "upper_back",
+    "lats"
+   ],
+   "secondary": [
+    "rear_delts",
+    "biceps"
+   ]
+  },
+  "cues": [
+   "Chest firmly on the pad",
+   "Pull elbows back, squeeze shoulder blades",
+   "Do not shrug"
+  ],
+  "defaultReps": "10–12",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "seat",
+     "at": [
+      76,
+      118
+     ]
+    },
+    {
+     "kind": "backpad",
+     "at": [
+      120,
+      64
+     ],
+     "to": [
+      108,
+      98
+     ]
+    },
+    {
+     "kind": "frame",
+     "at": [
+      110,
+      98
+     ],
+     "to": [
+      110,
+      152
+     ]
+    },
+    {
+     "kind": "frame",
+     "at": [
+      150,
+      40
+     ],
+     "to": [
+      150,
+      152
+     ]
+    },
+    {
+     "kind": "handle",
+     "attach": "hand"
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Return",
+     "durationMs": 1600,
+     "pose": {
+      "torso": 38,
+      "near": {
+       "shoulder": 68,
+       "elbow": 4,
+       "hip": 116,
+       "knee": 82,
+       "ankle": 0
+      },
+      "far": {
+       "shoulder": 71,
+       "elbow": 4,
+       "hip": 112,
+       "knee": 78
+      },
+      "root": [
+       80,
+       111
+      ]
+     }
+    },
+    {
+     "name": "Pull",
+     "durationMs": 1000,
+     "pose": {
+      "torso": 38,
+      "near": {
+       "shoulder": -6,
+       "elbow": 104,
+       "hip": 116,
+       "knee": 82,
+       "ankle": 0
+      },
+      "far": {
+       "shoulder": -3,
+       "elbow": 104,
+       "hip": 112,
+       "knee": 78
+      },
+      "root": [
+       80,
+       111
+      ]
+     }
+    },
+    {
+     "name": "Squeeze",
+     "durationMs": 700,
+     "pose": {
+      "torso": 38,
+      "near": {
+       "shoulder": -8,
+       "elbow": 106,
+       "hip": 116,
+       "knee": 82,
+       "ankle": 0
+      },
+      "far": {
+       "shoulder": -5,
+       "elbow": 106,
+       "hip": 112,
+       "knee": 78
+      },
+      "root": [
+       80,
+       111
+      ]
+     }
+    }
+   ],
+   "loop": "cycle"
+  }
+ },
+ {
+  "schemaVersion": 1,
+  "id": "cable-chest-fly",
+  "name": "Cable chest fly",
+  "equipment": [
+   "cable"
+  ],
+  "muscles": {
+   "primary": [
+    "chest"
+   ],
+   "secondary": [
+    "front_delts"
+   ]
+  },
+  "cues": [
+   "Slight bend in the elbows, kept the same all the way",
+   "Hug a big tree: hands meet in front of your chest",
+   "Do not let arms drift far behind you"
+  ],
+  "defaultReps": "10–12",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "pulley",
+     "at": [
+      44,
+      20
+     ]
+    },
+    {
+     "kind": "cable",
+     "attach": "hand",
+     "from": [
+      44,
+      20
+     ]
+    },
+    {
+     "kind": "handle",
+     "attach": "hand"
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Open",
+     "durationMs": 1700,
+     "pose": {
+      "torso": 10,
+      "near": {
+       "shoulder": 98,
+       "armYaw": 70,
+       "elbow": 20,
+       "hip": 22,
+       "knee": 14,
+       "ankle": -2
+      },
+      "far": {
+       "hip": -12,
+       "knee": 4,
+       "ankle": -26
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        146,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Hug",
+     "durationMs": 1200,
+     "pose": {
+      "torso": 10,
+      "near": {
+       "shoulder": 78,
+       "armYaw": 0,
+       "elbow": 20,
+       "hip": 22,
+       "knee": 14,
+       "ankle": -2
+      },
+      "far": {
+       "hip": -12,
+       "knee": 4,
+       "ankle": -26
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        146,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Squeeze",
+     "durationMs": 500,
+     "pose": {
+      "torso": 10,
+      "near": {
+       "shoulder": 76,
+       "armYaw": 0,
+       "elbow": 20,
+       "hip": 22,
+       "knee": 14,
+       "ankle": -2
+      },
+      "far": {
+       "hip": -12,
+       "knee": 4,
+       "ankle": -26
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        146,
+        149
+       ]
+      }
+     }
+    }
+   ],
+   "loop": "cycle"
+  },
+  "notes": "Keep a slight elbow bend and avoid a deep stretch behind the body (sensitive left shoulder)"
+ },
+ {
+  "schemaVersion": 1,
+  "id": "face-pull",
+  "name": "Face pull (cable)",
+  "equipment": [
+   "cable"
+  ],
+  "muscles": {
+   "primary": [
+    "rear_delts",
+    "upper_back"
+   ],
+   "secondary": [
+    "traps",
+    "biceps"
+   ]
+  },
+  "cues": [
+   "Cable at face height, rope handles",
+   "Pull toward your face, elbows high and wide",
+   "Squeeze rear shoulders, return slowly"
+  ],
+  "defaultReps": "12–15",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "pulley",
+     "at": [
+      226,
+      46
+     ]
+    },
+    {
+     "kind": "cable",
+     "attach": "hand",
+     "from": [
+      226,
+      46
+     ]
+    },
+    {
+     "kind": "handle",
+     "attach": "hand"
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Return",
+     "durationMs": 1600,
+     "pose": {
+      "torso": -6,
+      "near": {
+       "shoulder": 84,
+       "armYaw": 0,
+       "elbow": 4,
+       "hip": 8,
+       "knee": 6,
+       "ankle": 2
+      },
+      "far": {
+       "hip": -14,
+       "knee": 4,
+       "ankle": -20
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        128,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Pull",
+     "durationMs": 1000,
+     "pose": {
+      "torso": -6,
+      "near": {
+       "shoulder": 96,
+       "armYaw": 62,
+       "elbow": 118,
+       "hip": 8,
+       "knee": 6,
+       "ankle": 2
+      },
+      "far": {
+       "hip": -14,
+       "knee": 4,
+       "ankle": -20
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        128,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Squeeze",
+     "durationMs": 700,
+     "pose": {
+      "torso": -6,
+      "near": {
+       "shoulder": 97,
+       "armYaw": 64,
+       "elbow": 120,
+       "hip": 8,
+       "knee": 6,
+       "ankle": 2
+      },
+      "far": {
+       "hip": -14,
+       "knee": 4,
+       "ankle": -20
+      },
+      "anchor": {
+       "joint": "toe",
+       "at": [
+        128,
+        149
+       ]
+      }
+     }
+    }
+   ],
+   "loop": "cycle"
+  }
+ },
+ {
+  "schemaVersion": 1,
+  "id": "glute-bridge",
+  "name": "Glute bridge (or hip thrust)",
+  "equipment": [
+   "bodyweight"
+  ],
+  "muscles": {
+   "primary": [
+    "glutes"
+   ],
+   "secondary": [
+    "hamstrings",
+    "abs"
+   ]
+  },
+  "cues": [
+   "Feet flat, hip-width, heels under knees",
+   "Push hips up, squeeze glutes at the top",
+   "Lower slowly, do not arch your lower back"
+  ],
+  "defaultReps": "10–12",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "mat",
+     "at": [
+      20,
+      0
+     ],
+     "to": [
+      214,
+      0
+     ]
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Lower",
+     "durationMs": 1700,
+     "pose": {
+      "torso": -90,
+      "near": {
+       "shoulder": 0,
+       "elbow": 0,
+       "hip": 45,
+       "knee": 100,
+       "ankle": 35
+      },
+      "anchor": {
+       "joint": "heel",
+       "at": [
+        158,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Lift",
+     "durationMs": 1100,
+     "pose": {
+      "torso": -112,
+      "near": {
+       "shoulder": -22,
+       "elbow": 0,
+       "hip": 0,
+       "knee": 106,
+       "ankle": 6
+      },
+      "anchor": {
+       "joint": "heel",
+       "at": [
+        158,
+        149
+       ]
+      }
+     }
+    },
+    {
+     "name": "Squeeze",
+     "durationMs": 800,
+     "pose": {
+      "torso": -112,
+      "near": {
+       "shoulder": -22,
+       "elbow": 0,
+       "hip": 0,
+       "knee": 106,
+       "ankle": 6
+      },
+      "anchor": {
+       "joint": "heel",
+       "at": [
+        158,
+        149
+       ]
+      }
+     }
+    }
+   ],
+   "loop": "cycle"
+  }
+ },
+ {
+  "schemaVersion": 1,
+  "id": "dead-bug",
+  "name": "Dead bug",
+  "equipment": [
+   "bodyweight"
+  ],
+  "muscles": {
+   "primary": [
+    "abs"
+   ],
+   "secondary": [
+    "obliques",
+    "hip_flexors"
+   ]
+  },
+  "cues": [
+   "Lower back pressed into the floor",
+   "Slowly extend the opposite arm and leg",
+   "Alternate sides, 10 per side"
+  ],
+  "defaultReps": "10 per side",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "mat",
+     "at": [
+      20,
+      0
+     ],
+     "to": [
+      214,
+      0
+     ]
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Return",
+     "durationMs": 1300,
+     "pose": {
+      "torso": -90,
+      "near": {
+       "shoulder": 90,
+       "elbow": 0,
+       "hip": 90,
+       "knee": 90,
+       "ankle": 10
+      },
+      "far": {
+       "shoulder": 90,
+       "elbow": 0,
+       "hip": 90,
+       "knee": 90,
+       "ankle": 10
+      },
+      "root": [
+       118,
+       141
+      ]
+     }
+    },
+    {
+     "name": "Extend",
+     "durationMs": 1700,
+     "pose": {
+      "torso": -90,
+      "near": {
+       "shoulder": 172,
+       "elbow": 0,
+       "hip": 90,
+       "knee": 90,
+       "ankle": 10
+      },
+      "far": {
+       "shoulder": 90,
+       "elbow": 0,
+       "hip": 12,
+       "knee": 4,
+       "ankle": 30
+      },
+      "root": [
+       118,
+       141
+      ]
+     }
+    },
+    {
+     "name": "Pause",
+     "durationMs": 400,
+     "pose": {
+      "torso": -90,
+      "near": {
+       "shoulder": 172,
+       "elbow": 0,
+       "hip": 90,
+       "knee": 90,
+       "ankle": 10
+      },
+      "far": {
+       "shoulder": 90,
+       "elbow": 0,
+       "hip": 12,
+       "knee": 4,
+       "ankle": 30
+      },
+      "root": [
+       118,
+       141
+      ]
+     }
+    }
+   ],
+   "loop": "cycle",
+   "alternateSides": true
+  }
+ }
+]

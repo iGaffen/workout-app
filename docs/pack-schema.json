@@ -1,0 +1,618 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "schemaVersion": {
+      "type": "integer",
+      "minimum": -9007199254740991,
+      "maximum": 9007199254740991
+    },
+    "exercises": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "equipment": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "muscles": {
+            "type": "object",
+            "properties": {
+              "primary": {
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "chest",
+                    "front_delts",
+                    "side_delts",
+                    "rear_delts",
+                    "biceps",
+                    "triceps",
+                    "forearms",
+                    "upper_back",
+                    "lats",
+                    "traps",
+                    "lower_back",
+                    "abs",
+                    "obliques",
+                    "glutes",
+                    "quads",
+                    "hamstrings",
+                    "adductors",
+                    "calves",
+                    "tibialis",
+                    "hip_flexors"
+                  ]
+                }
+              },
+              "secondary": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": [
+                    "chest",
+                    "front_delts",
+                    "side_delts",
+                    "rear_delts",
+                    "biceps",
+                    "triceps",
+                    "forearms",
+                    "upper_back",
+                    "lats",
+                    "traps",
+                    "lower_back",
+                    "abs",
+                    "obliques",
+                    "glutes",
+                    "quads",
+                    "hamstrings",
+                    "adductors",
+                    "calves",
+                    "tibialis",
+                    "hip_flexors"
+                  ]
+                }
+              }
+            },
+            "required": [
+              "primary",
+              "secondary"
+            ]
+          },
+          "cues": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notes": {
+            "type": "string"
+          },
+          "defaultReps": {
+            "type": "string",
+            "minLength": 1
+          },
+          "holdSeconds": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "animation": {
+            "type": "object",
+            "properties": {
+              "view": {
+                "type": "string",
+                "const": "side"
+              },
+              "equipment": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "kind": {
+                      "type": "string",
+                      "enum": [
+                        "bench",
+                        "seat",
+                        "backpad",
+                        "pad",
+                        "legpress",
+                        "pulley",
+                        "cable",
+                        "dumbbell",
+                        "wall",
+                        "step",
+                        "mat",
+                        "handle",
+                        "bar",
+                        "plate",
+                        "frame"
+                      ]
+                    },
+                    "at": {
+                      "type": "array",
+                      "prefixItems": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "items": false,
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "to": {
+                      "type": "array",
+                      "prefixItems": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "items": false,
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "attach": {
+                      "type": "string",
+                      "enum": [
+                        "hand",
+                        "elbow",
+                        "foot",
+                        "toe",
+                        "knee",
+                        "hip",
+                        "chest",
+                        "shoulder"
+                      ]
+                    },
+                    "side": {
+                      "type": "string",
+                      "enum": [
+                        "near",
+                        "far"
+                      ]
+                    },
+                    "angle": {
+                      "type": "number"
+                    },
+                    "size": {
+                      "type": "number"
+                    },
+                    "from": {
+                      "type": "array",
+                      "prefixItems": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "items": false,
+                      "minItems": 2,
+                      "maxItems": 2
+                    }
+                  },
+                  "required": [
+                    "kind"
+                  ]
+                }
+              },
+              "keyframes": {
+                "minItems": 2,
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1
+                    },
+                    "durationMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 9007199254740991
+                    },
+                    "ease": {
+                      "type": "string",
+                      "enum": [
+                        "inOut",
+                        "linear"
+                      ]
+                    },
+                    "pose": {
+                      "type": "object",
+                      "properties": {
+                        "root": {
+                          "type": "array",
+                          "prefixItems": [
+                            {
+                              "type": "number"
+                            },
+                            {
+                              "type": "number"
+                            }
+                          ],
+                          "items": false,
+                          "minItems": 2,
+                          "maxItems": 2
+                        },
+                        "anchor": {
+                          "type": "object",
+                          "properties": {
+                            "joint": {
+                              "type": "string",
+                              "enum": [
+                                "hip",
+                                "shoulder",
+                                "head",
+                                "elbow",
+                                "hand",
+                                "knee",
+                                "ankle",
+                                "heel",
+                                "toe"
+                              ]
+                            },
+                            "side": {
+                              "type": "string",
+                              "enum": [
+                                "near",
+                                "far"
+                              ]
+                            },
+                            "at": {
+                              "type": "array",
+                              "prefixItems": [
+                                {
+                                  "type": "number"
+                                },
+                                {
+                                  "type": "number"
+                                }
+                              ],
+                              "items": false,
+                              "minItems": 2,
+                              "maxItems": 2
+                            }
+                          },
+                          "required": [
+                            "joint",
+                            "at"
+                          ]
+                        },
+                        "torso": {
+                          "type": "number"
+                        },
+                        "neck": {
+                          "type": "number"
+                        },
+                        "near": {
+                          "type": "object",
+                          "properties": {
+                            "shoulder": {
+                              "type": "number"
+                            },
+                            "armYaw": {
+                              "type": "number"
+                            },
+                            "elbow": {
+                              "type": "number"
+                            },
+                            "hip": {
+                              "type": "number"
+                            },
+                            "knee": {
+                              "type": "number"
+                            },
+                            "ankle": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "far": {
+                          "type": "object",
+                          "properties": {
+                            "shoulder": {
+                              "type": "number"
+                            },
+                            "armYaw": {
+                              "type": "number"
+                            },
+                            "elbow": {
+                              "type": "number"
+                            },
+                            "hip": {
+                              "type": "number"
+                            },
+                            "knee": {
+                              "type": "number"
+                            },
+                            "ankle": {
+                              "type": "number"
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "torso",
+                        "near"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "name",
+                    "durationMs",
+                    "pose"
+                  ]
+                }
+              },
+              "loop": {
+                "type": "string",
+                "enum": [
+                  "pingpong",
+                  "cycle"
+                ]
+              },
+              "alternateSides": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "view",
+              "equipment",
+              "keyframes",
+              "loop"
+            ]
+          },
+          "hidden": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "equipment",
+          "muscles",
+          "cues",
+          "defaultReps",
+          "animation"
+        ]
+      }
+    },
+    "routines": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sessions": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "name": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "blocks": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": [
+                          "exercise",
+                          "text"
+                        ]
+                      },
+                      "exerciseId": {
+                        "type": "string"
+                      },
+                      "reps": {
+                        "type": "string"
+                      },
+                      "sets": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "exclusiveMinimum": 0,
+                            "maximum": 9007199254740991
+                          },
+                          {
+                            "type": "string",
+                            "const": "phase"
+                          }
+                        ]
+                      },
+                      "restSeconds": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 9007199254740991
+                      },
+                      "title": {
+                        "type": "string"
+                      },
+                      "icon": {
+                        "type": "string"
+                      },
+                      "lines": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": [
+                      "type"
+                    ]
+                  }
+                }
+              },
+              "required": [
+                "id",
+                "name",
+                "blocks"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "sessions"
+        ]
+      }
+    },
+    "remove": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "schemaVersion": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "phaseSets": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "defaultRest": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "theme": {
+          "type": "string",
+          "enum": [
+            "system",
+            "light",
+            "dark"
+          ]
+        },
+        "activeRoutineId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "phaseSets",
+        "defaultRest",
+        "theme",
+        "activeRoutineId"
+      ]
+    },
+    "logs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "id": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string"
+          },
+          "routineId": {
+            "type": "string"
+          },
+          "sessionId": {
+            "type": "string"
+          },
+          "durationSeconds": {
+            "type": "number"
+          },
+          "sets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "exerciseId": {
+                  "type": "string"
+                },
+                "setIndex": {
+                  "type": "number"
+                },
+                "weightKg": {
+                  "type": "number"
+                },
+                "reps": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "exerciseId",
+                "setIndex"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "routineId",
+          "sessionId"
+        ]
+      }
+    },
+    "hiddenBundled": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
