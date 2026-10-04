@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { daysUntilDue, effectiveSettings, lastWeight, trainingWeek, weekStart, weeklyAverages, workoutsThisWeek, takesWeight } from "../src/model/progress";
+import { daysUntilDue, effectiveSettings, lastWeight, trainingWeek, weekStart, weeklyAverages, workoutsThisWeek, takesWeight, weekSummary } from "../src/model/progress";
 import { DEFAULT_SETTINGS } from "../src/model/plan";
 import exercises from "../src/data/exercises.json";
 import type { Exercise, WorkoutLog } from "../src/model/schema";
@@ -65,5 +65,22 @@ describe("body trends", () => {
     expect(daysUntilDue(null, 30)).toBe(0);
     expect(daysUntilDue("2026-01-01T00:00:00Z", 28, new Date("2026-01-10T00:00:00Z"))).toBe(19);
     expect(daysUntilDue("2026-01-01T00:00:00Z", 28, new Date("2026-02-10T00:00:00Z"))).toBeLessThanOrEqual(0);
+  });
+});
+
+describe("week summary", () => {
+  const routines = [
+    { schemaVersion: 1, id: "gym", name: "Gym", sessions: [{ id: "a", name: "A", blocks: [{ type: "exercise" as const, exerciseId: "leg-press" }] }] },
+    { schemaVersion: 1, id: "cardio-days", name: "Cardio", sessions: [{ id: "walk", name: "Walk", blocks: [{ type: "text" as const, title: "Walk" }] }] },
+  ];
+  const at = (d: number, rid: string, sid: string): WorkoutLog => ({ id: String(d), date: new Date(2026, 9, d, 9).toISOString(), routineId: rid, sessionId: sid });
+  it("counts gym days against Mon/Wed and cardio as bonus", () => {
+    const logs = [at(5, "gym", "a"), at(6, "cardio-days", "walk"), at(8, "gym", "a")]; // Mon, Tue, Thu
+    const w = weekSummary(logs, routines, DEFAULT_SETTINGS, new Date(2026, 9, 9, 12));
+    expect(w.goal).toBe(2);
+    expect(w.gym).toBe(2);
+    expect(w.cardio).toBe(1);
+    expect(w.days).toEqual([{ day: 1, name: "Mon", done: true }, { day: 3, name: "Wed", done: false }]);
+    expect(w.extraDays).toEqual(["Thu"]);
   });
 });

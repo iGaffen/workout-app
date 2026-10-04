@@ -2,7 +2,7 @@ import { useState } from "react";
 import { BodyRepo, LogRepo, RemindersRepo, RoutineRepo, SettingsRepo } from "../db/repos";
 import { useData } from "../components/hooks";
 import { TrendChart } from "../components/TrendChart";
-import { daysUntilDue, effectiveSettings, localDate, trainingWeek, weeklyAverages, workoutsThisWeek } from "../model/progress";
+import { daysUntilDue, effectiveSettings, localDate, trainingWeek, weekSummary, weeklyAverages } from "../model/progress";
 
 const num = (s: string) => { const n = parseFloat(s.replace(",", ".")); return Number.isFinite(n) && n > 0 ? n : undefined; };
 
@@ -17,8 +17,7 @@ export function Progress() {
   const [saved, setSaved] = useState("");
   if (!data) return <p className="sub">Loading…</p>;
   const { logs, body, routines, settings, lastPhoto, lastExport } = data;
-  const goal = settings.weeklyGoal ?? 5;
-  const done = workoutsThisWeek(logs);
+  const wk = weekSummary(logs, routines, settings);
   const eff = effectiveSettings(settings, logs);
   const photoDays = daysUntilDue(lastPhoto, 28);
   const backupDays = daysUntilDue(lastExport, 30);
@@ -44,11 +43,13 @@ export function Progress() {
 
       <div className="card">
         <div className="blockhead"><h2>This week</h2><span className="sub">Training week {trainingWeek(logs)} · {eff.phaseSets} sets{settings.phaseAuto ? " (auto)" : ""}</span></div>
-        <div className="goal" aria-label={`${done} of ${goal} workouts this week`}>
-          {Array.from({ length: Math.max(goal, done) }, (_, i) => <i key={i} className={i < done ? "done" : ""} />)}
+        <div className="days" aria-label={`${Math.min(wk.gym, wk.goal)} of ${wk.goal} gym workouts this week`}>
+          {wk.days.map((d) => <span key={d.day} className={`daychip ${d.done ? "done" : ""}`}>{d.name}{d.done ? " ✓" : ""}</span>)}
+          {wk.extraDays.map((n) => <span key={n} className="daychip done extra">{n} ✓</span>)}
         </div>
-        <p className="big goalnum">{done} of {goal} workouts</p>
-        <p className="sub">Gym and cardio days both count. Weeks start on Sunday.</p>
+        <p className="big goalnum">{wk.gym} of {wk.goal} gym workouts</p>
+        {wk.cardio > 0 && <p className="ok">+{wk.cardio} cardio {wk.cardio === 1 ? "session" : "sessions"} (bonus)</p>}
+        <p className="sub">A gym workout on another day still counts. Change your days in Settings.</p>
       </div>
 
       <div className="card">

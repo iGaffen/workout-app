@@ -2,7 +2,7 @@
   --bg:#E8EAEC; --card:#FFFFFF; --ink:#172033; --muted:#4F596C; --line:#CDD2D9;
   --accent:#2457F5; --accent-ink:#FFFFFF; --accent-soft:#A9BEFB; --rest:#F2C230; --rest-ink:#172033;
   --fig:#172033; --figfar:#8E98A9; --prop:#B6BDC9; --floor:#C4CAD3; --muscle-off:#D5D9DF; --silhouette:#EEF0F3;
-  --ok:#1F7F45; --danger:#B42318;
+  --ok:#1F7F45; --ok-ink:#FFFFFF; --danger:#B42318;
   --tabh:64px;
   color-scheme:light;
 }
@@ -11,14 +11,14 @@
     --bg:#10151F; --card:#1A2232; --ink:#EEF1F6; --muted:#A6B0C2; --line:#2C374B;
     --accent:#6D92FF; --accent-ink:#0B1020; --accent-soft:#34477E; --rest:#F2C230; --rest-ink:#172033;
     --fig:#EEF1F6; --figfar:#5D6A82; --prop:#3A4660; --floor:#2C374B; --muscle-off:#2E3A50; --silhouette:#232D40;
-    --ok:#4CC27E; --danger:#FF8A80; color-scheme:dark;
+    --ok:#4CC27E; --ok-ink:#0B1020; --danger:#FF8A80; color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
   --bg:#10151F; --card:#1A2232; --ink:#EEF1F6; --muted:#A6B0C2; --line:#2C374B;
   --accent:#6D92FF; --accent-ink:#0B1020; --accent-soft:#34477E; --rest:#F2C230; --rest-ink:#172033;
   --fig:#EEF1F6; --figfar:#5D6A82; --prop:#3A4660; --floor:#2C374B; --muscle-off:#2E3A50; --silhouette:#232D40;
-  --ok:#4CC27E; --danger:#FF8A80; color-scheme:dark;
+  --ok:#4CC27E; --ok-ink:#0B1020; --danger:#FF8A80; color-scheme:dark;
 }
 *{box-sizing:border-box}
 html{height:100%}
@@ -175,3 +175,9 @@ textarea{min-height:auto;font-family:ui-monospace,monospace;font-size:14px}
 .table table{width:100%;border-collapse:collapse;font-size:15px}
 .table th,.table td{text-align:left;padding:6px 4px;border-bottom:1px solid var(--line)}
 .tabs button{font-size:12px}
+.days{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.daychip{min-width:72px;text-align:center;padding:8px 12px;border-radius:12px;border:2px solid var(--line);font-weight:600;font-size:17px}
+.daychip.done{background:var(--ok);border-color:var(--ok);color:var(--ok-ink)}
+.daychip.extra{opacity:.85}
+.days7 button{min-width:44px;padding:10px 4px}
+.backupbox{margin-top:8px}
