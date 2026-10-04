@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { ExerciseRepo, LogRepo, RemindersRepo, RoutineRepo, SettingsRepo, applyPack, exportAll, wipeAll } from "../db/repos";
-import { daysUntilDue, effectiveSettings } from "../model/progress";
+import { DAY_NAMES, daysUntilDue, effectiveSettings, trainingDaysOf } from "../model/progress";
+import { backupNow } from "../components/backup";
 import { useData } from "../components/hooks";
 import { parsePack, previewPack, summary, type PackPreview } from "../model/pack";
 import type { Pack, Settings as S } from "../model/schema";
@@ -29,14 +30,6 @@ export function Settings() {
     try { await applyPack(pending.pack); setMsg(`Done. ${summary(pending.pv)}.`); setPending(null); setText(""); }
     catch (e) { setErr(`Nothing was changed. ${(e as Error).message}`); }
   };
-  const doExport = async () => {
-    const data = JSON.stringify(await exportAll(), null, 1);
-    const url = URL.createObjectURL(new Blob([data], { type: "application/json" }));
-    const a = document.createElement("a");
-    a.href = url; a.download = `gym-plan-backup-${new Date().toISOString().slice(0, 10)}.json`; a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 2000);
-    await RemindersRepo.markExported();
-  };
 
   return (
     <>
@@ -50,9 +43,16 @@ export function Settings() {
           <button aria-pressed={!s.phaseAuto && s.phaseSets === 2} onClick={() => put({ phaseAuto: false, phaseSets: 2 })}>2 sets</button>
           <button aria-pressed={!s.phaseAuto && s.phaseSets === 3} onClick={() => put({ phaseAuto: false, phaseSets: 3 })}>3 sets</button>
         </div>
-        <h2>Weekly goal</h2>
-        <div className="seg" role="group" aria-label="Workouts per week">
-          {[3, 4, 5, 6].map((n) => <button key={n} aria-pressed={(s.weeklyGoal ?? 5) === n} onClick={() => put({ weeklyGoal: n })}>{n} days</button>)}
+        <h2>Gym days</h2>
+        <p className="sub">Your weekly goal is the number of days picked ({trainingDaysOf(s).length}).</p>
+        <div className="seg days7" role="group" aria-label="Gym days">
+          {DAY_NAMES.map((n, i) => {
+            const on = trainingDaysOf(s).includes(i);
+            return <button key={n} aria-pressed={on} onClick={() => {
+              const next = on ? trainingDaysOf(s).filter((d) => d !== i) : [...trainingDaysOf(s), i];
+              if (next.length) put({ trainingDays: next });
+            }}>{n}</button>;
+          })}
         </div>
         <h2>Default rest</h2>
         <div className="seg" role="group" aria-label="Default rest">
@@ -98,7 +98,8 @@ export function Settings() {
         {backupDue && <p className="due" role="status">{d.lastExport ? "Backup due: last one was over 30 days ago." : "You have not backed up yet."}</p>}
         {d.lastExport && !backupDue && <p className="sub">Last backup: {new Date(d.lastExport).toLocaleDateString()}</p>}
         <p className="sub">Your data lives only on this phone. Clearing Chrome's site data deletes it, so export a backup now and then.</p>
-        <button className="cta" onClick={doExport}>Export all data</button>
+        <button className="cta" onClick={async () => { const r = await backupNow(); if (r !== "cancelled") setMsg(r === "shared" ? "Backup shared." : "Backup saved to Downloads."); }}>Export all data</button>
+        <p className="sub">Choose Google Drive in the share menu to keep the backup in the cloud.</p>
         <button className="secondary danger" onClick={async () => {
           if (confirm("Reset everything to defaults? Your routines, imported exercises, settings and history will be deleted. Export first if unsure.")) { await wipeAll(); setMsg("Reset to defaults."); }
         }}>Reset to defaults</button>

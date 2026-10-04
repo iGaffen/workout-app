@@ -123,6 +123,8 @@ export const SettingsSchema = z.object({
   phaseAuto: z.boolean().optional(),
   /** Workouts per week the Progress tab counts toward (gym and cardio). */
   weeklyGoal: z.number().int().positive().optional(),
+  /** Planned gym days, 0 = Sunday ... 6 = Saturday. The weekly goal is their count. */
+  trainingDays: z.array(z.number().int().min(0).max(6)).optional(),
   defaultRest: z.number().int().nonnegative(),
   theme: z.enum(["system", "light", "dark"]),
   activeRoutineId: z.string(),

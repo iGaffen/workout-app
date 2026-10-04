@@ -9,6 +9,7 @@ import { useWakeLock } from "../components/Timer";
 import type { Block, Exercise, WorkoutLog } from "../model/schema";
 import { effectiveSettings, lastWeight, takesWeight, trainingWeek } from "../model/progress";
 import { WeightInput } from "../components/WeightInput";
+import { BackupButton } from "../components/BackupButton";
 
 export function TextBlock({ b, children }: { b: Block; children?: React.ReactNode }) {
   return (
@@ -33,6 +34,7 @@ export function Today({ onRunning }: { onRunning: (r: boolean) => void }) {
   const [mode, setMode] = useState<"walk" | "full">(() => (localStorage.getItem("mode") as "walk" | "full") ?? "walk");
   const [running, setRunning] = useState(false);
   const [startedAt, setStartedAt] = useState(0);
+  const [justFinished, setJustFinished] = useState(false);
   const [fullWeights, setFullWeights] = useState<Record<string, number | undefined>>({});
   useWakeLock(running);
   useEffect(() => { onRunning(running); }, [running, onRunning]);
@@ -54,7 +56,7 @@ export function Today({ onRunning }: { onRunning: (r: boolean) => void }) {
     return b.exerciseId && w !== undefined ? Array.from({ length: setsFor(b, settings) }, (_, i) => ({ exerciseId: b.exerciseId!, setIndex: i + 1, weightKg: w })) : [];
   });
   const hasExercises = session.blocks.some((b) => b.type === "exercise");
-  const start = () => { setStartedAt(Date.now()); setRunning(true); scrollTo(0, 0); };
+  const start = () => { setJustFinished(false); setStartedAt(Date.now()); setRunning(true); scrollTo(0, 0); };
 
   if (running && mode === "walk") {
     return <Runner session={session} settings={settings} exMap={exMap} logs={logs} onFinish={finish} onExit={() => setRunning(false)} />;
@@ -80,6 +82,13 @@ export function Today({ onRunning }: { onRunning: (r: boolean) => void }) {
         <button aria-pressed={mode === "full"} onClick={() => setMode("full")}>Full workout</button>
       </div>
 
+      {justFinished && !running && (
+        <div className="card done">
+          <h2>Workout saved</h2>
+          <BackupButton />
+          <button className="linkbtn" onClick={() => setJustFinished(false)}>Close</button>
+        </div>
+      )}
       {mode === "walk" || !running ? (
         <div className="card">
           <div className="blockhead"><h2>{session.name}</h2>{hasExercises && <span className="sub">About {estimateMinutes(session, settings)} min · {settings.phaseSets} sets on main lifts{data.settings.phaseAuto ? ` (week ${trainingWeek(logs)})` : ""}</span>}</div>
@@ -110,7 +119,7 @@ export function Today({ onRunning }: { onRunning: (r: boolean) => void }) {
               </div>
             );
           })}
-          <button className="cta" onClick={async () => { await finish(fullSets()); setFullWeights({}); setRunning(false); scrollTo(0, 0); }}>Finish workout</button>
+          <button className="cta" onClick={async () => { await finish(fullSets()); setFullWeights({}); setRunning(false); setJustFinished(true); scrollTo(0, 0); }}>Finish workout</button>
           <button className="secondary" onClick={() => setRunning(false)}>Close without saving</button>
         </>
       )}

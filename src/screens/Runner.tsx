@@ -6,6 +6,7 @@ import { holdFor, repsFor, restFor, setsFor, step, type RunState } from "../mode
 import { ExerciseView } from "../components/ExerciseView";
 import { useTimer } from "../components/Timer";
 import { TextBlock } from "./Today";
+import { BackupButton } from "../components/BackupButton";
 
 interface Props { session: Session; settings: Settings; exMap: Map<string, Exercise>; logs: WorkoutLog[]; onFinish: (sets: NonNullable<WorkoutLog["sets"]>) => Promise<void>; onExit: () => void }
 
@@ -54,6 +55,7 @@ export function Runner({ session, settings, exMap, logs, onFinish, onExit }: Pro
         <div className="card done">
           <h2>Workout done</h2>
           <p className="sub">Nice work. Saved to your history. An easy walk on a non-gym day helps too.</p>
+          <BackupButton />
           <button className="cta" onClick={onExit}>Back to Today</button>
         </div>
       </>

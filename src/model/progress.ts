@@ -1,4 +1,4 @@
-import type { BodyLog, Exercise, Settings, WorkoutLog } from "./schema";
+import type { BodyLog, Exercise, Routine, Settings, WorkoutLog } from "./schema";
 
 const DAY = 86400000;
 
@@ -25,6 +25,31 @@ export const localDate = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() 
 export function workoutsThisWeek(logs: WorkoutLog[], now = new Date()): number {
   const ws = weekStart(now);
   return logs.filter((l) => weekStart(new Date(l.date)) === ws).length;
+}
+
+/** A gym workout is a session with at least one exercise; text-only sessions (cardio days) are not. */
+export function isGym(l: WorkoutLog, routines: Routine[]): boolean {
+  const s = routines.find((r) => r.id === l.routineId)?.sessions.find((x) => x.id === l.sessionId);
+  return s ? s.blocks.some((b) => b.type === "exercise") : true;
+}
+
+export const DAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+export const trainingDaysOf = (s: Settings) => [...(s.trainingDays ?? [1, 3])].sort((a, b) => a - b);
+
+/** This week's gym and cardio counts plus which planned days are done. */
+export function weekSummary(logs: WorkoutLog[], routines: Routine[], s: Settings, now = new Date()) {
+  const ws = weekStart(now);
+  const week = logs.filter((l) => weekStart(new Date(l.date)) === ws);
+  const gym = week.filter((l) => isGym(l, routines));
+  const gymDays = new Set(gym.map((l) => new Date(l.date).getDay()));
+  const plan = trainingDaysOf(s);
+  return {
+    gym: gym.length,
+    cardio: week.length - gym.length,
+    goal: plan.length,
+    days: plan.map((d) => ({ day: d, name: DAY_NAMES[d], done: gymDays.has(d) })),
+    extraDays: [...gymDays].filter((d) => !plan.includes(d)).sort().map((d) => DAY_NAMES[d]),
+  };
 }
 
 /** Most recent weight used for an exercise, from logged sets. */

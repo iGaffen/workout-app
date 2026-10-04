@@ -54,5 +54,11 @@ The format is described in [`docs/pack-schema.md`](docs/pack-schema.md) and [`do
 - **Backup reminder:** shown in Settings and Progress when you have workouts and haven't exported for 30 days.
 - **Lighthouse (mobile):** accessibility 100, best practices 100, performance about 79 on first visit from a local test server without compression. After install, the app loads from the phone.
 
+## Changed in v1.2
+- **Gym days instead of a number:** Settings → Gym days (default Monday and Wednesday). The weekly goal is how many days you pick. The Progress tab shows "Mon ✓ · Wed" and "1 of 2 gym workouts". A gym workout on another day still counts and shows as an extra day.
+- **Cardio is a bonus:** sessions with no exercises (the Cardio days routine) don't count toward the gym goal. They show as "+1 cardio session (bonus)".
+- **Sessions keep alternating A/B**, so missing a day doesn't break the order.
+- **One-tap backup:** after every finished workout there's a "Back up now" button. It opens Android's share menu: choose Google Drive to keep the copy in the cloud. Settings → Export does the same. Where sharing files isn't supported, the file downloads instead. Fully automatic backups aren't possible for an app installed from the browser, because Android requires a tap.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.

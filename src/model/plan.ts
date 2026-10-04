@@ -1,6 +1,6 @@
 import type { Block, Exercise, Routine, Session, Settings, WorkoutLog } from "./schema";
 
-export const DEFAULT_SETTINGS: Settings = { schemaVersion: 1, phaseSets: 2, phaseAuto: true, weeklyGoal: 5, defaultRest: 45, theme: "system", activeRoutineId: "full-body-ab" };
+export const DEFAULT_SETTINGS: Settings = { schemaVersion: 1, phaseSets: 2, phaseAuto: true, trainingDays: [1, 3], defaultRest: 45, theme: "system", activeRoutineId: "full-body-ab" };
 
 /** Number of sets for a block: a fixed number, or the Settings phase value. */
 export function setsFor(block: Block, settings: Pick<Settings, "phaseSets">): number {

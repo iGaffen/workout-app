@@ -29,7 +29,7 @@ export function parsePack(text: string): ParseResult {
   return { ok: true, pack: p };
 }
 
-export interface PackPreview { add: string[]; update: string[]; addRoutines: string[]; updateRoutines: string[]; remove: string[]; missingRefs: string[] }
+export interface PackPreview { add: string[]; update: string[]; addRoutines: string[]; updateRoutines: string[]; remove: string[]; missingRefs: string[]; other: string[] }
 
 /** Compare a pack with current data: what will be added/updated/removed. */
 export function previewPack(p: Pack, existingExercises: string[], existingRoutines: string[]): PackPreview {
@@ -46,6 +46,11 @@ export function previewPack(p: Pack, existingExercises: string[], existingRoutin
     updateRoutines: (p.routines ?? []).filter((r) => ro.has(r.id)).map((r) => r.name),
     remove: p.remove ?? [],
     missingRefs: [...missing],
+    other: [
+      ...(p.logs?.length ? [`${p.logs.length} workout${p.logs.length === 1 ? "" : "s"}`] : []),
+      ...(p.body?.length ? [`${p.body.length} body entr${p.body.length === 1 ? "y" : "ies"}`] : []),
+      ...(p.settings ? ["settings"] : []),
+    ],
   };
 }
 
@@ -57,6 +62,7 @@ export function summary(pv: PackPreview): string {
   if (pv.addRoutines.length) parts.push(`adds ${n(pv.addRoutines.length, "routine")}`);
   if (pv.updateRoutines.length) parts.push(`updates ${n(pv.updateRoutines.length, "routine")}`);
   if (pv.remove.length) parts.push(`removes ${n(pv.remove.length, "item")}`);
+  if (pv.other.length) parts.push(`restores ${pv.other.join(", ")}`);
   const s = parts.join(", ");
   return s ? s[0].toUpperCase() + s.slice(1) : "Nothing to change";
 }

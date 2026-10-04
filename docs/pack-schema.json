@@ -533,6 +533,14 @@
           "exclusiveMinimum": 0,
           "maximum": 9007199254740991
         },
+        "trainingDays": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6
+          }
+        },
         "defaultRest": {
           "type": "integer",
           "minimum": 0,
