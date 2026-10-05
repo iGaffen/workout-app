@@ -104,7 +104,7 @@ export function Settings() {
           if (confirm("Reset everything to defaults? Your routines, imported exercises, settings and history will be deleted. Export first if unsure.")) { await wipeAll(); setMsg("Reset to defaults."); }
         }}>Reset to defaults</button>
       </div>
-      <p className="sub center">Gym plan · works offline · no data leaves this phone</p>
+      <p className="sub center">Gym plan · works offline · no data leaves this phone<br />Version {__BUILD__}</p>
     </>
   );
 }
