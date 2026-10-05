@@ -10,6 +10,8 @@ import type { Block, Exercise, WorkoutLog } from "../model/schema";
 import { effectiveSettings, lastWeight, takesWeight, trainingWeek } from "../model/progress";
 import { WeightInput } from "../components/WeightInput";
 import { BackupButton } from "../components/BackupButton";
+import { useBackHandler } from "../components/back";
+import { ExerciseSheet } from "../components/ExerciseSheet";
 
 export function TextBlock({ b, children }: { b: Block; children?: React.ReactNode }) {
   return (
@@ -21,7 +23,7 @@ export function TextBlock({ b, children }: { b: Block; children?: React.ReactNod
   );
 }
 
-export function Today({ onRunning }: { onRunning: (r: boolean) => void }) {
+export function Today({ onRunning, visible }: { onRunning: (r: boolean) => void; visible: boolean }) {
   const data = useData(async () => {
     const settings = await SettingsRepo.get();
     const routines = await RoutineRepo.all();
@@ -35,6 +37,9 @@ export function Today({ onRunning }: { onRunning: (r: boolean) => void }) {
   const [running, setRunning] = useState(false);
   const [startedAt, setStartedAt] = useState(0);
   const [justFinished, setJustFinished] = useState(false);
+  const [peek, setPeek] = useState<{ ex: Exercise; reps: string } | null>(null);
+  useBackHandler(visible && running && mode === "full", () => { if (confirm("Close the workout without saving?")) setRunning(false); }, 1);
+  useBackHandler(visible && justFinished && !running, () => setJustFinished(false), 1);
   const [fullWeights, setFullWeights] = useState<Record<string, number | undefined>>({});
   useWakeLock(running);
   useEffect(() => { onRunning(running); }, [running, onRunning]);
@@ -59,7 +64,7 @@ export function Today({ onRunning }: { onRunning: (r: boolean) => void }) {
   const start = () => { setJustFinished(false); setStartedAt(Date.now()); setRunning(true); scrollTo(0, 0); };
 
   if (running && mode === "walk") {
-    return <Runner session={session} settings={settings} exMap={exMap} logs={logs} onFinish={finish} onExit={() => setRunning(false)} />;
+    return <Runner session={session} settings={settings} exMap={exMap} logs={logs} visible={visible} onFinish={finish} onExit={() => setRunning(false)} />;
   }
 
   return (
@@ -82,6 +87,7 @@ export function Today({ onRunning }: { onRunning: (r: boolean) => void }) {
         <button aria-pressed={mode === "full"} onClick={() => setMode("full")}>Full workout</button>
       </div>
 
+      {peek && <ExerciseSheet ex={peek.ex} reps={peek.reps} onClose={() => setPeek(null)} />}
       {justFinished && !running && (
         <div className="card done">
           <h2>Workout saved</h2>
@@ -98,7 +104,7 @@ export function Today({ onRunning }: { onRunning: (r: boolean) => void }) {
               return (
                 <li key={i}>
                   {b.type === "text" ? <span className="muted">{b.title}</span> : (
-                    <><span>{ex?.name ?? `Missing: ${b.exerciseId}`}</span><span className="sub">{setsFor(b, settings)} × {repsFor(b, ex)}</span></>
+                    <><button className="exlink" disabled={!ex} onClick={() => ex && setPeek({ ex, reps: repsFor(b, ex) })}>{ex?.name ?? `Missing: ${b.exerciseId}`}</button><span className="sub">{setsFor(b, settings)} × {repsFor(b, ex)}</span></>
                   )}
                 </li>
               );

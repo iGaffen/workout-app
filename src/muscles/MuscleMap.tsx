@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { MuscleId } from "../model/schema";
 import { BACK, FRONT, SILHOUETTE, pickViews } from "./shapes";
 import { MUSCLE_LABEL } from "./labels";
+import { useBackHandler } from "../components/back";
 
 interface Props { primary: MuscleId[]; secondary: MuscleId[]; name: string; compact?: boolean }
 
@@ -48,6 +49,7 @@ export function MuscleChips({ primary, secondary }: { primary: MuscleId[]; secon
 
 export function MuscleMap(props: Props) {
   const [big, setBig] = useState(false);
+  useBackHandler(big, () => setBig(false), 3);
   return (
     <div className={`musclemap ${props.compact ? "compact" : ""}`}>
       <button className="mapbtn" onClick={() => setBig(true)} aria-label={`Enlarge ${props.name} muscle diagram`}>
