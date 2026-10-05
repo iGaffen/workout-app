@@ -109,7 +109,9 @@ function Editor({ routine, onBack }: { routine: Routine; onBack: () => void }) {
                 </>
               ) : (
                 <>
-                  <button className="exlink" onClick={() => { const e = exercises?.find((x) => x.id === b.exerciseId); if (e) setPeek(e); }}>{name(b.exerciseId)}</button>
+                  <button className="exrow compact" onClick={() => { const e = exercises?.find((x) => x.id === b.exerciseId); if (e) setPeek(e); }}>
+                    <span className="exrowname">{name(b.exerciseId)}</span><span className="chev" aria-hidden="true"><Icon.next /></span>
+                  </button>
                   <div className="row gap wrap">
                     <label className="mini">Reps<input value={b.reps ?? ""} placeholder="default" onChange={(e) => patch(i, { reps: e.target.value || undefined })} /></label>
                     <label className="mini">Sets
