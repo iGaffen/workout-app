@@ -24,9 +24,36 @@ export function topHandler(list: Iterable<H>): H | undefined {
   return best;
 }
 
-/** Bring history in line with what is open. Called right after taps, so new entries count as user-made. */
+/**
+ * Two ways to catch the back button:
+ * - CloseWatcher (Chrome 120+, Android): made for exactly this. One watcher per open thing plus one
+ *   "exit guard" on Home. The first watcher needs no tap, so back works even right after opening the app.
+ * - Fallback: history entries, added only right after taps (Chrome skips entries added without one).
+ */
+interface CW { destroy(): void; onclose: (() => void) | null }
+const CloseWatcherCtor = (globalThis as unknown as { CloseWatcher?: new () => CW }).CloseWatcher;
+const watchers: CW[] = [];
+
+function onBack() {
+  const h = topHandler(handlers);
+  if (h) { h.fn(); return; }
+  toast("Press back again to exit");
+  clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => toast(null), 3000);
+}
+
+/** Bring watchers (or history entries) in line with what is open. Called right after taps. */
 function sync() {
   const want = 1 + handlers.size;
+  if (CloseWatcherCtor) {
+    while (watchers.length < want) {
+      const w = new CloseWatcherCtor();
+      w.onclose = () => { const i = watchers.indexOf(w); if (i >= 0) watchers.splice(i, 1); onBack(); };
+      watchers.push(w);
+    }
+    while (watchers.length > want) watchers.pop()!.destroy();
+    return;
+  }
   while (depth < want) { history.pushState({ gym: ++depth }, ""); }
   if (depth > want) {
     // Something was closed with an on-screen button: drop the extra entries quietly.
@@ -55,13 +82,10 @@ export function initBack(showToast: (msg: string | null) => void) {
   installed = true;
   // Any tap: sync after the app has reacted to it (still within the tap's user activation).
   window.addEventListener("click", syncSoon, true);
+  if (CloseWatcherCtor) { sync(); return; } // the first watcher is allowed without a tap
   window.addEventListener("popstate", () => {
     if (ignorePops > 0) { ignorePops--; return; }
     depth = Math.max(0, depth - 1);
-    const h = topHandler(handlers);
-    if (h) { h.fn(); return; }
-    toast("Press back again to exit");
-    clearTimeout(toastTimer);
-    toastTimer = window.setTimeout(() => toast(null), 3000);
+    onBack();
   });
 }

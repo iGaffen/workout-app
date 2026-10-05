@@ -69,5 +69,9 @@ The format is described in [`docs/pack-schema.md`](docs/pack-schema.md) and [`do
 - **Exercise rows:** each exercise in the session list is a full-width tappable row (plain text, a › arrow, no link styling) that opens the exercise card. The routine editor uses the same style.
 - **Back button rebuilt:** Chrome on Android skips history entries a page adds without a tap, which made back exit straight away. Entries are now added right after your taps. Back closes the topmost thing, and from any tab returns to **Home**. During a workout, back steps out to Home and keeps your progress, with a "Resume workout" card. On Home, back shows "Press back again to exit", and the next back closes the app.
 
+## Changed in v1.5
+- **Back button uses CloseWatcher:** Chrome's built-in way (Chrome 120+) for apps to handle the Android back button. Each open thing gets a watcher, plus one "exit guard" on Home. The first watcher needs no tap, so back works right after opening the app. Older browsers fall back to history entries.
+- **Version label** at the bottom of Settings (the build time), to confirm the phone has the latest update.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.
