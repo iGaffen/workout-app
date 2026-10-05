@@ -8,6 +8,7 @@ import { Icon } from "./components/Icons";
 import { TimerProvider, useTimer } from "./components/Timer";
 import { useData } from "./components/hooks";
 import { SettingsRepo } from "./db/repos";
+import { initBack, useBackHandler } from "./components/back";
 
 const TABS = [
   { id: "today", label: "Today", icon: Icon.today },
@@ -19,7 +20,17 @@ const TABS = [
 type Tab = (typeof TABS)[number]["id"];
 
 function Shell() {
-  const [tab, setTab] = useState<Tab>("today");
+  const [tab, setTabRaw] = useState<Tab>("today");
+  const [tabHistory, setTabHistory] = useState<Tab[]>([]);
+  const [toast, setToast] = useState<string | null>(null);
+  const setTab = (t: Tab) => { if (t !== tab) { setTabHistory((h) => [...h.filter((x) => x !== t), tab]); setTabRaw(t); } };
+  useEffect(() => initBack(setToast), []);
+  useBackHandler(tabHistory.length > 0, () => {
+    const prev = tabHistory[tabHistory.length - 1];
+    setTabHistory(tabHistory.slice(0, -1));
+    if (prev) setTabRaw(prev);
+    scrollTo(0, 0);
+  }, 0);
   const [running, setRunning] = useState(false);
   const settings = useData(() => SettingsRepo.get());
   const timer = useTimer();
@@ -35,7 +46,7 @@ function Shell() {
     <div className={`app ${timer.on ? "timer-on" : ""}`}>
       <main className="wrap">
         {/* Today stays mounted so a workout in progress survives switching tabs. */}
-        <div hidden={tab !== "today"}><Today onRunning={onRunning} /></div>
+        <div hidden={tab !== "today"}><Today onRunning={onRunning} visible={tab === "today"} /></div>
         <Suspense fallback={<p className="sub">Loading…</p>}>
         {tab === "routines" && <Routines />}
         {tab === "library" && <Library />}
@@ -43,6 +54,7 @@ function Shell() {
         {tab === "settings" && <Settings />}
         </Suspense>
       </main>
+      {toast && <div className="toast" role="status">{toast}</div>}
       <nav className="tabs" aria-label="Main">
         {TABS.map((t) => (
           <button key={t.id} aria-current={tab === t.id ? "page" : undefined} onClick={() => { setTab(t.id); scrollTo(0, 0); }}>

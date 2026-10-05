@@ -6,6 +6,7 @@ import { Figure } from "../anim/Figure";
 import { MuscleMap } from "../muscles/MuscleMap";
 import { Icon } from "../components/Icons";
 import { useReducedMotion } from "../components/hooks";
+import { useBackHandler } from "../components/back";
 
 export function Library() {
   const all = useData(() => ExerciseRepo.all(true));
@@ -60,6 +61,7 @@ export function Library() {
 
 function Detail({ id, onBack }: { id: string; onBack: () => void }) {
   const ex = useData(() => ExerciseRepo.get(id), [id]);
+  useBackHandler(true, onBack, 1);
   useReducedMotion();
   if (!ex) return null;
   const bundled = ExerciseRepo.isBundled(ex.id);

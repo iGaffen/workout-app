@@ -181,3 +181,8 @@ textarea{min-height:auto;font-family:ui-monospace,monospace;font-size:14px}
 .daychip.extra{opacity:.85}
 .days7 button{min-width:44px;padding:10px 4px}
 .backupbox{margin-top:8px}
+.exlink{padding:0;min-height:44px;text-align:left;font-weight:600;color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.exlink:disabled{color:var(--ink);text-decoration:none}
+.sheet{position:relative;padding-top:48px}
+.sheetclose{position:absolute;top:6px;right:6px;min-width:48px;min-height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(var(--tabh) + 24px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:600;z-index:30}

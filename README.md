@@ -60,5 +60,9 @@ The format is described in [`docs/pack-schema.md`](docs/pack-schema.md) and [`do
 - **Sessions keep alternating A/B**, so missing a day doesn't break the order.
 - **One-tap backup:** after every finished workout there's a "Back up now" button. It opens Android's share menu: choose Google Drive to keep the copy in the cloud. Settings → Export does the same. Where sharing files isn't supported, the file downloads instead. Fully automatic backups aren't possible for an app installed from the browser, because Android requires a tap.
 
+## Changed in v1.3
+- **Tap an exercise to see its card:** in the session list on Today, and in the routine editor, exercise names are links. Tapping one opens a pop-up with the animation, muscles, and cues. Close it with the X, by tapping outside, or with the phone's back button.
+- **Phone back button:** it closes the topmost thing first: an enlarged muscle diagram, then a pop-up, then a detail screen (exercise, routine editor, list of exercises to add), then steps back through a workout (asking before leaving on the first exercise), then returns to the previous tab. On the first screen it shows "Press back again to exit"; a second back within 2 seconds closes the app.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.

@@ -2,7 +2,9 @@ import { useState } from "react";
 import { ExerciseRepo, RoutineRepo, SettingsRepo } from "../db/repos";
 import { useData } from "../components/hooks";
 import { Icon } from "../components/Icons";
-import type { Block, Routine } from "../model/schema";
+import type { Block, Exercise, Routine } from "../model/schema";
+import { useBackHandler } from "../components/back";
+import { ExerciseSheet } from "../components/ExerciseSheet";
 
 const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "routine";
 const uniqueId = (base: string, taken: string[]) => { let id = slug(base), n = 2; while (taken.includes(id)) id = `${slug(base)}-${n++}`; return id; };
@@ -54,6 +56,9 @@ function Editor({ routine, onBack }: { routine: Routine; onBack: () => void }) {
   const [sid, setSid] = useState(routine.sessions[0]?.id);
   const [adding, setAdding] = useState(false);
   const [drag, setDrag] = useState<number | null>(null);
+  const [peek, setPeek] = useState<Exercise | null>(null);
+  useBackHandler(true, onBack, 1);
+  useBackHandler(adding, () => setAdding(false), 2);
   const session = routine.sessions.find((s) => s.id === sid) ?? routine.sessions[0];
   const name = (id?: string) => exercises?.find((e) => e.id === id)?.name ?? id;
 
@@ -104,7 +109,7 @@ function Editor({ routine, onBack }: { routine: Routine; onBack: () => void }) {
                 </>
               ) : (
                 <>
-                  <strong>{name(b.exerciseId)}</strong>
+                  <button className="exlink" onClick={() => { const e = exercises?.find((x) => x.id === b.exerciseId); if (e) setPeek(e); }}>{name(b.exerciseId)}</button>
                   <div className="row gap wrap">
                     <label className="mini">Reps<input value={b.reps ?? ""} placeholder="default" onChange={(e) => patch(i, { reps: e.target.value || undefined })} /></label>
                     <label className="mini">Sets
@@ -126,6 +131,7 @@ function Editor({ routine, onBack }: { routine: Routine; onBack: () => void }) {
       </ol>
       {session.blocks.length === 0 && <p className="sub">No blocks yet.</p>}
 
+      {peek && <ExerciseSheet ex={peek} onClose={() => setPeek(null)} />}
       {adding ? (
         <div className="card">
           <div className="blockhead"><h2>Add exercise</h2><button className="linkbtn" onClick={() => setAdding(false)}>Done</button></div>
