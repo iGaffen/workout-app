@@ -11,7 +11,7 @@ import { SettingsRepo } from "./db/repos";
 import { initBack, useBackHandler } from "./components/back";
 
 const TABS = [
-  { id: "today", label: "Today", icon: Icon.today },
+  { id: "home", label: "Home", icon: Icon.home },
   { id: "routines", label: "Routines", icon: Icon.routines },
   { id: "library", label: "Library", icon: Icon.library },
   { id: "progress", label: "Progress", icon: Icon.progress },
@@ -20,17 +20,11 @@ const TABS = [
 type Tab = (typeof TABS)[number]["id"];
 
 function Shell() {
-  const [tab, setTabRaw] = useState<Tab>("today");
-  const [tabHistory, setTabHistory] = useState<Tab[]>([]);
+  const [tab, setTab] = useState<Tab>("home");
   const [toast, setToast] = useState<string | null>(null);
-  const setTab = (t: Tab) => { if (t !== tab) { setTabHistory((h) => [...h.filter((x) => x !== t), tab]); setTabRaw(t); } };
   useEffect(() => initBack(setToast), []);
-  useBackHandler(tabHistory.length > 0, () => {
-    const prev = tabHistory[tabHistory.length - 1];
-    setTabHistory(tabHistory.slice(0, -1));
-    if (prev) setTabRaw(prev);
-    scrollTo(0, 0);
-  }, 0);
+  // Back from any other tab always lands on Home first.
+  useBackHandler(tab !== "home", () => { setTab("home"); scrollTo(0, 0); }, 0);
   const [running, setRunning] = useState(false);
   const settings = useData(() => SettingsRepo.get());
   const timer = useTimer();
@@ -45,8 +39,8 @@ function Shell() {
   return (
     <div className={`app ${timer.on ? "timer-on" : ""}`}>
       <main className="wrap">
-        {/* Today stays mounted so a workout in progress survives switching tabs. */}
-        <div hidden={tab !== "today"}><Today onRunning={onRunning} visible={tab === "today"} /></div>
+        {/* Home stays mounted so a workout in progress survives switching tabs. */}
+        <div hidden={tab !== "home"}><Today onRunning={onRunning} visible={tab === "home"} /></div>
         <Suspense fallback={<p className="sub">Loading…</p>}>
         {tab === "routines" && <Routines />}
         {tab === "library" && <Library />}
@@ -58,7 +52,7 @@ function Shell() {
       <nav className="tabs" aria-label="Main">
         {TABS.map((t) => (
           <button key={t.id} aria-current={tab === t.id ? "page" : undefined} onClick={() => { setTab(t.id); scrollTo(0, 0); }}>
-            <t.icon /><span>{t.label}{t.id === "today" && running && tab !== "today" ? " •" : ""}</span>
+            <t.icon /><span>{t.label}{t.id === "home" && running && tab !== "home" ? " •" : ""}</span>
           </button>
         ))}
       </nav>

@@ -7,7 +7,8 @@ import { ExerciseView } from "../components/ExerciseView";
 import { BlockIcon } from "../components/Icons";
 import { useWakeLock } from "../components/Timer";
 import type { Block, Exercise, WorkoutLog } from "../model/schema";
-import { effectiveSettings, lastWeight, takesWeight, trainingWeek } from "../model/progress";
+import { effectiveSettings, lastWeight, takesWeight, trainingWeek, weekSummary } from "../model/progress";
+import { Icon } from "../components/Icons";
 import { WeightInput } from "../components/WeightInput";
 import { BackupButton } from "../components/BackupButton";
 import { useBackHandler } from "../components/back";
@@ -34,11 +35,14 @@ export function Today({ onRunning, visible }: { onRunning: (r: boolean) => void;
   });
   const [sessionId, setSessionId] = useState<string>();
   const [mode, setMode] = useState<"walk" | "full">(() => (localStorage.getItem("mode") as "walk" | "full") ?? "walk");
-  const [running, setRunning] = useState(false);
+  const [running, setRunningRaw] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const setRunning = (r: boolean) => { setRunningRaw(r); setPaused(false); };
   const [startedAt, setStartedAt] = useState(0);
   const [justFinished, setJustFinished] = useState(false);
   const [peek, setPeek] = useState<{ ex: Exercise; reps: string } | null>(null);
-  useBackHandler(visible && running && mode === "full", () => { if (confirm("Close the workout without saving?")) setRunning(false); }, 1);
+  // Back during a workout steps out to Home and keeps your progress; "Resume workout" brings you back.
+  useBackHandler(visible && running && !paused, () => { setPaused(true); scrollTo(0, 0); }, 1);
   useBackHandler(visible && justFinished && !running, () => setJustFinished(false), 1);
   const [fullWeights, setFullWeights] = useState<Record<string, number | undefined>>({});
   useWakeLock(running);
@@ -61,22 +65,40 @@ export function Today({ onRunning, visible }: { onRunning: (r: boolean) => void;
     return b.exerciseId && w !== undefined ? Array.from({ length: setsFor(b, settings) }, (_, i) => ({ exerciseId: b.exerciseId!, setIndex: i + 1, weightKg: w })) : [];
   });
   const hasExercises = session.blocks.some((b) => b.type === "exercise");
+  const wk = weekSummary(logs, routines, data.settings);
   const start = () => { setJustFinished(false); setStartedAt(Date.now()); setRunning(true); scrollTo(0, 0); };
 
-  if (running && mode === "walk") {
-    return <Runner session={session} settings={settings} exMap={exMap} logs={logs} visible={visible} onFinish={finish} onExit={() => setRunning(false)} />;
-  }
+  const runner = running && mode === "walk" && (
+    <div hidden={paused}><Runner session={session} settings={settings} exMap={exMap} logs={logs} onFinish={finish} onExit={() => setRunning(false)} /></div>
+  );
+  if (running && !paused && mode === "walk") return <>{runner}</>;
 
   return (
     <>
+      {runner}
       <div className="top">
-        <h1>Today</h1>
+        <h1>Home</h1>
         {routines.length > 1 && (
           <select aria-label="Routine" value={routine.id} onChange={(e) => SettingsRepo.put({ ...settings, activeRoutineId: e.target.value })}>
             {routines.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
           </select>
         )}
       </div>
+      <div className="card weekcard">
+        <div className="blockhead"><h2>This week</h2><span className="sub">{wk.gym} of {wk.goal} gym workouts{wk.cardio ? ` · +${wk.cardio} cardio` : ""}</span></div>
+        <div className="days">
+          {wk.days.map((d) => <span key={d.day} className={`daychip ${d.done ? "done" : ""}`}>{d.name}{d.done ? " ✓" : ""}</span>)}
+          {wk.extraDays.map((n) => <span key={n} className="daychip done extra">{n} ✓</span>)}
+        </div>
+      </div>
+      {running && paused && (
+        <div className="card resume">
+          <h2>Workout in progress</h2>
+          <p className="sub">{session.name}. Your sets so far are kept.</p>
+          <button className="cta" onClick={() => setPaused(false)}>Resume workout</button>
+          <button className="secondary" onClick={() => { if (confirm("End this workout? It will not be saved.")) setRunning(false); }}>End without saving</button>
+        </div>
+      )}
       <div className="seg" role="group" aria-label="Session">
         {routine.sessions.map((s) => (
           <button key={s.id} aria-pressed={s.id === sid} onClick={() => { setSessionId(s.id); setRunning(false); }}>{s.name}</button>
@@ -95,7 +117,7 @@ export function Today({ onRunning, visible }: { onRunning: (r: boolean) => void;
           <button className="linkbtn" onClick={() => setJustFinished(false)}>Close</button>
         </div>
       )}
-      {mode === "walk" || !running ? (
+      {mode === "walk" || !running || paused ? (
         <div className="card">
           <div className="blockhead"><h2>{session.name}</h2>{hasExercises && <span className="sub">About {estimateMinutes(session, settings)} min · {settings.phaseSets} sets on main lifts{data.settings.phaseAuto ? ` (week ${trainingWeek(logs)})` : ""}</span>}</div>
           <ol className="plainlist">
@@ -103,14 +125,18 @@ export function Today({ onRunning, visible }: { onRunning: (r: boolean) => void;
               const ex = b.exerciseId ? exMap.get(b.exerciseId) : undefined;
               return (
                 <li key={i}>
-                  {b.type === "text" ? <span className="muted">{b.title}</span> : (
-                    <><button className="exlink" disabled={!ex} onClick={() => ex && setPeek({ ex, reps: repsFor(b, ex) })}>{ex?.name ?? `Missing: ${b.exerciseId}`}</button><span className="sub">{setsFor(b, settings)} × {repsFor(b, ex)}</span></>
+                  {b.type === "text" ? <span className="rowtext muted">{b.title}</span> : (
+                    <button className="exrow" disabled={!ex} onClick={() => ex && setPeek({ ex, reps: repsFor(b, ex) })} aria-label={`${ex?.name ?? b.exerciseId}, ${setsFor(b, settings)} sets of ${repsFor(b, ex)}. Show exercise`}>
+                      <span className="exrowname">{ex?.name ?? `Missing: ${b.exerciseId}`}</span>
+                      <span className="sub">{setsFor(b, settings)} × {repsFor(b, ex)}</span>
+                      {ex && <span className="chev" aria-hidden="true"><Icon.next /></span>}
+                    </button>
                   )}
                 </li>
               );
             })}
           </ol>
-          <button className="cta" onClick={start}>{mode === "walk" ? "Start walk through" : "Start full workout"}</button>
+          {!(running && paused) && <button className="cta" onClick={start}>{mode === "walk" ? "Start walk through" : "Start full workout"}</button>}
         </div>
       ) : (
         <>

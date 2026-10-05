@@ -7,23 +7,16 @@ import { ExerciseView } from "../components/ExerciseView";
 import { useTimer } from "../components/Timer";
 import { TextBlock } from "./Today";
 import { BackupButton } from "../components/BackupButton";
-import { useBackHandler } from "../components/back";
 
-interface Props { session: Session; settings: Settings; exMap: Map<string, Exercise>; logs: WorkoutLog[]; visible: boolean; onFinish: (sets: NonNullable<WorkoutLog["sets"]>) => Promise<void>; onExit: () => void }
+interface Props { session: Session; settings: Settings; exMap: Map<string, Exercise>; logs: WorkoutLog[]; onFinish: (sets: NonNullable<WorkoutLog["sets"]>) => Promise<void>; onExit: () => void }
 
-export function Runner({ session, settings, exMap, logs, visible, onFinish, onExit }: Props) {
+export function Runner({ session, settings, exMap, logs, onFinish, onExit }: Props) {
   const [weights, setWeights] = useState<Record<string, number | undefined>>({});
   const [sets, setSets] = useState<NonNullable<WorkoutLog["sets"]>>([]);
   const [st, setSt] = useState<RunState>({ idx: 0, set: 1 });
   const [done, setDone] = useState(false);
   const timer = useTimer();
   const blocks = session.blocks;
-  // Phone back: previous exercise; on the first one (or the done screen) ask before leaving.
-  useBackHandler(visible, () => {
-    if (done) { onExit(); return; }
-    if (st.idx > 0) { act("back"); return; }
-    if (confirm("End this workout? It will not be saved.")) { timer.stop(); onExit(); }
-  }, 1);
   const exBlocks = blocks.filter((b) => b.type === "exercise");
 
   const act = (a: "setDone" | "next" | "back" | "skip") => {

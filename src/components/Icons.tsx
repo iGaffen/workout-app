@@ -7,6 +7,8 @@ export const Icon = {
   bike: () => <svg {...P}><circle cx="5.5" cy="17" r="3.5"/><circle cx="18.5" cy="17" r="3.5"/><path d="M15 6h2l1.5 11M5.5 17 9 9h6l-6.5 8H12l3-8"/></svg>,
   stairs: () => <svg {...P}><path d="M3 21h5v-5h5v-5h5V6h3"/></svg>,
   progress: () => <svg {...P}><path d="M3 20h18M5 16l5-5 4 3 6-7"/></svg>,
+  home: () => <svg {...P}><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>,
+  next: () => <svg {...P}><path d="m9 6 6 6-6 6"/></svg>,
   up: () => <svg {...P}><path d="m6 15 6-6 6 6"/></svg>,
   down: () => <svg {...P}><path d="m6 9 6 6 6-6"/></svg>,
   grip: () => <svg {...P}><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg>,

@@ -64,5 +64,10 @@ The format is described in [`docs/pack-schema.md`](docs/pack-schema.md) and [`do
 - **Tap an exercise to see its card:** in the session list on Today, and in the routine editor, exercise names are links. Tapping one opens a pop-up with the animation, muscles, and cues. Close it with the X, by tapping outside, or with the phone's back button.
 - **Phone back button:** it closes the topmost thing first: an enlarged muscle diagram, then a pop-up, then a detail screen (exercise, routine editor, list of exercises to add), then steps back through a workout (asking before leaving on the first exercise), then returns to the previous tab. On the first screen it shows "Press back again to exit"; a second back within 2 seconds closes the app.
 
+## Changed in v1.4
+- **Home screen:** the Today tab is now **Home**, showing this week's gym days (Mon/Wed) above the next workout.
+- **Exercise rows:** each exercise in the session list is a full-width tappable row (plain text, a › arrow, no link styling) that opens the exercise card. The routine editor uses the same style.
+- **Back button rebuilt:** Chrome on Android skips history entries a page adds without a tap, which made back exit straight away. Entries are now added right after your taps. Back closes the topmost thing, and from any tab returns to **Home**. During a workout, back steps out to Home and keeps your progress, with a "Resume workout" card. On Home, back shows "Press back again to exit", and the next back closes the app.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.
