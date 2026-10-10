@@ -49,7 +49,7 @@ export const EquipmentSchema = z.object({
   /** Fixed position, or attach to a joint of the near (default) or far side. */
   at: z.tuple([z.number(), z.number()]).optional(),
   to: z.tuple([z.number(), z.number()]).optional(),
-  attach: z.enum(["hand", "elbow", "foot", "toe", "knee", "hip", "chest", "shoulder"]).optional(),
+  attach: z.enum(["hand", "elbow", "foot", "ankle", "toe", "knee", "hip", "chest", "shoulder"]).optional(),
   side: z.enum(["near", "far"]).optional(),
   angle: z.number().optional(),
   size: z.number().optional(),

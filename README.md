@@ -73,5 +73,15 @@ The format is described in [`docs/pack-schema.md`](docs/pack-schema.md) and [`do
 - **Back button uses CloseWatcher:** Chrome's built-in way (Chrome 120+) for apps to handle the Android back button. Each open thing gets a watcher, plus one "exit guard" on Home. The first watcher needs no tap, so back works right after opening the app. Older browsers fall back to history entries.
 - **Version label** at the bottom of Settings (the build time), to confirm the phone has the latest update.
 
+## Changed in v2.0: checklist instead of walk-through
+The app is now a simple list for the gym, so the phone can stay in your pocket.
+- **One routine, "Gym day":** 11 exercises, all at 3 sets. Legs: leg press, goblet squat, **seated leg curl** (new). Back: lat pulldown, seated cable row, **one-arm dumbbell row** (new). Chest: pec deck, cable chest fly. Then plank, standing calf raise, tibialis raise. Warm-up and finisher appear as one short line at the top and bottom.
+- **Home is a checklist:** tap the circle when an exercise is done, in any order. Done items move to a "Done" section and are crossed out. Each row shows sets × reps and the weight you'll use (your entry today, or last time's).
+- **Tap a row** to open the exercise card, with a kg field and a "Mark as done" button.
+- **Finish workout** saves the session (ticked exercises × 3 sets at their weight), counts toward your Mon/Wed goal, and offers "Back up now".
+- Today's ticks and weights are kept on the phone if you close the app, until the day changes or you finish.
+- **Removed:** walk-through mode, full-workout toggle, rest timer between sets, A/B sessions, the Cardio days routine, the Phase setting and the Default rest setting. The plank's "Start 30 sec hold" button stays. The screen locks normally.
+- The other built-in exercises (dumbbell RDL, glute bridge, dead bug, chest-supported row, face pull) are still in the Library.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.

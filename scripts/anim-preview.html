@@ -8,7 +8,7 @@ import { solve, dist } from "/src/anim/solver.ts";
 import { scene } from "/src/anim/draw.ts";
 import ex from "/src/data/exercises.json";
 let h = "";
-for (const e of ex) {
+for (const e of ex.filter((x) => !location.hash || location.hash.slice(1).split(",").includes(x.id))) {
   h += `<div class="row"><b>${e.id}</b>`;
   for (const k of e.animation.keyframes) h += `<svg viewBox="0 0 240 170">${scene(solve(k.pose), e.animation.equipment)}<text x="4" y="12" font-size="10">${k.name}</text></svg>`;
   h += "</div>";

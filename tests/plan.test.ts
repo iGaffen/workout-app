@@ -1,54 +1,28 @@
 import { describe, expect, it } from "vitest";
 import routines from "../src/data/routines.json";
-import { estimateMinutes, holdFor, nextSessionId, setsFor, step, type RunState } from "../src/model/plan";
+import { holdFor, setsFor } from "../src/model/plan";
 import type { Routine } from "../src/model/schema";
 
 const R = routines[0] as Routine;
-const A = R.sessions[0];
+const S = R.sessions[0];
 
-describe("sets and phase", () => {
-  it("main lifts follow phase, calves fixed at 2", () => {
-    const leg = A.blocks.find((b) => b.exerciseId === "leg-press")!;
-    const calf = A.blocks.find((b) => b.exerciseId === "standing-calf-raise")!;
-    expect(setsFor(leg, { phaseSets: 2 })).toBe(2);
-    expect(setsFor(leg, { phaseSets: 3 })).toBe(3);
-    expect(setsFor(calf, { phaseSets: 3 })).toBe(2);
-    expect(setsFor({ type: "text", title: "x" }, { phaseSets: 3 })).toBe(0);
+describe("gym day list", () => {
+  it("is one routine with one session", () => {
+    expect(routines).toHaveLength(1);
+    expect(R.sessions).toHaveLength(1);
+  });
+  it("has the 11 chosen exercises, warm-up first and finisher last", () => {
+    const ids = S.blocks.filter((b) => b.type === "exercise").map((b) => b.exerciseId);
+    expect(ids).toEqual(["leg-press", "goblet-squat", "seated-leg-curl", "lat-pulldown", "seated-cable-row", "one-arm-dumbbell-row",
+      "pec-deck", "cable-chest-fly", "plank", "standing-calf-raise", "tibialis-raise"]);
+    expect(S.blocks[0].title).toBe("Warm-up");
+    expect(S.blocks[S.blocks.length - 1].title).toBe("Finisher");
+  });
+  it("every exercise is 3 sets, whatever the phase setting", () => {
+    for (const b of S.blocks.filter((x) => x.type === "exercise")) expect(setsFor(b, { phaseSets: 2 })).toBe(3);
+    expect(setsFor({ type: "exercise", exerciseId: "x", sets: "phase" }, { phaseSets: 2 })).toBe(2);
   });
   it("plank gets a 30 sec hold", () => {
-    expect(holdFor(A.blocks.find((b) => b.exerciseId === "plank")!)).toBe(30);
-  });
-  it("estimate grows with phase", () => {
-    expect(estimateMinutes(A, { phaseSets: 3, defaultRest: 45 })).toBeGreaterThan(estimateMinutes(A, { phaseSets: 2, defaultRest: 45 }));
-  });
-});
-
-describe("next session", () => {
-  it("starts with A, then alternates", () => {
-    expect(nextSessionId(R, [])).toBe("a");
-    expect(nextSessionId(R, [{ id: "1", date: "2026-01-01", routineId: R.id, sessionId: "a" }])).toBe("b");
-    expect(nextSessionId(R, [
-      { id: "1", date: "2026-01-01", routineId: R.id, sessionId: "a" },
-      { id: "2", date: "2026-01-03", routineId: R.id, sessionId: "b" },
-    ])).toBe("a");
-  });
-});
-
-describe("walk-through steps", () => {
-  it("completes a whole session with taps only", () => {
-    let st: RunState = { idx: 0, set: 1 };
-    let finished = false, rests = 0, taps = 0;
-    while (!finished && taps < 200) {
-      const b = A.blocks[st.idx];
-      const r = step(A, { phaseSets: 2 }, st, b.type === "text" ? "next" : "setDone");
-      st = r.state; finished = r.finished; if (r.rest) rests++; taps++;
-    }
-    expect(finished).toBe(true);
-    // 8 exercises x 2 sets: 8 between-set rests + 7 between-exercise rests (none after the last exercise before the finisher? there is one).
-    expect(rests).toBe(16);
-  });
-  it("back and skip reset the set counter and clamp", () => {
-    expect(step(A, { phaseSets: 2 }, { idx: 0, set: 1 }, "back").state).toEqual({ idx: 0, set: 1 });
-    expect(step(A, { phaseSets: 2 }, { idx: 2, set: 2 }, "skip").state).toEqual({ idx: 3, set: 1 });
+    expect(holdFor(S.blocks.find((b) => b.exerciseId === "plank")!)).toBe(30);
   });
 });

@@ -9,6 +9,7 @@ export const Icon = {
   progress: () => <svg {...P}><path d="M3 20h18M5 16l5-5 4 3 6-7"/></svg>,
   home: () => <svg {...P}><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg>,
   next: () => <svg {...P}><path d="m9 6 6 6-6 6"/></svg>,
+  tick: () => <svg {...P} strokeWidth={3}><path d="m5 12 5 5 9-10"/></svg>,
   up: () => <svg {...P}><path d="m6 15 6-6 6 6"/></svg>,
   down: () => <svg {...P}><path d="m6 9 6 6 6-6"/></svg>,
   grip: () => <svg {...P}><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg>,

@@ -197,3 +197,20 @@ textarea{min-height:auto;font-family:ui-monospace,monospace;font-size:14px}
 .weekcard .days{margin-top:6px}
 .resume{border-color:var(--accent)}
 .exrow.compact{min-height:44px;padding:4px 2px}
+
+/* Checklist */
+.checklist{list-style:none;margin:6px 0;padding:0}
+.checkrow{display:flex;align-items:center;gap:6px;border-bottom:1px solid var(--line)}
+.checklist .checkrow:last-child{border-bottom:0}
+.check{flex:none;width:52px;height:56px;display:flex;align-items:center;justify-content:center;position:relative}
+.check::before{content:"";position:absolute;width:30px;height:30px;border-radius:50%;border:2.5px solid var(--muted)}
+.check[aria-pressed="true"]::before{background:var(--ok);border-color:var(--ok)}
+.check svg{position:relative;width:20px;height:20px;color:var(--ok-ink)}
+.checkrow .exrow{flex:1;min-height:64px}
+.exrowmain{flex:1;display:flex;flex-direction:column}
+.exrowmain .exrowname{font-size:20px}
+.exrowmain .sub{font-size:15px}
+.checkrow.isdone .exrowname{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1.5px}
+.donehead{margin:14px 0 0;color:var(--muted)}
+.noteline{margin:8px 0;font-size:15px;color:var(--muted)}
+.noteline strong{color:var(--ink)}

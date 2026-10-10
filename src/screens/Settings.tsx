@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { ExerciseRepo, LogRepo, RemindersRepo, RoutineRepo, SettingsRepo, applyPack, exportAll, wipeAll } from "../db/repos";
-import { DAY_NAMES, daysUntilDue, effectiveSettings, trainingDaysOf } from "../model/progress";
+import { DAY_NAMES, daysUntilDue, trainingDaysOf } from "../model/progress";
 import { backupNow } from "../components/backup";
 import { useData } from "../components/hooks";
 import { parsePack, previewPack, summary, type PackPreview } from "../model/pack";
@@ -36,13 +36,6 @@ export function Settings() {
       <div className="top"><h1>Settings</h1></div>
       {backupDue && <div className="card"><p className="due">Backup due. Scroll down and tap Export all data.</p></div>}
       <div className="card">
-        <h2>Phase</h2>
-        <p className="sub">Sets for the main lifts. Calves and shins stay at 2. Auto switches to 3 sets in week 4 (now: {effectiveSettings(s, d.logs).phaseSets} sets).</p>
-        <div className="seg" role="group" aria-label="Phase">
-          <button aria-pressed={!!s.phaseAuto} onClick={() => put({ phaseAuto: true })}>Auto</button>
-          <button aria-pressed={!s.phaseAuto && s.phaseSets === 2} onClick={() => put({ phaseAuto: false, phaseSets: 2 })}>2 sets</button>
-          <button aria-pressed={!s.phaseAuto && s.phaseSets === 3} onClick={() => put({ phaseAuto: false, phaseSets: 3 })}>3 sets</button>
-        </div>
         <h2>Gym days</h2>
         <p className="sub">Your weekly goal is the number of days picked ({trainingDaysOf(s).length}).</p>
         <div className="seg days7" role="group" aria-label="Gym days">
@@ -53,10 +46,6 @@ export function Settings() {
               if (next.length) put({ trainingDays: next });
             }}>{n}</button>;
           })}
-        </div>
-        <h2>Default rest</h2>
-        <div className="seg" role="group" aria-label="Default rest">
-          {[30, 45, 60].map((n) => <button key={n} aria-pressed={s.defaultRest === n} onClick={() => put({ defaultRest: n })}>{n} sec</button>)}
         </div>
         <h2>Theme</h2>
         <div className="seg" role="group" aria-label="Theme">

@@ -1,5 +1,5 @@
-import { Suspense, lazy, useCallback, useEffect, useState } from "react";
-import { Today } from "./screens/Today";
+import { Suspense, lazy, useEffect, useState } from "react";
+import { Home } from "./screens/Home";
 const Routines = lazy(() => import("./screens/Routines").then((m) => ({ default: m.Routines })));
 const Library = lazy(() => import("./screens/Library").then((m) => ({ default: m.Library })));
 const Settings = lazy(() => import("./screens/Settings").then((m) => ({ default: m.Settings })));
@@ -25,10 +25,8 @@ function Shell() {
   useEffect(() => initBack(setToast), []);
   // Back from any other tab always lands on Home first.
   useBackHandler(tab !== "home", () => { setTab("home"); scrollTo(0, 0); }, 0);
-  const [running, setRunning] = useState(false);
   const settings = useData(() => SettingsRepo.get());
   const timer = useTimer();
-  const onRunning = useCallback((r: boolean) => setRunning(r), []);
 
   useEffect(() => {
     const t = settings?.theme ?? "system";
@@ -40,7 +38,7 @@ function Shell() {
     <div className={`app ${timer.on ? "timer-on" : ""}`}>
       <main className="wrap">
         {/* Home stays mounted so a workout in progress survives switching tabs. */}
-        <div hidden={tab !== "home"}><Today onRunning={onRunning} visible={tab === "home"} /></div>
+        <div hidden={tab !== "home"}><Home /></div>
         <Suspense fallback={<p className="sub">Loading…</p>}>
         {tab === "routines" && <Routines />}
         {tab === "library" && <Library />}
@@ -52,7 +50,7 @@ function Shell() {
       <nav className="tabs" aria-label="Main">
         {TABS.map((t) => (
           <button key={t.id} aria-current={tab === t.id ? "page" : undefined} onClick={() => { setTab(t.id); scrollTo(0, 0); }}>
-            <t.icon /><span>{t.label}{t.id === "home" && running && tab !== "home" ? " •" : ""}</span>
+            <t.icon /><span>{t.label}</span>
           </button>
         ))}
       </nav>
