@@ -30,15 +30,19 @@ export function nextSessionId(routine: Routine, logs: WorkoutLog[]): string {
   return routine.sessions[(i + 1) % routine.sessions.length].id;
 }
 
-/** Rough estimate in minutes: ~45 s of work per set plus rest, plus ~1.5 min to switch machines; text blocks ~8 min. */
-export function estimateMinutes(session: Session, settings: Pick<Settings, "phaseSets" | "defaultRest">): number {
-  let sec = 0;
+/**
+ * Rough gym time in minutes: a main lift at 3 sets is ~6 min (45 s sets, 60-90 s rest, setting up);
+ * quick moves (holds and slow calf/shin raises) ~4 min; the finisher ~9 min. Warm-up is the ride to the gym.
+ */
+export function estimateMinutes(session: Session, settings: Pick<Settings, "phaseSets">, exercises: Map<string, Exercise> = new Map()): number {
+  let min = 0;
   for (const b of session.blocks) {
-    if (b.type === "text") { sec += 8 * 60; continue; }
-    const n = setsFor(b, settings);
-    sec += n * 45 + Math.max(0, n - 1) * restFor(b, settings) + 90;
+    if (b.type === "text") { if (/finisher/i.test(b.title ?? "")) min += 9; continue; }
+    const ex = b.exerciseId ? exercises.get(b.exerciseId) : undefined;
+    const quick = !!holdFor(b, ex) || /slow/i.test(repsFor(b, ex));
+    min += (quick ? 4 : 6) * (setsFor(b, settings) / 3);
   }
-  return Math.round(sec / 60);
+  return Math.round(min);
 }
 
 export const exerciseBlocks = (s: Session) => s.blocks.filter((b) => b.type === "exercise");

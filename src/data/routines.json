@@ -5,8 +5,8 @@
   "name": "Gym day",
   "sessions": [
    {
-    "id": "main",
-    "name": "Gym day",
+    "id": "w1",
+    "name": "Workout 1",
     "blocks": [
      {
       "type": "text",
@@ -24,12 +24,6 @@
      },
      {
       "type": "exercise",
-      "exerciseId": "goblet-squat",
-      "sets": 3,
-      "reps": "10–12"
-     },
-     {
-      "type": "exercise",
       "exerciseId": "seated-leg-curl",
       "sets": 3,
       "reps": "10–12"
@@ -37,6 +31,46 @@
      {
       "type": "exercise",
       "exerciseId": "lat-pulldown",
+      "sets": 3,
+      "reps": "10–12"
+     },
+     {
+      "type": "exercise",
+      "exerciseId": "pec-deck",
+      "sets": 3,
+      "reps": "10–12"
+     },
+     {
+      "type": "exercise",
+      "exerciseId": "standing-calf-raise",
+      "sets": 3,
+      "reps": "12–15 slow"
+     },
+     {
+      "type": "text",
+      "title": "Finisher",
+      "icon": "stairs",
+      "lines": [
+       "Stairmaster or incline walk, 8–10 min"
+      ]
+     }
+    ]
+   },
+   {
+    "id": "w2",
+    "name": "Workout 2",
+    "blocks": [
+     {
+      "type": "text",
+      "title": "Warm-up",
+      "icon": "bike",
+      "lines": [
+       "Bike ride to the gym, arm circles, band pull-aparts"
+      ]
+     },
+     {
+      "type": "exercise",
+      "exerciseId": "goblet-squat",
       "sets": 3,
       "reps": "10–12"
      },
@@ -54,12 +88,6 @@
      },
      {
       "type": "exercise",
-      "exerciseId": "pec-deck",
-      "sets": 3,
-      "reps": "10–12"
-     },
-     {
-      "type": "exercise",
       "exerciseId": "cable-chest-fly",
       "sets": 3,
       "reps": "10–12"
@@ -69,12 +97,6 @@
       "exerciseId": "plank",
       "sets": 3,
       "reps": "30 sec hold"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "standing-calf-raise",
-      "sets": 3,
-      "reps": "12–15 slow"
      },
      {
       "type": "exercise",

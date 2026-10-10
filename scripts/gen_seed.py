@@ -219,11 +219,14 @@ def g(id, reps=None):
     return x
 WARM = {"type": "text", "title": "Warm-up", "icon": "bike", "lines": ["Bike ride to the gym, arm circles, band pull-aparts"]}
 FIN = {"type": "text", "title": "Finisher", "icon": "stairs", "lines": ["Stairmaster or incline walk, 8–10 min"]}
+# Two lists that alternate. Each is about 35 min of lifting plus the finisher (45 min total).
 R = [{"schemaVersion": 1, "id": "gym-day", "name": "Gym day", "sessions": [
-  {"id": "main", "name": "Gym day", "blocks": [WARM,
-     g("leg-press", "10–12"), g("goblet-squat", "10–12"), g("seated-leg-curl", "10–12"),
-     g("lat-pulldown", "10–12"), g("seated-cable-row", "10–12"), g("one-arm-dumbbell-row", "10 per arm"),
-     g("pec-deck", "10–12"), g("cable-chest-fly", "10–12"),
-     g("plank", "30 sec hold"), g("standing-calf-raise", "12–15 slow"), g("tibialis-raise", "12–15 slow"), FIN]}]}]
+  {"id": "w1", "name": "Workout 1", "blocks": [WARM,
+     g("leg-press", "10–12"), g("seated-leg-curl", "10–12"), g("lat-pulldown", "10–12"),
+     g("pec-deck", "10–12"), g("standing-calf-raise", "12–15 slow"), FIN]},
+  {"id": "w2", "name": "Workout 2", "blocks": [WARM,
+     g("goblet-squat", "10–12"), g("seated-cable-row", "10–12"), g("one-arm-dumbbell-row", "10 per arm"),
+     g("cable-chest-fly", "10–12"), g("plank", "30 sec hold"), g("tibialis-raise", "12–15 slow"), FIN]},
+]}]
 json.dump(R, open(os.path.join(OUT, "routines.json"), "w"), indent=1, ensure_ascii=False)
 print("wrote", len(E), "exercises")

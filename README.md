@@ -83,5 +83,12 @@ The app is now a simple list for the gym, so the phone can stay in your pocket.
 - **Removed:** walk-through mode, full-workout toggle, rest timer between sets, A/B sessions, the Cardio days routine, the Phase setting and the Default rest setting. The plank's "Start 30 sec hold" button stays. The screen locks normally.
 - The other built-in exercises (dumbbell RDL, glute bridge, dead bug, chest-supported row, face pull) are still in the Library.
 
+## Changed in v2.1: two 45-minute workouts
+All 11 exercises at 3 sets took about 70 minutes with the finisher, so they're now split into two lists that alternate. Each is about 35 minutes of lifting plus the 8–10 minute finisher:
+- **Workout 1** (about 37 min): leg press, seated leg curl, lat pulldown, pec deck, standing calf raise.
+- **Workout 2** (about 42 min): goblet squat, seated cable row, one-arm dumbbell row, cable chest fly, plank, tibialis raise.
+
+Home picks the next one in turn, and you can tap the other to switch. Each card shows a time estimate: about 6 min per main lift at 3 sets, about 4 min for holds and slow calf or shin raises, and 9 min for the finisher.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.
