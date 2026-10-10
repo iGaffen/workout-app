@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ExerciseRepo, LogRepo, RoutineRepo, SettingsRepo } from "../db/repos";
 import { useData } from "../components/hooks";
-import { repsFor, setsFor } from "../model/plan";
+import { estimateMinutes, nextSessionId, repsFor, setsFor } from "../model/plan";
 import { lastWeight, localDate, takesWeight, weekSummary } from "../model/progress";
 import { ExerciseSheet } from "../components/ExerciseSheet";
 import { WeightInput } from "../components/WeightInput";
@@ -32,13 +32,16 @@ export function Home() {
   const [day, setDay] = useState<DayState>(loadDay);
   const [open, setOpen] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [pick, setPick] = useState<string | null>(null);
   useEffect(() => saveDay(day), [day]);
   useBackHandler(saved, () => setSaved(false), 1);
 
   if (!data) return <p className="sub">Loading…</p>;
   const { settings, routines, routine, exercises, logs } = data;
   if (!routine) return <div className="card"><h2>No routine</h2><p className="sub">Create one in the Routines tab.</p></div>;
-  const session = routine.sessions[0];
+  // The next workout in turn is chosen for you; tap the other one to switch.
+  const sid = pick && routine.sessions.some((s) => s.id === pick) ? pick : nextSessionId(routine, logs);
+  const session = routine.sessions.find((s) => s.id === sid) ?? routine.sessions[0];
   const exMap = new Map<string, Exercise>(exercises.map((e) => [e.id, e]));
   const wk = weekSummary(logs, routines, settings);
 
@@ -69,6 +72,7 @@ export function Home() {
     await LogRepo.add({ date: new Date().toISOString(), routineId: routine.id, sessionId: session.id, ...(sets.length ? { sets } : {}) });
     setDay({ date: localDate(new Date()), done: [], weights: {} });
     setSaved(true);
+    setPick(null);
     scrollTo(0, 0);
   };
 
@@ -122,8 +126,13 @@ export function Home() {
         </div>
       )}
 
+      {routine.sessions.length > 1 && (
+        <div className="seg" role="group" aria-label="Workout">
+          {routine.sessions.map((s) => <button key={s.id} aria-pressed={s.id === session.id} onClick={() => setPick(s.id)}>{s.name}</button>)}
+        </div>
+      )}
       <div className="card">
-        <div className="blockhead"><h2>{routine.name}</h2><span className="sub">{done.length} of {items.length} done</span></div>
+        <div className="blockhead"><h2>{session.name}</h2><span className="sub">About {estimateMinutes(session, settings, exMap)} min · {done.length} of {items.length} done</span></div>
         {before.map((b, i) => <p key={i} className="noteline"><strong>{b.title}:</strong> {(b.lines ?? []).join(" · ")}</p>)}
         <ul className="checklist">{todo.map(row)}</ul>
         {todo.length === 0 && items.length > 0 && <p className="ok">All done. Nice work.</p>}
