@@ -182,6 +182,29 @@ E.append(ex("dead-bug", "Dead bug", ["bodyweight"], ["abs"], ["obliques", "hip_f
        [K("Return", 1300, db({}, {})), K("Extend", 1700, db({"shoulder": 172}, {"hip": 12, "knee": 4, "ankle": 30})),
         K("Pause", 400, db({"shoulder": 172}, {"hip": 12, "knee": 4, "ankle": 30}))], alternate=True)))
 
+
+# 15 Seated leg curl: thigh pad on top, roller behind the ankles pulls under the seat.
+def curl(knee):
+    return P(-12, {"shoulder": 18, "elbow": 40, "hip": 78, "knee": knee, "ankle": 0}, {"hip": 76, "knee": knee}, root=[78, 110])
+E.append(ex("seated-leg-curl", "Seated leg curl", ["machine"], ["hamstrings"], ["calves"],
+  ["Knees lined up with the machine's pivot", "Pull your heels down and under the seat", "Slow on the way back up, do not let the weight slam"],
+  "10–12",
+  anim([{"kind": "seat", "at": [80, 117], "size": 1.3}, {"kind": "backpad", "at": [64, 116], "to": [56, 66]},
+        {"kind": "pad", "at": [104, 96], "angle": 0, "size": 1.1},
+        {"kind": "pad", "attach": "ankle", "at": [3, 5], "angle": 90, "size": 0.7}],
+       [K("Return", 1600, curl(8)), K("Curl", 1100, curl(100)), K("Squeeze", 500, curl(102))])))
+
+# 16 One-arm dumbbell row: far knee and far hand on the bench, near arm rows.
+def dbrow(s, el):
+    # Far knee pinned on the bench under the hip; near leg stands straight beside it.
+    return P(78, {"shoulder": s, "elbow": el, "hip": 80, "knee": 4, "ankle": -2},
+             {"shoulder": 78, "elbow": 0, "hip": 78, "knee": 90, "ankle": 40}, anchor=A("knee", 100, 118, "far"))
+E.append(ex("one-arm-dumbbell-row", "One-arm dumbbell row", ["dumbbell", "bench"], ["lats", "upper_back"], ["rear_delts", "biceps", "forearms"],
+  ["Knee and hand on the bench, back flat", "Pull the dumbbell to your hip, elbow close to your side", "Lower slowly to a full stretch, then switch arms"],
+  "10 per arm",
+  anim([{"kind": "bench", "at": [80, 123], "to": [158, 123]}, {"kind": "dumbbell", "attach": "hand"}],
+       [K("Lower", 1600, dbrow(78, 0)), K("Row", 1000, dbrow(-8, 96)), K("Squeeze", 500, dbrow(-10, 98))])))
+
 json.dump(E, open(os.path.join(OUT, "exercises.json"), "w"), indent=1, ensure_ascii=False)
 
 WARM = {"type": "text", "title": "Warm-up", "icon": "bike", "lines": ["Bike ride to the gym (10 min)", "Arm circles, 1 min", "Band pull-aparts, 1×15"]}
@@ -190,25 +213,17 @@ def b(id, reps=None, sets="phase"):
     x = {"type": "exercise", "exerciseId": id, "sets": sets}
     if reps: x["reps"] = reps
     return x
-R = [{"schemaVersion": 1, "id": "full-body-ab", "name": "Full body A/B", "sessions": [
-  {"id": "a", "name": "Session A", "blocks": [WARM, b("leg-press", "10–12"), b("seated-cable-row", "10–12"), b("pec-deck", "10–12"), b("lat-pulldown", "10–12"),
-     b("dumbbell-romanian-deadlift", "10"), b("plank", "30 sec hold"), b("standing-calf-raise", "12–15 slow", 2), b("tibialis-raise", "12–15 slow", 2), FIN]},
-  {"id": "b", "name": "Session B", "blocks": [WARM, b("goblet-squat", "10–12"), b("chest-supported-row", "10–12"), b("cable-chest-fly", "10–12"), b("face-pull", "12–15"),
-     b("glute-bridge", "10–12"), b("dead-bug", "10 per side"), b("standing-calf-raise", "12–15 slow", 2), b("tibialis-raise", "12–15 slow", 2), FIN]},
-]},
- {"schemaVersion": 1, "id": "cardio-days", "name": "Cardio days", "sessions": [
-  {"id": "incline-walk", "name": "Incline walk", "blocks": [
-    {"type": "text", "title": "Warm-up", "lines": ["Easy walk on the treadmill, 5 min"]},
-    {"type": "text", "title": "Incline walk", "icon": "stairs", "lines": ["Incline 8–12%, speed 4.5–5.5 km/h, 30–40 min", "Breathing harder but you can still talk", "Do not hold the handrails"]},
-    {"type": "text", "title": "Cool-down", "lines": ["Flat walk, 5 min", "Stretch calves and hips"]}]},
-  {"id": "stairs-intervals", "name": "Stairs", "blocks": [
-    {"type": "text", "title": "Warm-up", "lines": ["Easy stairmaster pace, 5 min"]},
-    {"type": "text", "title": "Intervals", "icon": "stairs", "lines": ["1 min faster, 2 min easy, repeat 6–8 times", "Stand tall, light hands on the rails"]},
-    {"type": "text", "title": "Cool-down", "lines": ["Easy pace, 5 min"]}]},
-  {"id": "walk-outdoors", "name": "Long walk", "blocks": [
-    {"type": "text", "title": "Brisk walk", "lines": ["45–60 min outdoors at a brisk pace", "Hills are a bonus"]}]},
-  {"id": "swim-or-elliptical", "name": "Swim or elliptical", "blocks": [
-    {"type": "text", "title": "Steady cardio", "lines": ["Swim or elliptical, 30–40 min", "Moderate pace you can hold the whole time"]}]},
- ]}]
+def g(id, reps=None):
+    x = {"type": "exercise", "exerciseId": id, "sets": 3}
+    if reps: x["reps"] = reps
+    return x
+WARM = {"type": "text", "title": "Warm-up", "icon": "bike", "lines": ["Bike ride to the gym, arm circles, band pull-aparts"]}
+FIN = {"type": "text", "title": "Finisher", "icon": "stairs", "lines": ["Stairmaster or incline walk, 8–10 min"]}
+R = [{"schemaVersion": 1, "id": "gym-day", "name": "Gym day", "sessions": [
+  {"id": "main", "name": "Gym day", "blocks": [WARM,
+     g("leg-press", "10–12"), g("goblet-squat", "10–12"), g("seated-leg-curl", "10–12"),
+     g("lat-pulldown", "10–12"), g("seated-cable-row", "10–12"), g("one-arm-dumbbell-row", "10 per arm"),
+     g("pec-deck", "10–12"), g("cable-chest-fly", "10–12"),
+     g("plank", "30 sec hold"), g("standing-calf-raise", "12–15 slow"), g("tibialis-raise", "12–15 slow"), FIN]}]}]
 json.dump(R, open(os.path.join(OUT, "routines.json"), "w"), indent=1, ensure_ascii=False)
 print("wrote", len(E), "exercises")

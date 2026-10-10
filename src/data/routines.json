@@ -1,143 +1,85 @@
 [
  {
   "schemaVersion": 1,
-  "id": "full-body-ab",
-  "name": "Full body A/B",
+  "id": "gym-day",
+  "name": "Gym day",
   "sessions": [
    {
-    "id": "a",
-    "name": "Session A",
+    "id": "main",
+    "name": "Gym day",
     "blocks": [
      {
       "type": "text",
       "title": "Warm-up",
       "icon": "bike",
       "lines": [
-       "Bike ride to the gym (10 min)",
-       "Arm circles, 1 min",
-       "Band pull-aparts, 1×15"
+       "Bike ride to the gym, arm circles, band pull-aparts"
       ]
      },
      {
       "type": "exercise",
       "exerciseId": "leg-press",
-      "sets": "phase",
+      "sets": 3,
       "reps": "10–12"
      },
      {
       "type": "exercise",
-      "exerciseId": "seated-cable-row",
-      "sets": "phase",
+      "exerciseId": "goblet-squat",
+      "sets": 3,
       "reps": "10–12"
      },
      {
       "type": "exercise",
-      "exerciseId": "pec-deck",
-      "sets": "phase",
+      "exerciseId": "seated-leg-curl",
+      "sets": 3,
       "reps": "10–12"
      },
      {
       "type": "exercise",
       "exerciseId": "lat-pulldown",
-      "sets": "phase",
+      "sets": 3,
       "reps": "10–12"
      },
      {
       "type": "exercise",
-      "exerciseId": "dumbbell-romanian-deadlift",
-      "sets": "phase",
-      "reps": "10"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "plank",
-      "sets": "phase",
-      "reps": "30 sec hold"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "standing-calf-raise",
-      "sets": 2,
-      "reps": "12–15 slow"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "tibialis-raise",
-      "sets": 2,
-      "reps": "12–15 slow"
-     },
-     {
-      "type": "text",
-      "title": "Finisher",
-      "icon": "stairs",
-      "lines": [
-       "Stairmaster or incline walk, 8–10 min",
-       "Easy to moderate pace",
-       "Bike ride home is your cooldown"
-      ]
-     }
-    ]
-   },
-   {
-    "id": "b",
-    "name": "Session B",
-    "blocks": [
-     {
-      "type": "text",
-      "title": "Warm-up",
-      "icon": "bike",
-      "lines": [
-       "Bike ride to the gym (10 min)",
-       "Arm circles, 1 min",
-       "Band pull-aparts, 1×15"
-      ]
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "goblet-squat",
-      "sets": "phase",
+      "exerciseId": "seated-cable-row",
+      "sets": 3,
       "reps": "10–12"
      },
      {
       "type": "exercise",
-      "exerciseId": "chest-supported-row",
-      "sets": "phase",
+      "exerciseId": "one-arm-dumbbell-row",
+      "sets": 3,
+      "reps": "10 per arm"
+     },
+     {
+      "type": "exercise",
+      "exerciseId": "pec-deck",
+      "sets": 3,
       "reps": "10–12"
      },
      {
       "type": "exercise",
       "exerciseId": "cable-chest-fly",
-      "sets": "phase",
+      "sets": 3,
       "reps": "10–12"
      },
      {
       "type": "exercise",
-      "exerciseId": "face-pull",
-      "sets": "phase",
-      "reps": "12–15"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "glute-bridge",
-      "sets": "phase",
-      "reps": "10–12"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "dead-bug",
-      "sets": "phase",
-      "reps": "10 per side"
+      "exerciseId": "plank",
+      "sets": 3,
+      "reps": "30 sec hold"
      },
      {
       "type": "exercise",
       "exerciseId": "standing-calf-raise",
-      "sets": 2,
+      "sets": 3,
       "reps": "12–15 slow"
      },
      {
       "type": "exercise",
       "exerciseId": "tibialis-raise",
-      "sets": 2,
+      "sets": 3,
       "reps": "12–15 slow"
      },
      {
@@ -145,104 +87,7 @@
       "title": "Finisher",
       "icon": "stairs",
       "lines": [
-       "Stairmaster or incline walk, 8–10 min",
-       "Easy to moderate pace",
-       "Bike ride home is your cooldown"
-      ]
-     }
-    ]
-   }
-  ]
- },
- {
-  "schemaVersion": 1,
-  "id": "cardio-days",
-  "name": "Cardio days",
-  "sessions": [
-   {
-    "id": "incline-walk",
-    "name": "Incline walk",
-    "blocks": [
-     {
-      "type": "text",
-      "title": "Warm-up",
-      "lines": [
-       "Easy walk on the treadmill, 5 min"
-      ]
-     },
-     {
-      "type": "text",
-      "title": "Incline walk",
-      "icon": "stairs",
-      "lines": [
-       "Incline 8–12%, speed 4.5–5.5 km/h, 30–40 min",
-       "Breathing harder but you can still talk",
-       "Do not hold the handrails"
-      ]
-     },
-     {
-      "type": "text",
-      "title": "Cool-down",
-      "lines": [
-       "Flat walk, 5 min",
-       "Stretch calves and hips"
-      ]
-     }
-    ]
-   },
-   {
-    "id": "stairs-intervals",
-    "name": "Stairs",
-    "blocks": [
-     {
-      "type": "text",
-      "title": "Warm-up",
-      "lines": [
-       "Easy stairmaster pace, 5 min"
-      ]
-     },
-     {
-      "type": "text",
-      "title": "Intervals",
-      "icon": "stairs",
-      "lines": [
-       "1 min faster, 2 min easy, repeat 6–8 times",
-       "Stand tall, light hands on the rails"
-      ]
-     },
-     {
-      "type": "text",
-      "title": "Cool-down",
-      "lines": [
-       "Easy pace, 5 min"
-      ]
-     }
-    ]
-   },
-   {
-    "id": "walk-outdoors",
-    "name": "Long walk",
-    "blocks": [
-     {
-      "type": "text",
-      "title": "Brisk walk",
-      "lines": [
-       "45–60 min outdoors at a brisk pace",
-       "Hills are a bonus"
-      ]
-     }
-    ]
-   },
-   {
-    "id": "swim-or-elliptical",
-    "name": "Swim or elliptical",
-    "blocks": [
-     {
-      "type": "text",
-      "title": "Steady cardio",
-      "lines": [
-       "Swim or elliptical, 30–40 min",
-       "Moderate pace you can hold the whole time"
+       "Stairmaster or incline walk, 8–10 min"
       ]
      }
     ]

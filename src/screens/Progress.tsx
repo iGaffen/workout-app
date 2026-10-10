@@ -2,7 +2,7 @@ import { useState } from "react";
 import { BodyRepo, LogRepo, RemindersRepo, RoutineRepo, SettingsRepo } from "../db/repos";
 import { useData } from "../components/hooks";
 import { TrendChart } from "../components/TrendChart";
-import { daysUntilDue, effectiveSettings, localDate, trainingWeek, weekSummary, weeklyAverages } from "../model/progress";
+import { daysUntilDue, localDate, trainingWeek, weekSummary, weeklyAverages } from "../model/progress";
 
 const num = (s: string) => { const n = parseFloat(s.replace(",", ".")); return Number.isFinite(n) && n > 0 ? n : undefined; };
 
@@ -18,7 +18,6 @@ export function Progress() {
   if (!data) return <p className="sub">Loading…</p>;
   const { logs, body, routines, settings, lastPhoto, lastExport } = data;
   const wk = weekSummary(logs, routines, settings);
-  const eff = effectiveSettings(settings, logs);
   const photoDays = daysUntilDue(lastPhoto, 28);
   const backupDays = daysUntilDue(lastExport, 30);
   const todayEntry = body.find((b) => b.date === today);
@@ -42,7 +41,7 @@ export function Progress() {
       <div className="top"><h1>Progress</h1></div>
 
       <div className="card">
-        <div className="blockhead"><h2>This week</h2><span className="sub">Training week {trainingWeek(logs)} · {eff.phaseSets} sets{settings.phaseAuto ? " (auto)" : ""}</span></div>
+        <div className="blockhead"><h2>This week</h2><span className="sub">Training week {trainingWeek(logs)}</span></div>
         <div className="days" aria-label={`${Math.min(wk.gym, wk.goal)} of ${wk.goal} gym workouts this week`}>
           {wk.days.map((d) => <span key={d.day} className={`daychip ${d.done ? "done" : ""}`}>{d.name}{d.done ? " ✓" : ""}</span>)}
           {wk.extraDays.map((n) => <span key={n} className="daychip done extra">{n} ✓</span>)}

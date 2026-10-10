@@ -1823,5 +1823,275 @@
    "loop": "cycle",
    "alternateSides": true
   }
+ },
+ {
+  "schemaVersion": 1,
+  "id": "seated-leg-curl",
+  "name": "Seated leg curl",
+  "equipment": [
+   "machine"
+  ],
+  "muscles": {
+   "primary": [
+    "hamstrings"
+   ],
+   "secondary": [
+    "calves"
+   ]
+  },
+  "cues": [
+   "Knees lined up with the machine's pivot",
+   "Pull your heels down and under the seat",
+   "Slow on the way back up, do not let the weight slam"
+  ],
+  "defaultReps": "10–12",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "seat",
+     "at": [
+      80,
+      117
+     ],
+     "size": 1.3
+    },
+    {
+     "kind": "backpad",
+     "at": [
+      64,
+      116
+     ],
+     "to": [
+      56,
+      66
+     ]
+    },
+    {
+     "kind": "pad",
+     "at": [
+      104,
+      96
+     ],
+     "angle": 0,
+     "size": 1.1
+    },
+    {
+     "kind": "pad",
+     "attach": "ankle",
+     "at": [
+      3,
+      5
+     ],
+     "angle": 90,
+     "size": 0.7
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Return",
+     "durationMs": 1600,
+     "pose": {
+      "torso": -12,
+      "near": {
+       "shoulder": 18,
+       "elbow": 40,
+       "hip": 78,
+       "knee": 8,
+       "ankle": 0
+      },
+      "far": {
+       "hip": 76,
+       "knee": 8
+      },
+      "root": [
+       78,
+       110
+      ]
+     }
+    },
+    {
+     "name": "Curl",
+     "durationMs": 1100,
+     "pose": {
+      "torso": -12,
+      "near": {
+       "shoulder": 18,
+       "elbow": 40,
+       "hip": 78,
+       "knee": 100,
+       "ankle": 0
+      },
+      "far": {
+       "hip": 76,
+       "knee": 100
+      },
+      "root": [
+       78,
+       110
+      ]
+     }
+    },
+    {
+     "name": "Squeeze",
+     "durationMs": 500,
+     "pose": {
+      "torso": -12,
+      "near": {
+       "shoulder": 18,
+       "elbow": 40,
+       "hip": 78,
+       "knee": 102,
+       "ankle": 0
+      },
+      "far": {
+       "hip": 76,
+       "knee": 102
+      },
+      "root": [
+       78,
+       110
+      ]
+     }
+    }
+   ],
+   "loop": "cycle"
+  }
+ },
+ {
+  "schemaVersion": 1,
+  "id": "one-arm-dumbbell-row",
+  "name": "One-arm dumbbell row",
+  "equipment": [
+   "dumbbell",
+   "bench"
+  ],
+  "muscles": {
+   "primary": [
+    "lats",
+    "upper_back"
+   ],
+   "secondary": [
+    "rear_delts",
+    "biceps",
+    "forearms"
+   ]
+  },
+  "cues": [
+   "Knee and hand on the bench, back flat",
+   "Pull the dumbbell to your hip, elbow close to your side",
+   "Lower slowly to a full stretch, then switch arms"
+  ],
+  "defaultReps": "10 per arm",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "bench",
+     "at": [
+      80,
+      123
+     ],
+     "to": [
+      158,
+      123
+     ]
+    },
+    {
+     "kind": "dumbbell",
+     "attach": "hand"
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Lower",
+     "durationMs": 1600,
+     "pose": {
+      "torso": 78,
+      "near": {
+       "shoulder": 78,
+       "elbow": 0,
+       "hip": 80,
+       "knee": 4,
+       "ankle": -2
+      },
+      "far": {
+       "shoulder": 78,
+       "elbow": 0,
+       "hip": 78,
+       "knee": 90,
+       "ankle": 40
+      },
+      "anchor": {
+       "joint": "knee",
+       "at": [
+        100,
+        118
+       ],
+       "side": "far"
+      }
+     }
+    },
+    {
+     "name": "Row",
+     "durationMs": 1000,
+     "pose": {
+      "torso": 78,
+      "near": {
+       "shoulder": -8,
+       "elbow": 96,
+       "hip": 80,
+       "knee": 4,
+       "ankle": -2
+      },
+      "far": {
+       "shoulder": 78,
+       "elbow": 0,
+       "hip": 78,
+       "knee": 90,
+       "ankle": 40
+      },
+      "anchor": {
+       "joint": "knee",
+       "at": [
+        100,
+        118
+       ],
+       "side": "far"
+      }
+     }
+    },
+    {
+     "name": "Squeeze",
+     "durationMs": 500,
+     "pose": {
+      "torso": 78,
+      "near": {
+       "shoulder": -10,
+       "elbow": 98,
+       "hip": 80,
+       "knee": 4,
+       "ankle": -2
+      },
+      "far": {
+       "shoulder": 78,
+       "elbow": 0,
+       "hip": 78,
+       "knee": 90,
+       "ankle": 40
+      },
+      "anchor": {
+       "joint": "knee",
+       "at": [
+        100,
+        118
+       ],
+       "side": "far"
+      }
+     }
+    }
+   ],
+   "loop": "cycle"
+  }
  }
 ]
