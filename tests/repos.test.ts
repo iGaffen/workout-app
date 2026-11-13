@@ -7,7 +7,7 @@ import exercises from "../src/data/exercises.json";
 describe("repositories", () => {
   it("export, wipe, import restores everything", async () => {
     await ExerciseRepo.put({ ...(exercises[0] as never), id: "my-move", name: "My move" });
-    await ExerciseRepo.remove("plank");
+    await ExerciseRepo.remove("goblet-squat");
     await SettingsRepo.put({ ...(await SettingsRepo.get()), phaseSets: 3 });
     await LogRepo.add({ date: "2026-01-01T10:00:00Z", routineId: "full-body-ab", sessionId: "a" });
     await BodyRepo.put("2026-01-02", { weightKg: 90 });
@@ -24,7 +24,7 @@ describe("repositories", () => {
     if (!p.ok) throw new Error(p.error);
     await applyPack(p.pack);
     expect((await ExerciseRepo.get("my-move"))?.name).toBe("My move");
-    expect((await ExerciseRepo.get("plank"))?.hidden).toBe(true);
+    expect((await ExerciseRepo.get("goblet-squat"))?.hidden).toBe(true);
     expect((await SettingsRepo.get()).phaseSets).toBe(3);
     expect(await LogRepo.all()).toHaveLength(1);
     expect(await BodyRepo.all()).toMatchObject([{ date: "2026-01-02", weightKg: 90, waistCm: 101 }]);
@@ -36,9 +36,9 @@ describe("repositories", () => {
     expect(JSON.stringify(await exportAll())).toBe(before);
   });
   it("bundled exercises hide and restore", async () => {
-    await ExerciseRepo.remove("dead-bug");
-    expect((await ExerciseRepo.all()).some((e) => e.id === "dead-bug")).toBe(false);
-    await ExerciseRepo.setHidden("dead-bug", false);
-    expect((await ExerciseRepo.all()).some((e) => e.id === "dead-bug")).toBe(true);
+    await ExerciseRepo.remove("cable-lateral-raise");
+    expect((await ExerciseRepo.all()).some((e) => e.id === "cable-lateral-raise")).toBe(false);
+    await ExerciseRepo.setHidden("cable-lateral-raise", false);
+    expect((await ExerciseRepo.all()).some((e) => e.id === "cable-lateral-raise")).toBe(true);
   });
 });

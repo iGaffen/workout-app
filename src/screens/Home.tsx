@@ -11,7 +11,7 @@ import { useBackHandler } from "../components/back";
 import type { Block, Exercise, WorkoutLog } from "../model/schema";
 
 /** Today's ticks and weights survive closing the app, until the day changes or you finish. */
-interface DayState { date: string; done: string[]; weights: Record<string, number> }
+interface DayState { date: string; done: string[]; weights: Record<string, number>; choice?: Record<string, string> }
 const KEY = "gym-today";
 function loadDay(): DayState {
   const empty = { date: localDate(new Date()), done: [], weights: {} };
@@ -60,14 +60,31 @@ export function Home() {
     if (v === undefined) delete weights[id]; else weights[id] = v;
     return { ...d, weights };
   });
+  // A slot with alternatives: today's pick, else the one you logged most recently, else the first.
+  const optionsOf = (b: Block & { exerciseId: string }) => [b.exerciseId, ...(b.alternatives ?? [])].filter((id) => exMap.has(id));
+  const lastPicked = (opts: string[]) => {
+    for (const l of [...logs].sort((a, c) => c.date.localeCompare(a.date))) {
+      const hit = opts.find((id) => (l.sets ?? []).some((s) => s.exerciseId === id));
+      if (hit) return hit;
+    }
+    return undefined;
+  };
+  const chosen = (b: Block & { exerciseId: string }) => {
+    const opts = optionsOf(b);
+    const c = day.choice?.[b.exerciseId];
+    return (c && opts.includes(c) ? c : lastPicked(opts)) ?? b.exerciseId;
+  };
+  const choose = (key: string, id: string) => setDay((d) => ({ ...d, choice: { ...(d.choice ?? {}), [key]: id } }));
+  const repsOf = (b: Block & { exerciseId: string }, id: string) => (id === b.exerciseId ? repsFor(b, exMap.get(id)) : exMap.get(id)?.defaultReps ?? "");
   const weightFor = (id: string) => day.weights[id] ?? lastWeight(logs, id)?.weightKg;
 
   const finish = async () => {
     if (!done.length && !confirm("Nothing is ticked yet. Save the workout anyway?")) return;
     const sets: NonNullable<WorkoutLog["sets"]> = done.flatMap((b) => {
-      const ex = exMap.get(b.exerciseId);
-      const w = ex && takesWeight(ex) ? weightFor(b.exerciseId) : undefined;
-      return Array.from({ length: setsFor(b, settings) }, (_, i) => ({ exerciseId: b.exerciseId, setIndex: i + 1, ...(w !== undefined ? { weightKg: w } : {}) }));
+      const id = chosen(b);
+      const ex = exMap.get(id);
+      const w = ex && takesWeight(ex) ? weightFor(id) : undefined;
+      return Array.from({ length: setsFor(b, settings) }, (_, i) => ({ exerciseId: id, setIndex: i + 1, ...(w !== undefined ? { weightKg: w } : {}) }));
     });
     await LogRepo.add({ date: new Date().toISOString(), routineId: routine.id, sessionId: session.id, ...(sets.length ? { sets } : {}) });
     setDay({ date: localDate(new Date()), done: [], weights: {} });
@@ -77,9 +94,11 @@ export function Home() {
   };
 
   const row = (b: Block & { exerciseId: string }) => {
-    const ex = exMap.get(b.exerciseId);
+    const id = chosen(b);
+    const ex = exMap.get(id);
     const d = isDone(b.exerciseId);
-    const w = ex && takesWeight(ex) ? weightFor(b.exerciseId) : undefined;
+    const w = ex && takesWeight(ex) ? weightFor(id) : undefined;
+    const others = optionsOf(b).filter((x) => x !== id).map((x) => exMap.get(x)?.name).filter(Boolean);
     return (
       <li key={b.exerciseId} className={`checkrow ${d ? "isdone" : ""}`}>
         <button className="check" aria-pressed={d} onClick={() => toggle(b.exerciseId)} aria-label={`${d ? "Undo" : "Mark done"}: ${ex?.name ?? b.exerciseId}`}>
@@ -88,7 +107,8 @@ export function Home() {
         <button className="exrow" disabled={!ex} onClick={() => setOpen(b.exerciseId)} aria-label={`${ex?.name ?? b.exerciseId}. Show exercise`}>
           <span className="exrowmain">
             <span className="exrowname">{ex?.name ?? `Missing: ${b.exerciseId}`}</span>
-            <span className="sub">{setsFor(b, settings)} × {repsFor(b, ex)}{w !== undefined ? ` · ${w} kg` : ""}</span>
+            <span className="sub">{setsFor(b, settings)} × {repsOf(b, id)}{w !== undefined ? ` · ${w} kg` : ""}</span>
+            {others.length > 0 && <span className="sub alt">Or: {others.join(" / ")} (tap to switch)</span>}
           </span>
           {ex && <span className="chev" aria-hidden="true"><Icon.next /></span>}
         </button>
@@ -97,7 +117,9 @@ export function Home() {
   };
 
   const openBlock = open ? items.find((b) => b.exerciseId === open) : undefined;
-  const openEx = open ? exMap.get(open) : undefined;
+  const openId = openBlock ? chosen(openBlock) : undefined;
+  const openEx = openId ? exMap.get(openId) : undefined;
+  const openOpts = openBlock ? optionsOf(openBlock) : [];
 
   return (
     <>
@@ -143,10 +165,15 @@ export function Home() {
       </div>
 
       {openEx && openBlock && (
-        <ExerciseSheet ex={openEx} reps={repsFor(openBlock, openEx)} onClose={() => setOpen(null)}>
+        <ExerciseSheet ex={openEx} reps={repsOf(openBlock, openEx.id)} onClose={() => setOpen(null)}
+          top={openOpts.length > 1 ? (
+            <div className="seg" role="group" aria-label={`${openBlock.title ?? "Exercise"}: pick one`}>
+              {openOpts.map((x) => <button key={x} aria-pressed={x === openEx.id} onClick={() => choose(openBlock.exerciseId, x)}>{exMap.get(x)?.name}</button>)}
+            </div>
+          ) : undefined}>
           {takesWeight(openEx) && <WeightInput key={openEx.id} value={day.weights[openEx.id]} last={lastWeight(logs, openEx.id)} onChange={(v) => setWeight(openEx.id, v)} />}
-          <button className={isDone(openEx.id) ? "secondary" : "cta"} onClick={() => { toggle(openEx.id); setOpen(null); }}>
-            {isDone(openEx.id) ? "Mark as not done" : "Mark as done"}
+          <button className={isDone(openBlock.exerciseId) ? "secondary" : "cta"} onClick={() => { toggle(openBlock.exerciseId); setOpen(null); }}>
+            {isDone(openBlock.exerciseId) ? "Mark as not done" : "Mark as done"}
           </button>
         </ExerciseSheet>
       )}

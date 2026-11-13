@@ -44,7 +44,7 @@ def lp(thigh, knee):
     t = -55
     shin = thigh - knee
     return P(t, {"shoulder": 25, "elbow": 35, "hip": thigh + t, "knee": knee, "ankle": shin - 130}, {"hip": thigh + t - 4, "knee": knee}, root=[84, 128])
-E.append(ex("leg-press", "Leg press", ["machine"], ["quads", "glutes"], ["hamstrings", "adductors", "calves"],
+E.append(ex("leg-press", "Leg press (45° linear)", ["machine"], ["quads", "glutes"], ["hamstrings", "adductors", "calves"],
   ["Feet shoulder-width, middle of the plate", "Lower until knees are about 90°, push through heels", "Do not lock your knees at the top"],
   "10–12",
   anim([lp_seat, {"kind": "frame", "at": [70, 140], "to": [70, FLOOR]}, {"kind": "frame", "at": [40, 120], "to": [40, FLOOR]},
@@ -205,6 +205,61 @@ E.append(ex("one-arm-dumbbell-row", "One-arm dumbbell row", ["dumbbell", "bench"
   anim([{"kind": "bench", "at": [80, 123], "to": [158, 123]}, {"kind": "dumbbell", "attach": "hand"}],
        [K("Lower", 1600, dbrow(78, 0)), K("Row", 1000, dbrow(-8, 96)), K("Squeeze", 500, dbrow(-10, 98))])))
 
+# 17 Barbell bench press: lying on the bench, head to the left, feet flat on the floor.
+def bp(ua, el):
+    # ua = upper arm's absolute angle (180 = straight up); with torso -90 the shoulder joint angle is ua - 90.
+    return P(-90, {"shoulder": ua - 90, "elbow": el, "hip": -15, "knee": 89, "ankle": -14}, {"hip": -12, "knee": 86, "ankle": -12}, root=[128, 111])
+E.append(ex("barbell-bench-press", "Barbell bench press", ["barbell", "bench"], ["chest"], ["front_delts", "triceps"],
+  ["Shoulder blades squeezed together, feet flat on the floor", "Lower the bar to mid-chest, elbows about 45° from your body", "Press up and slightly back over your shoulders"],
+  "10–12",
+  anim([{"kind": "bench", "at": [56, 117], "to": [150, 117]}, {"kind": "frame", "at": [52, 30], "to": [52, FLOOR]}, {"kind": "frame", "at": [52, 34], "to": [66, 34]}, {"kind": "dumbbell", "attach": "hand", "size": 1.6}],
+       [K("Press", 1100, bp(180, 0)), K("Lower", 1800, bp(16, 160)), K("Pause", 300, bp(16, 160))]),
+  notes="Stop short of any pain in the range (sensitive left shoulder). Use a spotter or safety bars when going heavy"))
+
+# 18 EZ-bar preacher curl: upper arms rest on the angled pad.
+def pc(el):
+    return P(15, {"shoulder": 60, "elbow": el, "hip": 105, "knee": 90, "ankle": 0}, {"hip": 103, "knee": 88}, root=[90, 118])
+E.append(ex("ez-bar-preacher-curl", "EZ-bar preacher curl", ["barbell", "machine"], ["biceps"], ["forearms"],
+  ["Armpits snug on top of the pad, upper arms flat on it", "Curl the W bar up toward your chin, squeeze", "Lower slowly almost to straight, do not bounce at the bottom"],
+  "10–12",
+  anim([{"kind": "seat", "at": [90, 125]}, {"kind": "backpad", "at": [100, 83], "to": [117, 99]}, {"kind": "frame", "at": [116, 100], "to": [116, FLOOR]},
+        {"kind": "bar", "attach": "hand", "angle": 90, "size": 0.5}],
+       [K("Lower", 1800, pc(12)), K("Curl", 1000, pc(122)), K("Squeeze", 400, pc(124))])))
+
+# 19 Triceps rope pushdown: elbows pinned at the sides, high pulley in front.
+def tp(el):
+    return P(10, {"shoulder": 12, "elbow": el, "hip": 10, "knee": 4, "ankle": -4}, {"shoulder": 14, "elbow": el, "hip": 4, "knee": 2}, anchor=A("toe", 134, SOLE))
+E.append(ex("triceps-rope-pushdown", "Triceps rope pushdown", ["cable"], ["triceps"], ["forearms"],
+  ["Elbows pinned to your sides, slight forward lean", "Push the rope down and pull the ends apart at the bottom", "Let it come up to about 90° at the elbow, slowly"],
+  "10–12",
+  anim([{"kind": "pulley", "at": [150, 8]}, {"kind": "cable", "attach": "hand", "from": [150, 8]}, {"kind": "handle", "attach": "hand"}],
+       [K("Return", 1500, tp(100)), K("Push", 1000, tp(4)), K("Squeeze", 400, tp(2))])))
+
+# 20 Cable lateral raise: arm swings out to the side (toward the viewer), low pulley.
+def lr(s):
+    return P(0, {"shoulder": s, "armYaw": 50, "elbow": 12, "hip": 0, "knee": 3, "ankle": -3}, {"shoulder": 0, "armYaw": 0, "elbow": 10, "hip": -4, "knee": 2}, anchor=A("toe", 134, SOLE))
+E.append(ex("cable-lateral-raise", "Cable lateral raise (one arm)", ["cable"], ["side_delts"], ["traps", "front_delts"],
+  ["Stand side-on to a low cable, handle in the far hand", "Raise your arm out to the side to shoulder height, slight elbow bend", "Lower slowly, do not swing your body"],
+  "10–12 per arm",
+  anim([{"kind": "pulley", "at": [126, 140]}, {"kind": "cable", "attach": "hand", "from": [126, 140]}, {"kind": "handle", "attach": "hand"}],
+       [K("Lower", 1700, lr(8)), K("Raise", 1100, lr(85)), K("Pause", 300, lr(85))]),
+  notes="Stop at shoulder height (sensitive left shoulder)"))
+
+# 21 Shoulder press machine: seated, handles from shoulder height to overhead.
+def sp(s, el):
+    return P(-5, {"shoulder": s, "elbow": el, "hip": 95, "knee": 92, "ankle": -2}, {"hip": 92, "knee": 88}, root=[86, 118])
+E.append(ex("shoulder-press-machine", "Shoulder press machine", ["machine"], ["front_delts", "side_delts"], ["triceps", "traps"],
+  ["Seat height so the handles start at shoulder level", "Press straight up without locking your elbows hard", "Lower under control to shoulder level"],
+  "10–12",
+  anim([{"kind": "seat", "at": [86, 125]}, {"kind": "backpad", "at": [74, 120], "to": [70, 62]}, {"kind": "frame", "at": [62, 10], "to": [62, FLOOR]},
+        {"kind": "handle", "attach": "hand"}],
+       [K("Lower", 1600, sp(35, 135)), K("Press", 1100, sp(168, 12)), K("Lockout", 300, sp(168, 12))]),
+  notes="Skip it for the cable lateral raise if your left shoulder complains"))
+
+# Only the exercises you actually do ship with the app.
+KEEP = ["lat-pulldown", "ez-bar-preacher-curl", "triceps-rope-pushdown", "leg-press", "barbell-bench-press", "goblet-squat", "cable-lateral-raise", "shoulder-press-machine"]
+E = [e for e in E if e["id"] in KEEP]
+
 json.dump(E, open(os.path.join(OUT, "exercises.json"), "w"), indent=1, ensure_ascii=False)
 
 WARM = {"type": "text", "title": "Warm-up", "icon": "bike", "lines": ["Bike ride to the gym (10 min)", "Arm circles, 1 min", "Band pull-aparts, 1×15"]}
@@ -219,14 +274,10 @@ def g(id, reps=None):
     return x
 WARM = {"type": "text", "title": "Warm-up", "icon": "bike", "lines": ["Bike ride to the gym, arm circles, band pull-aparts"]}
 FIN = {"type": "text", "title": "Finisher", "icon": "stairs", "lines": ["Stairmaster or incline walk, 8–10 min"]}
-# Two lists that alternate. Each is about 35 min of lifting plus the finisher (45 min total).
 R = [{"schemaVersion": 1, "id": "gym-day", "name": "Gym day", "sessions": [
-  {"id": "w1", "name": "Workout 1", "blocks": [WARM,
-     g("leg-press", "10–12"), g("seated-leg-curl", "10–12"), g("lat-pulldown", "10–12"),
-     g("pec-deck", "10–12"), g("standing-calf-raise", "12–15 slow"), FIN]},
-  {"id": "w2", "name": "Workout 2", "blocks": [WARM,
-     g("goblet-squat", "10–12"), g("seated-cable-row", "10–12"), g("one-arm-dumbbell-row", "10 per arm"),
-     g("cable-chest-fly", "10–12"), g("plank", "30 sec hold"), g("tibialis-raise", "12–15 slow"), FIN]},
-]}]
+  {"id": "main", "name": "Gym day", "blocks": [WARM,
+     g("lat-pulldown", "10–12"), g("ez-bar-preacher-curl", "10–12"), g("triceps-rope-pushdown", "10–12"),
+     g("leg-press", "10–12"), g("barbell-bench-press", "10–12"), g("goblet-squat", "10–12"),
+     {**g("cable-lateral-raise", "10–12 per arm"), "title": "Shoulders", "alternatives": ["shoulder-press-machine"]}]}]}]
 json.dump(R, open(os.path.join(OUT, "routines.json"), "w"), indent=1, ensure_ascii=False)
 print("wrote", len(E), "exercises")
