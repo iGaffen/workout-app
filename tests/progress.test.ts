@@ -44,10 +44,10 @@ describe("last weight", () => {
   });
   it("bodyweight moves take no weight", () => {
     const by = (id: string) => exercises.find((e) => e.id === id) as Exercise;
-    expect(takesWeight(by("plank"))).toBe(false);
-    expect(takesWeight(by("tibialis-raise"))).toBe(false);
+    expect(takesWeight({ ...by("goblet-squat"), equipment: ["bodyweight"] })).toBe(false);
+    expect(takesWeight({ ...by("goblet-squat"), equipment: ["bodyweight", "wall"] })).toBe(false);
     expect(takesWeight(by("leg-press"))).toBe(true);
-    expect(takesWeight(by("standing-calf-raise"))).toBe(true);
+    expect(takesWeight(by("goblet-squat"))).toBe(true);
   });
 });
 

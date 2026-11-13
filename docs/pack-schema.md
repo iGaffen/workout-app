@@ -48,6 +48,7 @@ Rules
   ]}
 ]}
 ```
+- `alternatives`: other exercise ids that can be done in this slot instead. The row shows the one picked today (or last time), with a switch in its card.
 - `sets`: a number, or `"phase"` to follow Settings → Phase (2 or 3).
 - `restSeconds`: overrides Settings → Default rest.
 - `icon` for text blocks: `bike` or `stairs`.

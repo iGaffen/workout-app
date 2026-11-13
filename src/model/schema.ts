@@ -93,6 +93,8 @@ export type Exercise = z.infer<typeof ExerciseSchema> & { schemaVersion: number 
 export const BlockSchema = z.object({
   type: z.enum(["exercise", "text"]),
   exerciseId: z.string().optional(),
+  /** Other exercises that can be done in this slot instead (pick one on the day). */
+  alternatives: z.array(z.string()).optional(),
   reps: z.string().optional(),
   sets: z.union([z.number().int().positive(), z.literal("phase")]).optional(),
   restSeconds: z.number().int().nonnegative().optional(),

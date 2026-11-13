@@ -5,8 +5,8 @@
   "name": "Gym day",
   "sessions": [
    {
-    "id": "w1",
-    "name": "Workout 1",
+    "id": "main",
+    "name": "Gym day",
     "blocks": [
      {
       "type": "text",
@@ -15,18 +15,6 @@
       "lines": [
        "Bike ride to the gym, arm circles, band pull-aparts"
       ]
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "leg-press",
-      "sets": 3,
-      "reps": "10–12"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "seated-leg-curl",
-      "sets": 3,
-      "reps": "10–12"
      },
      {
       "type": "exercise",
@@ -36,37 +24,27 @@
      },
      {
       "type": "exercise",
-      "exerciseId": "pec-deck",
+      "exerciseId": "ez-bar-preacher-curl",
       "sets": 3,
       "reps": "10–12"
      },
      {
       "type": "exercise",
-      "exerciseId": "standing-calf-raise",
+      "exerciseId": "triceps-rope-pushdown",
       "sets": 3,
-      "reps": "12–15 slow"
+      "reps": "10–12"
      },
      {
-      "type": "text",
-      "title": "Finisher",
-      "icon": "stairs",
-      "lines": [
-       "Stairmaster or incline walk, 8–10 min"
-      ]
-     }
-    ]
-   },
-   {
-    "id": "w2",
-    "name": "Workout 2",
-    "blocks": [
+      "type": "exercise",
+      "exerciseId": "leg-press",
+      "sets": 3,
+      "reps": "10–12"
+     },
      {
-      "type": "text",
-      "title": "Warm-up",
-      "icon": "bike",
-      "lines": [
-       "Bike ride to the gym, arm circles, band pull-aparts"
-      ]
+      "type": "exercise",
+      "exerciseId": "barbell-bench-press",
+      "sets": 3,
+      "reps": "10–12"
      },
      {
       "type": "exercise",
@@ -76,40 +54,12 @@
      },
      {
       "type": "exercise",
-      "exerciseId": "seated-cable-row",
+      "exerciseId": "cable-lateral-raise",
       "sets": 3,
-      "reps": "10–12"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "one-arm-dumbbell-row",
-      "sets": 3,
-      "reps": "10 per arm"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "cable-chest-fly",
-      "sets": 3,
-      "reps": "10–12"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "plank",
-      "sets": 3,
-      "reps": "30 sec hold"
-     },
-     {
-      "type": "exercise",
-      "exerciseId": "tibialis-raise",
-      "sets": 3,
-      "reps": "12–15 slow"
-     },
-     {
-      "type": "text",
-      "title": "Finisher",
-      "icon": "stairs",
-      "lines": [
-       "Stairmaster or incline walk, 8–10 min"
+      "reps": "10–12 per arm",
+      "title": "Shoulders",
+      "alternatives": [
+       "shoulder-press-machine"
       ]
      }
     ]

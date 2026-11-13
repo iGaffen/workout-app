@@ -90,5 +90,17 @@ All 11 exercises at 3 sets took about 70 minutes with the finisher, so they're n
 
 Home picks the next one in turn, and you can tap the other to switch. Each card shows a time estimate: about 6 min per main lift at 3 sets, about 4 min for holds and slow calf or shin raises, and 9 min for the finisher.
 
+## Changed in v3.0: the exercises you actually do
+One list, every gym day, at 3 × 10–12 (about 42 min, no finisher):
+1. Lat pulldown
+2. EZ-bar preacher curl (new)
+3. Triceps rope pushdown (new)
+4. Leg press (45° linear): the Technogym Pure Strength Linear Leg Press. Log the total plates you load.
+5. Barbell bench press (new)
+6. Goblet squat
+7. **Shoulders:** cable lateral raise (one arm) **or** shoulder press machine (both new). One row; switch between them at the top of its card. The row starts on whichever you did last.
+
+Only these 8 exercises ship with the app. Earlier workout history stays in Progress. Routines can now give a slot `alternatives` (other exercise ids), shown as a switch in the card. See docs/pack-schema.md.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.
