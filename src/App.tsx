@@ -6,7 +6,9 @@ const Settings = lazy(() => import("./screens/Settings").then((m) => ({ default:
 const Progress = lazy(() => import("./screens/Progress").then((m) => ({ default: m.Progress })));
 import { Glyph, brandUrl, type GlyphName } from "./components/Glyph";
 import { TimerProvider } from "./components/Timer";
-import { initBack, useBackHandler } from "./components/back";
+import { initBack, initNativeBack, useBackHandler } from "./components/back";
+import { isNative } from "./native/platform";
+import { App as CapApp } from "@capacitor/app";
 
 const TABS: { id: string; label: string; icon: GlyphName }[] = [
   { id: "home", label: "Home", icon: "home" },
@@ -30,7 +32,10 @@ function Shell() {
   const [tab, setTab] = useState("home");
   const [toast, setToast] = useState<string | null>(null);
   const [splash, setSplash] = useState(true);
-  useEffect(() => initBack(setToast), []);
+  useEffect(() => {
+    if (isNative()) initNativeBack(setToast, (fn) => { CapApp.addListener("backButton", fn); }, () => { CapApp.exitApp(); });
+    else initBack(setToast);
+  }, []);
   useEffect(() => { const t = setTimeout(() => setSplash(false), 1150); return () => clearTimeout(t); }, []);
   // Back from any other tab always lands on Home first.
   useBackHandler(tab !== "home", () => { setTab("home"); scrollTo(0, 0); }, 0);

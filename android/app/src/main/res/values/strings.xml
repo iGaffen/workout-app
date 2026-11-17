@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Gym plan</string>
+    <string name="title_activity_main">Gym plan</string>
+    <string name="package_name">app.gymplan.am</string>
+    <string name="custom_url_scheme">app.gymplan.am</string>
+    <string name="widget_workout_name">Workout</string>
+    <string name="widget_workout_desc">Today\'s workout: tick exercises, set weights and finish, right on the home screen</string>
+    <string name="widget_summary_name">This week</string>
+    <string name="widget_summary_desc">Gym days, streak, body weight and waist</string>
+    <string name="widget_lift_name">Lift progress</string>
+    <string name="widget_lift_desc">Weight progression for each exercise</string>
+    <string name="widget_body_name">Log body</string>
+    <string name="widget_body_desc">Log today\'s weight and waist</string>
+</resources>

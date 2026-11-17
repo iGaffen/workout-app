@@ -76,6 +76,24 @@ export function useBackHandler(active: boolean, fn: () => void, level: number) {
   }, [active, level]);
 }
 
+/**
+ * In the Android app (Capacitor) the system back button arrives as a native event instead:
+ * close the top thing, or on Home show the toast and leave on the second press within 3 s.
+ */
+export function initNativeBack(showToast: (msg: string | null) => void, listen: (fn: () => void) => void, exit: () => void) {
+  toast = showToast;
+  if (installed) return;
+  installed = true;
+  let armedUntil = 0;
+  listen(() => {
+    const h = topHandler(handlers);
+    if (h) { h.fn(); return; }
+    if (Date.now() < armedUntil) { exit(); return; }
+    armedUntil = Date.now() + 3000;
+    onBack();
+  });
+}
+
 export function initBack(showToast: (msg: string | null) => void) {
   toast = showToast;
   if (installed) return;
