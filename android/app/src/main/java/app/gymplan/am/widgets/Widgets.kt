@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
@@ -73,7 +74,7 @@ private fun Btn(text: String, onClick: androidx.glance.action.Action, w: Dp, h: 
     Box(
         modifier = GlanceModifier.width(w).height(h).cornerRadius(h / 2).background(bg).clickable(onClick),
         contentAlignment = Alignment.Center,
-    ) { Text(text, style = TextStyle(color = Look.c(fg), fontSize = androidx.compose.ui.unit.TextUnit(size.toFloat(), androidx.compose.ui.unit.TextUnitType.Sp), textAlign = TextAlign.Center)) }
+    ) { Text(text, style = TextStyle(color = Look.c(fg), fontSize = size.sp, textAlign = TextAlign.Center)) }
 }
 
 @Composable
@@ -272,7 +273,7 @@ private fun LiftContent(s: JSONObject?, idxIn: Int) {
     Column(GlanceModifier.fillMaxSize()) {
         Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Btn("◀", actionRunCallback<LiftNavAction>(actionParametersOf(DELTA to -1.0)), 32.dp, 32.dp, size = 13)
-            Text(l.getString("name"), style = TextStyle(color = Look.c(Look.ink1), fontSize = androidx.compose.ui.unit.TextUnit(14f, androidx.compose.ui.unit.TextUnitType.Sp), textAlign = TextAlign.Center), maxLines = 1, modifier = GlanceModifier.defaultWeight())
+            Text(l.getString("name"), style = TextStyle(color = Look.c(Look.ink1), fontSize = 14f.sp, textAlign = TextAlign.Center), maxLines = 1, modifier = GlanceModifier.defaultWeight())
             Btn("▶", actionRunCallback<LiftNavAction>(actionParametersOf(DELTA to 1.0)), 32.dp, 32.dp, size = 13)
         }
         if (values.isEmpty()) {
@@ -336,7 +337,7 @@ private fun BodyRow(label: String, value: String, field: String, step: Double) {
     Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Text(label, style = Look.label(), modifier = GlanceModifier.width(58.dp))
         Btn("−", actionRunCallback<BodyStepAction>(actionParametersOf(FIELD to field, DELTA to -step)), 36.dp, 36.dp)
-        Text(value, style = TextStyle(color = Look.c(Look.ink1), fontSize = androidx.compose.ui.unit.TextUnit(18f, androidx.compose.ui.unit.TextUnitType.Sp), textAlign = TextAlign.Center), modifier = GlanceModifier.defaultWeight())
+        Text(value, style = TextStyle(color = Look.c(Look.ink1), fontSize = 18f.sp, textAlign = TextAlign.Center), modifier = GlanceModifier.defaultWeight())
         Btn("+", actionRunCallback<BodyStepAction>(actionParametersOf(FIELD to field, DELTA to step)), 36.dp, 36.dp, Look.amethyst, Look.onAccent)
     }
 }
