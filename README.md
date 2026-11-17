@@ -102,5 +102,17 @@ One list, every gym day, at 3 × 10–12 (about 42 min, no finisher):
 
 Only these 8 exercises ship with the app. Earlier workout history stays in Progress. Routines can now give a slot `alternatives` (other exercise ids), shown as a switch in the card. See docs/pack-schema.md.
 
+## Changed in v3.1: what the weight number means
+Each exercise says what to type in the kg field:
+- **Plates you added (both sides together):** barbell bench press, EZ-bar preacher curl, leg press. The app adds the empty bar or sled and shows an approximate total, e.g. "40 kg plates ≈ 60 kg".
+  - Olympic bar: **20 kg**. This is the standard men's bar with thick 50 mm sleeves.
+  - W bar (EZ bar, Olympic sleeves): **about 10 kg** (estimate; they range from 6 to 12 kg, and many have it stamped on the end).
+  - Technogym Pure Strength Linear Leg Press sled: **about 40 kg** (estimate). Technogym doesn't publish it for this model; their Pure Strength Leg Press lists 38 kg without plates, and similar linear sleds from other brands are 47–65 kg.
+  - Tap "Change … weight" in the card to correct any of these. It's saved on the phone.
+- **Number on the weight stack:** lat pulldown, rope pushdown, cable lateral raise, shoulder press machine. Taken as entered.
+- **Dumbbell weight:** goblet squat.
+
+Logged sets keep both what you entered (`weightKg`) and the approximate total (`totalKg`).
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.

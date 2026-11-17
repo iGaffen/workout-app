@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { daysUntilDue, effectiveSettings, lastWeight, trainingWeek, weekStart, weeklyAverages, workoutsThisWeek, takesWeight, weekSummary } from "../src/model/progress";
+import { daysUntilDue, effectiveSettings, lastWeight, trainingWeek, weekStart, weeklyAverages, workoutsThisWeek, takesWeight, weekSummary, totalKg, weightText } from "../src/model/progress";
 import { DEFAULT_SETTINGS } from "../src/model/plan";
 import exercises from "../src/data/exercises.json";
 import type { Exercise, WorkoutLog } from "../src/model/schema";
@@ -82,5 +82,21 @@ describe("week summary", () => {
     expect(w.cardio).toBe(1);
     expect(w.days).toEqual([{ day: 1, name: "Mon", done: true }, { day: 3, name: "Wed", done: false }]);
     expect(w.extraDays).toEqual(["Thu"]);
+  });
+});
+
+describe("what the weight means", () => {
+  const by = (id: string) => exercises.find((e) => e.id === id) as Exercise;
+  it("plate-loaded kit adds the empty bar or sled", () => {
+    expect(totalKg(by("barbell-bench-press"), 40)).toBe(60);
+    expect(totalKg(by("ez-bar-preacher-curl"), 10)).toBe(20);
+    expect(totalKg(by("leg-press"), 80)).toBe(120);
+    expect(weightText(by("barbell-bench-press"), 40)).toBe("40 kg plates ≈ 60 kg");
+  });
+  it("stacks and dumbbells are taken as entered", () => {
+    expect(totalKg(by("lat-pulldown"), 45)).toBe(45);
+    expect(weightText(by("lat-pulldown"), 45)).toBe("stack 45");
+    expect(weightText(by("shoulder-press-machine"), 30)).toBe("stack 30");
+    expect(weightText(by("goblet-squat"), 12)).toBe("12 kg dumbbell");
   });
 });

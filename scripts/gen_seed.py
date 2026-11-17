@@ -259,6 +259,16 @@ E.append(ex("shoulder-press-machine", "Shoulder press machine", ["machine"], ["f
 # Only the exercises you actually do ship with the app.
 KEEP = ["lat-pulldown", "ez-bar-preacher-curl", "triceps-rope-pushdown", "leg-press", "barbell-bench-press", "goblet-squat", "cable-lateral-raise", "shoulder-press-machine"]
 E = [e for e in E if e["id"] in KEEP]
+# What the weight field means on each (researched Nov 2026; estimates can be edited in the app).
+LOAD = {
+  "barbell-bench-press": {"weightKind": "plates", "baseKg": 20, "baseLabel": "Olympic bar"},
+  "ez-bar-preacher-curl": {"weightKind": "plates", "baseKg": 10, "baseLabel": "W bar (EZ bar)", "baseEstimate": True},
+  "leg-press": {"weightKind": "plates", "baseKg": 40, "baseLabel": "Sled", "baseEstimate": True},
+  "goblet-squat": {"weightKind": "dumbbell"},
+  "lat-pulldown": {"weightKind": "stack"}, "triceps-rope-pushdown": {"weightKind": "stack"},
+  "cable-lateral-raise": {"weightKind": "stack"}, "shoulder-press-machine": {"weightKind": "stack"},
+}
+for e in E: e.update(LOAD.get(e["id"], {}))
 
 json.dump(E, open(os.path.join(OUT, "exercises.json"), "w"), indent=1, ensure_ascii=False)
 

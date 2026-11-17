@@ -85,6 +85,17 @@ export const ExerciseSchema = z.object({
   notes: z.string().optional(),
   defaultReps: z.string().min(1),
   holdSeconds: z.number().int().positive().optional(),
+  /**
+   * What the weight field means. "plates": plates you add (both sides together); the app adds baseKg
+   * (the empty bar or sled) for an approximate total. "stack": the number on the pin stack or cable.
+   * "dumbbell": the dumbbell's weight. Missing = plain kg.
+   */
+  weightKind: z.enum(["plates", "stack", "dumbbell"]).optional(),
+  baseKg: z.number().nonnegative().optional(),
+  /** What the base weight is, e.g. "Olympic bar", "Sled". */
+  baseLabel: z.string().optional(),
+  /** True when baseKg is an estimate the user should check. */
+  baseEstimate: z.boolean().optional(),
   animation: AnimationSchema,
   hidden: z.boolean().optional(),
 });
@@ -140,7 +151,7 @@ export const WorkoutLogSchema = z.object({
   routineId: z.string(),
   sessionId: z.string(),
   durationSeconds: z.number().optional(),
-  sets: z.array(z.object({ exerciseId: z.string(), setIndex: z.number(), weightKg: z.number().optional(), reps: z.number().optional() })).optional(),
+  sets: z.array(z.object({ exerciseId: z.string(), setIndex: z.number(), weightKg: z.number().optional(), totalKg: z.number().optional(), reps: z.number().optional() })).optional(),
 });
 export type WorkoutLog = z.infer<typeof WorkoutLogSchema> & { schemaVersion?: number };
 

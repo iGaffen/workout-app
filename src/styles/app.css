@@ -216,3 +216,7 @@ textarea{min-height:auto;font-family:ui-monospace,monospace;font-size:14px}
 .noteline strong{color:var(--ink)}
 .exrowmain .alt{font-size:14px}
 .sheet .seg{margin-bottom:12px}
+.weightlabel{margin:0 0 6px;font-weight:600;font-size:15px}
+.basebox{margin-top:8px;padding:8px 10px;border-radius:10px;background:var(--bg);font-size:15px}
+.basebox p{margin:0}
+.basebox .linkbtn{padding:0;min-height:40px}

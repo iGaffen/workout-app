@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ExerciseRepo, LogRepo, RoutineRepo, SettingsRepo } from "../db/repos";
 import { useData } from "../components/hooks";
 import { estimateMinutes, nextSessionId, repsFor, setsFor } from "../model/plan";
-import { lastWeight, localDate, takesWeight, weekSummary } from "../model/progress";
+import { lastWeight, localDate, takesWeight, totalKg, weekSummary, weightText } from "../model/progress";
 import { ExerciseSheet } from "../components/ExerciseSheet";
 import { WeightInput } from "../components/WeightInput";
 import { BackupButton } from "../components/BackupButton";
@@ -84,7 +84,7 @@ export function Home() {
       const id = chosen(b);
       const ex = exMap.get(id);
       const w = ex && takesWeight(ex) ? weightFor(id) : undefined;
-      return Array.from({ length: setsFor(b, settings) }, (_, i) => ({ exerciseId: id, setIndex: i + 1, ...(w !== undefined ? { weightKg: w } : {}) }));
+      return Array.from({ length: setsFor(b, settings) }, (_, i) => ({ exerciseId: id, setIndex: i + 1, ...(w !== undefined && ex ? { weightKg: w, totalKg: totalKg(ex, w) } : {}) }));
     });
     await LogRepo.add({ date: new Date().toISOString(), routineId: routine.id, sessionId: session.id, ...(sets.length ? { sets } : {}) });
     setDay({ date: localDate(new Date()), done: [], weights: {} });
@@ -107,7 +107,7 @@ export function Home() {
         <button className="exrow" disabled={!ex} onClick={() => setOpen(b.exerciseId)} aria-label={`${ex?.name ?? b.exerciseId}. Show exercise`}>
           <span className="exrowmain">
             <span className="exrowname">{ex?.name ?? `Missing: ${b.exerciseId}`}</span>
-            <span className="sub">{setsFor(b, settings)} × {repsOf(b, id)}{w !== undefined ? ` · ${w} kg` : ""}</span>
+            <span className="sub">{setsFor(b, settings)} × {repsOf(b, id)}{w !== undefined && ex ? ` · ${weightText(ex, w)}` : ""}</span>
             {others.length > 0 && <span className="sub alt">Or: {others.join(" / ")} (tap to switch)</span>}
           </span>
           {ex && <span className="chev" aria-hidden="true"><Icon.next /></span>}
@@ -171,7 +171,7 @@ export function Home() {
               {openOpts.map((x) => <button key={x} aria-pressed={x === openEx.id} onClick={() => choose(openBlock.exerciseId, x)}>{exMap.get(x)?.name}</button>)}
             </div>
           ) : undefined}>
-          {takesWeight(openEx) && <WeightInput key={openEx.id} value={day.weights[openEx.id]} last={lastWeight(logs, openEx.id)} onChange={(v) => setWeight(openEx.id, v)} />}
+          {takesWeight(openEx) && <WeightInput key={openEx.id} ex={openEx} value={day.weights[openEx.id]} last={lastWeight(logs, openEx.id)} onChange={(v) => setWeight(openEx.id, v)} />}
           <button className={isDone(openBlock.exerciseId) ? "secondary" : "cta"} onClick={() => { toggle(openBlock.exerciseId); setOpen(null); }}>
             {isDone(openBlock.exerciseId) ? "Mark as not done" : "Mark as done"}
           </button>
