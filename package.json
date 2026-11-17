@@ -12,8 +12,8 @@
     "seed": "python3 scripts/gen_seed.py"
   },
   "dependencies": {
-    "@fontsource/barlow": "^5.3.0",
-    "@fontsource/barlow-condensed": "^5.3.0",
+    "@fontsource/inter-tight": "^5.3.0",
+    "@fontsource/michroma": "^5.3.0",
     "dexie": "^4.4.6",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",

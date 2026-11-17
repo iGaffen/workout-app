@@ -1,0 +1,90 @@
+/* Design tokens from the Obsidian Horology build pack (docs/build-pack.md). Dark only for now. */
+:root {
+  /* ---------- Ground & atmosphere ---------- */
+  --obsidian: #07060A;                       /* app ground */
+  --obsidian-deep: #050407;                  /* splash, icon */
+  --stage: #030205;                          /* behind sheets only */
+  --atmos: radial-gradient(560px 560px at -10% -8%, rgba(124,82,255,0.42) 0%, rgba(124,82,255,0) 65%),
+           radial-gradient(460px 460px at 112% 42%, rgba(214,170,255,0.13) 0%, rgba(214,170,255,0) 65%),
+           #07060A;                          /* every screen background */
+  --grain-opacity: 0.13;                     /* fractal-noise overlay, mix-blend-mode: overlay (see §2.0) */
+
+  /* ---------- Surfaces ---------- */
+  --glass: linear-gradient(160deg, rgba(255,255,255,0.09), rgba(255,255,255,0.02));
+  --glass-border: rgba(255,255,255,0.12);
+  --glass-highlight: inset 0 1px 0 rgba(255,255,255,0.14);
+  --glass-shadow: 0 24px 48px rgba(0,0,0,0.45);
+  --glass-fallback: #110E17;                 /* solid fallback, low-power or no backdrop support */
+  --sheet: #0D0A13;                          /* exercise sheet; + radial amethyst glow at top */
+  --tabbar: rgba(12,10,16,0.82);
+  --toast: rgba(20,16,28,0.92);
+  --window: #050408;                         /* recessed inputs and the weight window */
+  --window-inset: inset 0 4px 14px rgba(0,0,0,0.9);
+  --dial-face: radial-gradient(circle at 50% 35%, #1D1628 0%, #0C0A10 75%);
+  --guilloche: repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0 1px, transparent 1px 5px);
+
+  /* ---------- Lines ---------- */
+  --hair: rgba(255,255,255,0.07);            /* list row dividers */
+  --hair-strong: rgba(255,255,255,0.14);     /* button and input borders */
+  --hair-gold: rgba(227,201,143,0.35);       /* section top rules */
+  --hair-gold-done: rgba(227,201,143,0.28);  /* done row divider */
+
+  /* ---------- Ink ---------- */
+  --ink-1: #F1ECF7;     /* 17.9:1 on obsidian */
+  --ink-2: #A39BB3;     /* 7.6:1, meta and labels */
+  --ink-3: #7D748F;     /* 4.6:1, done rows, captions, units */
+  --ink-4: #5E566E;     /* non-text only: "/8" in dial, equipment lines */
+  --ink-on-accent: #120A22;  /* text on amethyst (5.3:1) and on gold */
+
+  /* ---------- Amethyst: action + lume (the only thing that glows) ---------- */
+  --amethyst: #8B6CFF;                       /* primary buttons, filled ticks, active segment */
+  --amethyst-chart: #9575FF;                 /* chart line, muscle-map primary (passed the dataviz lightness and contrast checks on #0C0A10) */
+  --lume: #C9B4FF;                           /* active icons, links, figure limbs, "Or:" line */
+  --amethyst-22: rgba(139,108,255,0.22);     /* selected chip or segment fill */
+  --amethyst-border: rgba(201,180,255,0.55); /* selected chip or segment border */
+  --glow-primary: 0 0 28px rgba(139,108,255,0.5), inset 0 1px 0 rgba(255,255,255,0.35);
+  --glow-tick: 0 0 14px rgba(139,108,255,0.65);
+  --glow-select: 0 0 18px rgba(139,108,255,0.35);
+
+  /* ---------- Champagne gold: achievement + metal ---------- */
+  --gold: #E3C98F;                           /* 12.6:1; totals, streaks, done numerals, dial, bezel */
+  --gold-sheen: linear-gradient(110deg, #F6E7BF 0%, #E3C98F 50%, #A8884A 100%);
+  --gold-dial: linear-gradient(135deg, #F6E7BF, #E3C98F 50%, #A8884A);  /* SVG linearGradient x1=0 y1=0 x2=1 y2=1 */
+  --gold-07: rgba(227,201,143,0.07);         /* base/total box fill */
+  --gold-30: rgba(227,201,143,0.30);         /* base/total box border */
+  --glow-finish: 0 10px 30px rgba(227,201,143,0.30);
+
+  --danger: #FF8A8A;  --danger-07: rgba(255,138,138,0.07);  --danger-30: rgba(255,138,138,0.30);
+  /* Rule: amethyst = you can act; gold = you achieved. Never both on one element. */
+
+  /* ---------- Type ---------- */
+  --f-instrument: 'Michroma', sans-serif;    /* numbers, labels, buttons, titles (400 only) */
+  --f-read: 'Inter Tight', sans-serif;       /* names and body (400/500/600/700) */
+  --t-window:   46px/1 var(--f-instrument);  /* weight window */
+  --t-dial:     42px/1 var(--f-instrument);  /* dial count; "/8" at 22px in --ink-4 */
+  --t-title:    26px/1.2 var(--f-instrument);  /* screen titles, letter-spacing 3px, CAPS */
+  --t-sheet:    700 28px/1.05 var(--f-read);   /* sheet title, letter-spacing -0.5px */
+  --t-row:      600 18px/1.2 var(--f-read);    /* row name (done: 16px) */
+  --t-body:     400 16px/1.45 var(--f-read);
+  --t-meta:     400 13px/1.4 var(--f-read);
+  --t-weight:   16px/1 var(--f-instrument);    /* row weight; unit 8px --ink-3 */
+  --t-button:   10.5px/1 var(--f-instrument);  /* letter-spacing 2.5px, CAPS */
+  --t-label:    9px/1.3 var(--f-instrument);   /* letter-spacing 2.5px, CAPS, --ink-2 */
+  --t-tab:      6.5px/1 var(--f-instrument);   /* letter-spacing 0.6px, CAPS */
+  /* Michroma is wide: keep labels short. Sentence case for sentences; CAPS only for Michroma labels and buttons. */
+
+  /* ---------- Space & shape ---------- */
+  --s-4: 4px; --s-8: 8px; --s-12: 12px; --s-16: 16px; --s-24: 24px; --s-32: 32px;
+  --edge: 24px;                 /* screen side padding */
+  --touch: 48px;
+  --r-inner: 18px;              /* windows, inner boxes, caution */
+  --r-panel: 28px;              /* glass panels, animation frame */
+  --r-sheet: 32px;              /* sheet top corners */
+  --r-pill: 999px;              /* all buttons, chips, segments, tab bar */
+
+  /* ---------- Motion ---------- */
+  --ease-enter: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-exit:  cubic-bezier(0.4, 0, 1, 1);
+  --ease-press: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-reduced: 150ms;
+}

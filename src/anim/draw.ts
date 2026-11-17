@@ -23,13 +23,17 @@ function limbs(s: Side, cls: string): string {
     capsule(s.shoulder, s.elbow, 3.9, 3.1),
     capsule(s.elbow, s.hand, 3, 2.3),
   ];
-  return `<path class="${cls}" d="${parts.join("")}"/><circle class="${cls}" cx="${f(s.hand[0])}" cy="${f(s.hand[1])}" r="3"/>`;
+  return `<path class="${cls}" d="${parts.join("")}"/>`;
 }
 
+/** Gold dots where the body meets the kit (hands, feet). */
+const contacts = (s: Side) =>
+  `<circle class="contact" cx="${f(s.hand[0])}" cy="${f(s.hand[1])}" r="4"/>`;
+
 function torso(k: Skeleton): string {
-  return `<path class="body" d="${capsule(k.hip, k.shoulder, 6.5, 7.5)}"/>` +
-    `<path class="body" d="${capsule(k.shoulder, k.neck, 3, 3)}"/>` +
-    `<circle class="body" cx="${f(k.head[0])}" cy="${f(k.head[1])}" r="${LEN.headR}"/>`;
+  return `<path class="torso" d="${capsule(k.hip, k.shoulder, 6.5, 7.5)}"/>` +
+    `<path class="torso" d="${capsule(k.shoulder, k.neck, 3, 3)}"/>` +
+    `<circle class="head" cx="${f(k.head[0])}" cy="${f(k.head[1])}" r="${LEN.headR}"/>`;
 }
 
 const ANG = (a: Pt, b: Pt) => (Math.atan2(b[1] - a[1], b[0] - a[0]) * 180) / Math.PI;
@@ -139,6 +143,7 @@ export function scene(k: Skeleton, equipment: EquipmentSpec[]): string {
     drawEquipment(equipment, k, "back") +
     `<g class="farside">${limbs(k.far, "far")}</g>` +
     torso(k) +
-    limbs(k.near, "body") +
-    drawEquipment(equipment, k, "front");
+    `<g class="nearside">${limbs(k.near, "near")}</g>` +
+    drawEquipment(equipment, k, "front") +
+    contacts(k.near);
 }

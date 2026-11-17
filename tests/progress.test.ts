@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { daysUntilDue, effectiveSettings, lastWeight, trainingWeek, weekStart, weeklyAverages, workoutsThisWeek, takesWeight, weekSummary, totalKg, weightText } from "../src/model/progress";
+import { daysUntilDue, effectiveSettings, lastWeight, trainingWeek, weekStart, weeklyAverages, workoutsThisWeek, takesWeight, weekSummary, totalKg, weightText, weekStreak, bestWeight, isNewBest, weekPhrase, roman, dateLabel } from "../src/model/progress";
 import { DEFAULT_SETTINGS } from "../src/model/plan";
 import exercises from "../src/data/exercises.json";
 import type { Exercise, WorkoutLog } from "../src/model/schema";
@@ -98,5 +98,33 @@ describe("what the weight means", () => {
     expect(weightText(by("lat-pulldown"), 45)).toBe("stack 45");
     expect(weightText(by("shoulder-press-machine"), 30)).toBe("stack 30");
     expect(weightText(by("goblet-squat"), 12)).toBe("12 kg dumbbell");
+  });
+});
+
+describe("Horology redesign logic", () => {
+  const routines = [{ schemaVersion: 1, id: "gym-day", name: "Gym day", sessions: [{ id: "main", name: "Gym day", blocks: [{ type: "exercise" as const, exerciseId: "leg-press" }] }] }];
+  const at = (y: number, m: number, d: number, sets?: WorkoutLog["sets"]): WorkoutLog => ({ id: `${m}-${d}`, date: new Date(y, m, d, 9).toISOString(), routineId: "gym-day", sessionId: "main", sets });
+  it("streak counts complete weeks back from last week, plus this week once complete", () => {
+    // Mon/Wed goal. Weeks starting Sun 4 Oct, 11 Oct, 18 Oct 2026; "now" is Thu 22 Oct.
+    const logs = [at(2026, 9, 5), at(2026, 9, 7), at(2026, 9, 12), at(2026, 9, 14), at(2026, 9, 19)];
+    const now = new Date(2026, 9, 22, 12);
+    expect(weekStreak(logs, routines, DEFAULT_SETTINGS, now)).toBe(2);
+    expect(weekStreak([...logs, at(2026, 9, 21)], routines, DEFAULT_SETTINGS, now)).toBe(3);
+    expect(weekStreak([], routines, DEFAULT_SETTINGS, now)).toBe(0);
+  });
+  it("new best needs an earlier record to beat", () => {
+    const logs = [at(2026, 9, 5, [{ exerciseId: "leg-press", setIndex: 1, weightKg: 40 }]), at(2026, 9, 7, [{ exerciseId: "leg-press", setIndex: 1, weightKg: 45 }])];
+    expect(bestWeight(logs, "leg-press")).toBe(45);
+    expect(bestWeight(logs, "leg-press", logs[1].date)).toBe(40);
+    expect(isNewBest(47.5, 45)).toBe(true);
+    expect(isNewBest(45, 45)).toBe(false);
+    expect(isNewBest(50, undefined)).toBe(false);
+  });
+  it("voice: week phrases, numerals, date label", () => {
+    expect(weekPhrase(2, 2)).toBe("Two for two this week.");
+    expect(weekPhrase(1, 2)).toBe("One for two this week.");
+    expect(weekPhrase(3, 2)).toBe("Three this week.");
+    expect(roman(8)).toBe("VIII");
+    expect(dateLabel(new Date(2026, 10, 18))).toBe("WED · 18 NOV");
   });
 });
