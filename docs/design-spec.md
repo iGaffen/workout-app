@@ -1,4 +1,6 @@
-# Gym plan: design spec v1 (Noir & Amethyst)
+# Design spec v1: Noir & Amethyst
+
+A **fully branded personal app**: a small private brand built to make going to the gym feel special and keep motivation up. It's not for sale. The name is TBD, so "the app" stands in until it's chosen.
 
 Source of truth for the redesign. Built in Figma first, then in the app. Decisions marked **(decided)** came from Avi; the rest are proposals to confirm in Figma.
 
@@ -40,8 +42,16 @@ Rules: amethyst is for actions; gold is for achievement and totals. Never both o
 - The tab bar is glass, floating 8 px above the bottom edge, with rounded corners.
 - Spacing scale: 4, 8, 12, 16, 20, 24, 32. Touch targets at least 48 px.
 
-## 5. Icons
-Thin line icons, 1.75 px stroke, rounded ends, 24 px grid, in `text/secondary`; the active one is `accent/amethyst`. One set throughout: home, list, library (dumbbell), progress (line), settings, tick, chevron, plus, minus, close, switch (two arrows).
+## 5. Icons (decided: custom set, not a stock pack)
+A bespoke line-icon family drawn for this brand, so every icon shares the same DNA:
+- 24 px grid, 1.75 px stroke, rounded ends and joins, 2 px corner radius on shapes.
+- One brand detail repeated across the set: a small **gold node** (a 2 px dot or short cap), used where it makes sense, such as the end of the progress line, the dumbbell's plate or the active tab, so the set feels like one family.
+- Two states: outline (`text/secondary`) and active (outline in `accent/amethyst` plus the gold node).
+- **Navigation:** home, routines, library, progress, settings.
+- **Actions:** tick, plus, minus, close, chevron, switch, edit, backup/share.
+- **Exercise glyphs:** a simple mark per movement type (pull, push, press, curl, legs, shoulders), used as row badges and in the Library.
+- **Achievement:** streak flame (in gold), trophy or medal, week complete.
+Deliverables: an SVG for each icon, built as Figma components with an outline and an active variant.
 
 ## 6. Motion (decided: refined, no vibration)
 Global: ease-out `cubic-bezier(0.2, 0.8, 0.2, 1)` for entering, ease-in `cubic-bezier(0.4, 0, 1, 1)` for leaving, spring for presses. Nothing longer than 800 ms, nothing blocks taps. With "reduce motion" on, everything becomes a 150 ms fade.
@@ -74,7 +84,35 @@ Global: ease-out `cubic-bezier(0.2, 0.8, 0.2, 1)` for entering, ease-in `cubic-b
 Home (checklist), exercise sheet, Library, Progress, Settings, "Workout saved" state. Phone frame 390 × 844.
 
 ## 9. Figma file structure
-Pages: References, Foundations (variables for colour with dark and light modes, type styles, spacing, radii, effects), Icons, Components (with variants for each state), Screens, Motion (a prototype for each row of the motion table).
+Pages: References, Brand (logo, wordmark, lock-ups, voice), Foundations (variables for colour with dark and light modes, type styles, spacing, radii, effects), Icons, Components (with variants for each state), Screens, Motion (a prototype for each row of the motion table).
 
-## 10. App mark (decided: monogram)
-A monogram in `metal/gold-sheen` on `bg/base`, set in Barlow Condensed 700 with a thin gold ring. Proposal: **"AM"** (Avi Moshe); alternative: "G" for Gym plan. It's used for the app icon (with a maskable safe zone), the splash, and the app-open sheen.
+## 10. Brand
+### Name
+TBD. Chosen later; everything below works without it, and the name drops into the wordmark slot.
+
+### Logo system (decided: custom logo)
+- **Primary mark:** a monogram inside a thin gold ring (see the App mark below). Used for the app icon, the splash and the Settings footer.
+- **Wordmark:** the app name in Barlow Condensed 700, letter-spaced, in gold sheen. Designed once the name is chosen.
+- **Lock-ups:** mark only, mark with wordmark side by side, and mark with wordmark stacked.
+- **Clear space:** the ring's width on every side. Minimum size 24 px.
+- **Versions:** gold on plum-black (primary), and amethyst or white single-colour versions for small sizes.
+
+### Voice
+Short, calm, confident, like a good coach who doesn't shout. Second person, present tense, no exclamation marks and no emoji.
+- Empty Home: "Your session is ready."
+- Tick: "Done." Last exercise: "That's the lot."
+- Workout saved: "Session logged. Two for two this week."
+- Missed day: "Wednesday's still open."
+- Backup reminder: "Keep a copy safe."
+
+### Motivation moments (brand, not gamification noise)
+- **Week chips** for Mon and Wed fill in gold; a full week earns a gold ring around the week card.
+- **Streak:** consecutive complete weeks, shown quietly on Home ("4-week streak") with the gold flame icon.
+- **Personal best:** when a logged weight beats your previous best for that exercise, the weight shows in gold with a small "PB" tag and a one-time sheen.
+- **Monthly recap card** in Progress: sessions done, PBs, waist change.
+
+### Brand touchpoints
+App icon (maskable), splash, app-open sheen, the "Workout saved" card, empty states, the PB tag and the share or backup card.
+
+## 11. App mark (decided: monogram)
+A monogram in `metal/gold-sheen` on `bg/base`, set in Barlow Condensed 700 with a thin gold ring. Proposal: **"AM"** (Avi Moshe) until the app has a name; then the monogram may switch to the name's initial. It's used for the app icon (with a maskable safe zone), the splash, and the app-open sheen.
