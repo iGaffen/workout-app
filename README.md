@@ -127,5 +127,8 @@ The app was redesigned as a personal brand. The concept is a fine watch at night
 - **New logic:** the week streak (consecutive weeks meeting the gym-day goal), personal bests (a weight above every earlier one) and the week phrases ("Two for two this week.").
 - **Light theme** is shown as "comes later"; System follows dark.
 
+## v4.1: edit today's session
+After **Finish workout**, the saved card has **Edit today's session**. It reopens the day with the saved ticks, weights and shoulder pick. Change anything, then tap **Save changes**: the saved session is replaced, not duplicated, and keeps its original time and duration. **Keep the saved session** cancels editing and leaves the saved version as it was.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.
