@@ -11,9 +11,11 @@ permissions:
   pages: write
   id-token: write
 
+# Pull-request test runs and main deploys use separate queues, so a test run can never cancel a deploy.
+# Deploys queue up (never cancelled midway); test runs on the same PR replace older ones.
 concurrency:
-  group: pages
-  cancel-in-progress: true
+  group: ${{ github.event_name == 'pull_request' && format('test-{0}', github.ref) || 'pages-deploy' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
