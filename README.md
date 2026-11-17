@@ -138,5 +138,13 @@ Each exercise card shows a live 3D mannequin (three.js, `src/anim/three/`), driv
 - The 3D code loads only when an exercise card opens, and is cached for offline use. Phones without WebGL 2 show the 2D figure. With "reduce motion" on, it shows still poses.
 - Per-exercise camera angle, zoom, grip width and pulley side are in `SETUP` in `src/anim/three/scene.ts`.
 
+## v4.3: a more human mannequin
+The mannequin was rebuilt to read as a human figure instead of stacked shapes:
+- **Proportions** follow the classic 8-head figure: head about 1/8 of height, shoulders about two heads wide, and the torso tapering from chest to waist.
+- **Sculpted limbs:** each limb is a turned profile with muscle bellies (deltoid, biceps, forearm, quads, calf) that tapers toward the joints. The rounded ends overlap, so joints read smoothly, and there are no joint balls.
+- **One continuous torso:** a single mesh lofted through elliptical, slightly squared rings for seat, hips, waist, ribcage and shoulders.
+- **Head, hands and feet:** an egg-shaped head with a jaw, a tapered neck, flattened gold hands (the brand's contact points) and wedge feet.
+- It's still a stylised figure (no face, skin or clothes). A realistic human would need a professionally modelled, rigged 3D file.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.

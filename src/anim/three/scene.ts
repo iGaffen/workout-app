@@ -15,7 +15,8 @@ import { FLOOR_Y, LEN, solve, type Pt, type Skeleton } from "../solver";
 // ---------- Units: 40 solver units = 1 scene unit; x forward, y up, z toward the viewer's right ----------
 const U = 40;
 const v3 = (p: Pt, z = 0) => new THREE.Vector3((p[0] - 120) / U, (FLOOR_Y - p[1]) / U, z);
-const HIP_Z = 0.19, SHOULDER_Z = 0.38;
+// Joint spacing from classic figure proportions: shoulders about two head-widths apart, hip joints closer.
+const HIP_Z = 0.17, SHOULDER_Z = 0.33;
 const L = { upper: LEN.upperArm / U, fore: LEN.forearm / U, thigh: LEN.thigh / U, shin: LEN.shin / U };
 
 /** Per-exercise 3D setup: grip width, which side a low pulley sits on, single-column frames. */
@@ -112,45 +113,144 @@ function workingSegments(spec: AnimationSpec, spread: number): Set<string> {
 }
 
 // ---------- The mannequin ----------
+// Proportions follow the classic 8-head figure (Loomis): head ≈ 1/8 of height, shoulders ≈ 2 heads wide,
+// waist narrower than chest and hips (V-taper), upper arm and thigh tapering toward elbow and knee,
+// with muscle bellies (deltoid, biceps, forearm, quads, calf) placed along each segment.
+
+/** A limb shaped by a radius profile along its length: [t (0..1 from the upper joint), radius]. */
+function sculptedLimb(profile: [number, number][], len: number, mat: THREE.Material) {
+  // `between` points +Y at the second joint, so t = 0 (the upper joint) sits at -len/2.
+  const r0 = profile[0][1], r1 = profile[profile.length - 1][1];
+  // Rounded ends that overlap into the neighbouring segment, so joints read as one smooth body.
+  const pts: THREE.Vector2[] = [];
+  for (let a = 0; a < 4; a++) { const k = a / 4; pts.push(new THREE.Vector2(r0 * Math.sin((k * Math.PI) / 2) + 1e-4, -len / 2 - r0 * 0.55 * Math.cos((k * Math.PI) / 2))); }
+  for (const [t, r] of profile) pts.push(new THREE.Vector2(r, -len / 2 + t * len));
+  for (let a = 3; a >= 0; a--) { const k = a / 4; pts.push(new THREE.Vector2(r1 * Math.sin((k * Math.PI) / 2) + 1e-4, len / 2 + r1 * 0.55 * Math.cos((k * Math.PI) / 2))); }
+  const g = new THREE.LatheGeometry(pts, 28);
+  g.rotateY(Math.PI); // seam to the back
+  return new THREE.Mesh(g, mat);
+}
+// Radius profiles (scene units; torso length is 1.1).
+const PROFILE = {
+  upper: [[0, 0.092], [0.12, 0.098], [0.45, 0.082], [0.62, 0.085], [0.85, 0.066], [1, 0.058]] as [number, number][],
+  fore: [[0, 0.06], [0.18, 0.068], [0.45, 0.058], [0.8, 0.045], [1, 0.04]] as [number, number][],
+  thigh: [[0, 0.135], [0.2, 0.14], [0.55, 0.118], [0.85, 0.09], [1, 0.075]] as [number, number][],
+  shin: [[0, 0.07], [0.15, 0.078], [0.32, 0.084], [0.6, 0.062], [0.9, 0.045], [1, 0.042]] as [number, number][],
+};
+
+/**
+ * One continuous torso: elliptical rings along the spine (x = front/back, z = side to side),
+ * from the seat up through hips, waist, ribcage and shoulders.
+ */
+function torsoGeometry(len: number) {
+  // [t along hip→shoulder, half-depth (front/back), half-width (side), forward offset]
+  const rings: [number, number, number, number][] = [
+    [-0.16, 0.06, 0.1, -0.02], [-0.1, 0.115, 0.17, -0.025], [0.0, 0.135, 0.2, -0.02], [0.12, 0.13, 0.19, -0.01],
+    [0.3, 0.112, 0.16, 0.0], [0.45, 0.118, 0.165, 0.005], [0.6, 0.135, 0.19, 0.02], [0.74, 0.148, 0.215, 0.028],
+    [0.87, 0.14, 0.235, 0.02], [0.97, 0.11, 0.225, 0.0], [1.04, 0.07, 0.15, -0.01], [1.08, 0.03, 0.06, -0.01],
+  ];
+  const seg = 32;
+  const pos: number[] = [];
+  for (const [t, rx, rz, cx] of rings) {
+    for (let i = 0; i <= seg; i++) {
+      const a = (i / seg) * Math.PI * 2;
+      // Slightly squarer than an ellipse, like a real ribcage and back.
+      const c = Math.cos(a), sn = Math.sin(a);
+      const sq = (v: number) => Math.sign(v) * Math.pow(Math.abs(v), 0.82);
+      pos.push(cx + rx * 1.08 * sq(c), t * len, rz * 1.14 * sq(sn)); // a touch broader than the base profile
+    }
+  }
+  const idx: number[] = [];
+  for (let r = 0; r < rings.length - 1; r++) for (let i = 0; i < seg; i++) {
+    const a = r * (seg + 1) + i, b = a + seg + 1;
+    idx.push(a, b, a + 1, b, b + 1, a + 1);
+  }
+  // Close bottom and top.
+  const cap = (ring: number, top: boolean) => {
+    const [t, , , cx] = rings[ring];
+    const c = pos.length / 3; pos.push(cx, t * len, 0);
+    for (let i = 0; i < seg; i++) { const a = ring * (seg + 1) + i; if (top) idx.push(a, c, a + 1); else idx.push(a + 1, c, a); }
+  };
+  cap(0, false); cap(rings.length - 1, true);
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  g.setIndex(idx);
+  g.computeVertexNormals();
+  return g;
+}
+
 function buildBody(m: Mats, working: Set<string>) {
   const g = new THREE.Group();
+  const torsoLen = LEN.torso / U;
+  const pick = (i: number, seg: string) => (working.has(`${i}:${seg}`) ? m.work : m.body);
   // Glow is per side, so a one-arm exercise lights only the working arm.
   const sides = [0, 1].map((i) => ({
-    upper: capsule(0.085, L.upper, working.has(`${i}:upper`) ? m.work : m.body), fore: capsule(0.07, L.fore, working.has(`${i}:fore`) ? m.work : m.body),
-    thigh: capsule(0.12, L.thigh, working.has(`${i}:thigh`) ? m.work : m.body), shin: capsule(0.09, L.shin, working.has(`${i}:shin`) ? m.work : m.body),
-    foot: capsule(0.06, 20 / U, m.body),
-    shoulderJ: sphere(0.1, m.gold), elbowJ: sphere(0.072, m.gold), hand: sphere(0.07, m.gold),
-    hipJ: sphere(0.11, m.gold), kneeJ: sphere(0.09, m.gold), ankleJ: sphere(0.065, m.gold),
+    upper: sculptedLimb(PROFILE.upper, L.upper, pick(i, "upper")),
+    fore: sculptedLimb(PROFILE.fore, L.fore, pick(i, "fore")),
+    thigh: sculptedLimb(PROFILE.thigh, L.thigh, pick(i, "thigh")),
+    shin: sculptedLimb(PROFILE.shin, L.shin, pick(i, "shin")),
+    deltoid: sphere(1, pick(i, "upper")),
+    hand: sphere(1, m.gold),
+    foot: sphere(1, m.body),
   }));
-  // Torso: pelvis, waist, ribcage and shoulder yoke, all ellipsoids for a sculpted mannequin.
-  const pelvis = sphere(1, m.body), waist = sphere(1, m.body), chest = sphere(1, m.body), yoke = capsule(0.11, SHOULDER_Z * 2 + 0.1, m.body);
-  const neck = capsule(0.07, 0.22, m.body), head = sphere(1, m.body);
-  g.add(pelvis, waist, chest, yoke, neck, head);
+  const torso = new THREE.Mesh(torsoGeometry(torsoLen), m.body);
+  const neck = sculptedLimb([[0, 0.07], [0.5, 0.062], [1, 0.068]], 0.2, m.body);
+  const head = sphere(1, m.body), jaw = sphere(1, m.body);
+  g.add(torso, neck, head, jaw);
   sides.forEach((s) => g.add(...Object.values(s)));
   g.traverse((o) => { if ((o as THREE.Mesh).isMesh) { o.castShadow = true; o.receiveShadow = true; } });
+
+  const basis = new THREE.Matrix4();
+  const X = new THREE.Vector3(), Y = new THREE.Vector3(), Z = new THREE.Vector3();
+  /** Orientation with Y along `up` and X toward the body's front (in the side-view plane). */
+  const frame = (up: THREE.Vector3, q: THREE.Quaternion) => {
+    Y.copy(up).normalize();
+    X.set(Y.y, -Y.x, 0).normalize();
+    Z.crossVectors(X, Y).normalize();
+    basis.makeBasis(X, Y, Z);
+    q.setFromRotationMatrix(basis);
+  };
 
   return {
     group: g,
     update(b: Body3) {
       const spine = new THREE.Vector3().subVectors(b.chest, b.hip).normalize();
-      const orient = (o: THREE.Object3D) => o.quaternion.setFromUnitVectors(UP, spine);
-      pelvis.position.copy(b.hip).addScaledVector(spine, 0.05); orient(pelvis); pelvis.scale.set(0.24, 0.2, 0.3);
-      waist.position.copy(b.hip).lerp(b.chest, 0.45); orient(waist); waist.scale.set(0.2, 0.3, 0.25);
-      chest.position.copy(b.chest); orient(chest); chest.scale.set(0.26, 0.3, 0.36);
-      const sL = b.sides[0].s, sR = b.sides[1].s;
-      between(yoke, sR, sL);
-      const neckBase = sL.clone().lerp(sR, 0.5);
+      torso.position.copy(b.hip);
+      frame(spine, torso.quaternion);
+
+      const neckBase = b.sides[0].s.clone().lerp(b.sides[1].s, 0.5).addScaledVector(spine, 0.03);
       const headDir = new THREE.Vector3().subVectors(b.head, neckBase).normalize();
-      between(neck, neckBase, neckBase.clone().addScaledVector(headDir, 0.26));
-      head.position.copy(b.head).addScaledVector(headDir, 0.04);
-      head.quaternion.setFromUnitVectors(UP, headDir); head.scale.set(0.16, 0.2, 0.15);
+      between(neck, neckBase, neckBase.clone().addScaledVector(headDir, 0.2));
+      // Head: an egg, slightly longer front-to-back than side-to-side, with a jaw below the front.
+      head.position.copy(neckBase).addScaledVector(headDir, 0.36);
+      frame(headDir, head.quaternion);
+      head.scale.set(0.14, 0.17, 0.124);
+      jaw.quaternion.copy(head.quaternion);
+      jaw.position.copy(head.position).addScaledVector(headDir, -0.09);
+      const front = new THREE.Vector3(headDir.y, -headDir.x, 0).normalize();
+      jaw.position.addScaledVector(front, 0.035);
+      jaw.scale.set(0.1, 0.085, 0.092);
+
       b.sides.forEach((p, i) => {
         const s = sides[i];
         between(s.upper, p.s, p.e); between(s.fore, p.e, p.h);
         between(s.thigh, p.hip, p.k); between(s.shin, p.k, p.a);
-        between(s.foot, p.heel, p.toe);
-        s.shoulderJ.position.copy(p.s); s.elbowJ.position.copy(p.e); s.hand.position.copy(p.h);
-        s.hipJ.position.copy(p.hip); s.kneeJ.position.copy(p.k); s.ankleJ.position.copy(p.a);
+        // Deltoid caps the shoulder, leaning along the upper arm.
+        const armDir = new THREE.Vector3().subVectors(p.e, p.s).normalize();
+        s.deltoid.position.copy(p.s).addScaledVector(armDir, 0.035);
+        s.deltoid.quaternion.setFromUnitVectors(UP, armDir);
+        s.deltoid.scale.set(0.105, 0.13, 0.1);
+        // Hand: a flattened mitt continuing the forearm (gold, the brand's contact points).
+        const foreDir = new THREE.Vector3().subVectors(p.h, p.e).normalize();
+        s.hand.position.copy(p.h).addScaledVector(foreDir, 0.055);
+        s.hand.quaternion.setFromUnitVectors(UP, foreDir);
+        s.hand.scale.set(0.04, 0.085, 0.058);
+        // Foot: a wedge from heel to toe, slightly raised at the ankle.
+        const footDir = new THREE.Vector3().subVectors(p.toe, p.heel);
+        const fl = footDir.length(); footDir.normalize();
+        s.foot.position.copy(p.heel).addScaledVector(footDir, fl * 0.5).add(new THREE.Vector3(0, 0.02, 0));
+        s.foot.quaternion.setFromUnitVectors(UP, footDir);
+        s.foot.scale.set(0.055, fl * 0.62, 0.06);
       });
     },
   };
