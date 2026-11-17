@@ -339,3 +339,5 @@ textarea.window-input{height:150px;padding:14px 16px;font:var(--t-body);resize:v
 .musclepanel{text-align:left}
 .inline-row>div{min-width:0;flex:1}
 .inline-row .btn-xs{flex:none;white-space:nowrap;letter-spacing:1.5px}
+.fig3d{display:block;width:100%;aspect-ratio:4/3;touch-action:pan-y;cursor:grab;border-radius:18px}
+.fig3d:active{cursor:grabbing}

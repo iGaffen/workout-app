@@ -130,5 +130,13 @@ The app was redesigned as a personal brand. The concept is a fine watch at night
 ## v4.1: edit today's session
 After **Finish workout**, the saved card has **Edit today's session**. It reopens the day with the saved ticks, weights and shoulder pick. Change anything, then tap **Save changes**: the saved session is replaced, not duplicated, and keeps its original time and duration. **Keep the saved session** cancels editing and leaves the saved version as it was.
 
+## v4.2: 3D mannequin animations
+Each exercise card shows a live 3D mannequin (three.js, `src/anim/three/`), driven by the same joint-angle movement data as before. The side-view skeleton is lifted into 3D: near limbs toward the viewer, far limbs away, grip width per exercise, and arm yaw for lateral moves. Limb lengths stay fixed in 3D.
+- **Look:** a graphite satin body with champagne-gold joints and hands. The limbs that do the work glow lilac (detected automatically: any segment that moves more than 20°, per side, so one-arm moves light one arm). There's a soft bloom, a warm key light with soft shadows, an amethyst rim light and a guilloché floor.
+- **Equipment in 3D:** benches, seats, back pads, rollers, cable columns with pulleys and a cable that follows the hands, the lat bar, the rope handle, the EZ bar with plates, the Olympic barbell with gold-rimmed plates and a rack, the goblet dumbbell, and the 45° leg-press sled on rails with loaded plates.
+- **Controls:** drag sideways to turn the view, tap to pause, double-tap to reset the angle, 1× / 0.5× speed, and START/END frames.
+- The 3D code loads only when an exercise card opens, and is cached for offline use. Phones without WebGL 2 show the 2D figure. With "reduce motion" on, it shows still poses.
+- Per-exercise camera angle, zoom, grip width and pulley side are in `SETUP` in `src/anim/three/scene.ts`.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.
