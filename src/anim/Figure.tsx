@@ -1,13 +1,24 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import type { AnimationSpec } from "../model/schema";
 import { endPoses, sample, solve, timeline } from "./solver";
 import { scene } from "./draw";
 import { subscribe } from "./loop";
 import { useReducedMotion } from "../components/hooks";
 
-interface Props { spec: AnimationSpec; name: string; controls?: boolean }
+// The 3D mannequin (three.js) loads on demand; phones without WebGL keep the 2D figure.
+const Figure3D = lazy(() => import("./three/Figure3D"));
+let webgl: boolean | undefined;
+function hasWebGL() {
+  if (webgl === undefined) {
+    try { webgl = !!document.createElement("canvas").getContext("webgl2"); } catch { webgl = false; }
+  }
+  return webgl;
+}
 
-export function Figure({ spec, name, controls = true }: Props) {
+interface Props { spec: AnimationSpec; name: string; exerciseId?: string; controls?: boolean }
+
+export function Figure({ spec, name, exerciseId, controls = true }: Props) {
+  const use3D = !!exerciseId && hasWebGL();
   const g = useRef<SVGGElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const label = useRef<HTMLSpanElement>(null);
@@ -21,7 +32,7 @@ export function Figure({ spec, name, controls = true }: Props) {
   state.current.slow = slow;
 
   useEffect(() => {
-    if (reduce) return;
+    if (reduce || use3D) return;
     const el = box.current;
     const io = new IntersectionObserver(([e]) => { state.current.visible = e.isIntersecting; });
     if (el) io.observe(el);
@@ -41,7 +52,7 @@ export function Figure({ spec, name, controls = true }: Props) {
       draw();
     });
     return () => { unsub(); io.disconnect(); };
-  }, [spec, segs, reduce]);
+  }, [spec, segs, reduce, use3D]);
 
   const still = (pose: typeof startPose) => scene(solve(pose), spec.equipment);
   // START / END pills freeze the figure on that end position; tap the figure to go back to moving.
@@ -57,15 +68,23 @@ export function Figure({ spec, name, controls = true }: Props) {
           <button className="pill" onClick={() => setSlow((x) => !x)} aria-pressed={slow} aria-label="Half speed">{slow ? "0.5×" : "1×"}</button>
         )}
       </div>
-      <button className="figbtn" onClick={() => { if (frozen) setFrozen(null); else setPaused((p) => !p); }}
-        aria-label={paused || frozen ? `Play ${name} animation` : `Pause ${name} animation`}>
-        {view
-          ? <svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name}: ${view} position`} dangerouslySetInnerHTML={{ __html: still(view === "start" ? startPose : endPose) }} />
-          : <svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name} movement animation`}><g ref={g} /></svg>}
-      </button>
+      {use3D ? (
+        <Suspense fallback={<svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name}: start position`} dangerouslySetInnerHTML={{ __html: still(startPose) }} />}>
+          <Figure3D spec={spec} exerciseId={exerciseId!} name={name} paused={paused} slow={slow} frozen={frozen} still={reduce}
+            onPhase={(lb) => { if (label.current && !frozen) label.current.textContent = lb; }}
+            onTap={() => { if (frozen) setFrozen(null); else setPaused((p) => !p); }} />
+        </Suspense>
+      ) : (
+        <button className="figbtn" onClick={() => { if (frozen) setFrozen(null); else setPaused((p) => !p); }}
+          aria-label={paused || frozen ? `Play ${name} animation` : `Pause ${name} animation`}>
+          {view
+            ? <svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name}: ${view} position`} dangerouslySetInnerHTML={{ __html: still(view === "start" ? startPose : endPose) }} />
+            : <svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name} movement animation`}><g ref={g} /></svg>}
+        </button>
+      )}
       {controls && (
         <div className="framefoot">
-          <span className="tap">{reduce ? "Still frames" : paused || frozen ? "Tap to play" : "Tap to pause"}</span>
+          <span className="tap">{reduce ? "Still frames" : paused || frozen ? "Tap to play" : use3D ? "Drag to turn · tap to pause" : "Tap to pause"}</span>
           <span style={{ display: "flex", gap: 6 }}>
             <button className="pill pill-sm" aria-pressed={view === "start"} onClick={() => setFrozen((f) => (f === "start" && !reduce ? null : "start"))}>Start</button>
             <button className="pill pill-sm" aria-pressed={view === "end"} onClick={() => setFrozen((f) => (f === "end" && !reduce ? null : "end"))}>End</button>

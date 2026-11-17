@@ -10,7 +10,7 @@ export function ExerciseView({ ex, reps, hold, weight }: { ex: Exercise; reps?: 
   const timer = useTimer();
   return (
     <>
-      <Figure spec={ex.animation} name={ex.name} />
+      <Figure spec={ex.animation} name={ex.name} exerciseId={ex.id} />
       <div className="titlerow">
         <h2>{ex.name}</h2>
         {reps && <span className="repspill">{reps}</span>}
