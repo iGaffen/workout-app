@@ -46,7 +46,9 @@ jobs:
           VERSION_CODE: ${{ github.run_number }}
         run: |
           chmod +x gradlew
-          ./gradlew assembleRelease --no-daemon --stacktrace
+          set -o pipefail
+          # Keep the log readable: on failure, print just the compiler / build errors at the end.
+          ./gradlew assembleRelease --no-daemon 2>&1 | tee build.log || { echo "::group::Errors"; grep -E "^e: |error:|What went wrong|> " build.log | grep -v "^> Task" | head -80; echo "::endgroup::"; exit 1; }
           cp app/build/outputs/apk/release/app-release.apk ../gym-plan.apk
       - uses: actions/upload-artifact@v4
         with:
