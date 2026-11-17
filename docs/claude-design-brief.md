@@ -1,5 +1,7 @@
 # Claude Design brief: workout app redesign
 
+> **Superseded:** use `docs/design-handoff.md` instead. It is one self-contained file to send to a new tool.
+
 How to take `docs/design-spec.md` into Claude Design, work it into a finished brand and app design, and bring back what's needed to build it.
 
 ## 0. Before you start
