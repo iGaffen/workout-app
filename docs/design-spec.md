@@ -26,11 +26,11 @@ Source of truth for the redesign. Built in Figma first, then in the app. Decisio
 
 Rules: amethyst is for actions; gold is for achievement and totals. Never both on the same element. Every text colour passes 4.5:1 on its background, and 3:1 for 24 px and up.
 
-**Light theme (to design after dark):** base `#F6F3FA`, glass `rgba(255,255,255,0.7)`, text `#1A1326`, amethyst `#5B3FD9`, gold `#9C7A35`.
+**Light theme (decided: later, derived from dark once it's final):** base `#F6F3FA`, glass `rgba(255,255,255,0.7)`, text `#1A1326`, amethyst `#5B3FD9`, gold `#9C7A35`.
 
 ## 3. Type
 - **Display and numbers:** Barlow Condensed 600/700. Exercise names 22 px, screen titles 40 px, hero numbers 34–52 px, tabular figures.
-- **Body and labels:** Inter 400/500/600 (proposal; Barlow is the fallback). Meta 14 px, labels 13 px with 1.5 px letter-spacing in caps for section headers ("STILL TO DO").
+- **Body and labels:** Inter 400/500/600 **(decided)**. Meta 14 px, labels 13 px with 1.5 px letter-spacing in caps for section headers ("STILL TO DO").
 - Sentence case everywhere except small caps section labels.
 
 ## 4. Surfaces (decided: frosted glass)
@@ -76,7 +76,5 @@ Home (checklist), exercise sheet, Library, Progress, Settings, "Workout saved" s
 ## 9. Figma file structure
 Pages: References, Foundations (variables for colour with dark and light modes, type styles, spacing, radii, effects), Icons, Components (with variants for each state), Screens, Motion (a prototype for each row of the motion table).
 
-## Open questions
-- Body font: Inter or keep Barlow?
-- Light theme now or later?
-- App mark and icon: monogram, abstract mark, or wordmark?
+## 10. App mark (decided: monogram)
+A monogram in `metal/gold-sheen` on `bg/base`, set in Barlow Condensed 700 with a thin gold ring. Proposal: **"AM"** (Avi Moshe); alternative: "G" for Gym plan. It's used for the app icon (with a maskable safe zone), the splash, and the app-open sheen.
