@@ -11,7 +11,10 @@ import "./styles/figure.css";
 import { App } from "./App";
 import { init } from "./db/repos";
 import { registerSW } from "virtual:pwa-register";
+import { isNative } from "./native/platform";
 
-registerSW({ immediate: true });
+// The Android app ships its files inside the APK, so it needs no service worker; it talks to the widgets instead.
+if (isNative()) import("./native/bridge").then((m) => m.startWidgetBridge());
+else registerSW({ immediate: true });
 init();
 createRoot(document.getElementById("root")!).render(<StrictMode><App /></StrictMode>);

@@ -12,6 +12,10 @@
     "seed": "python3 scripts/gen_seed.py"
   },
   "dependencies": {
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/filesystem": "^8.1.5",
+    "@capacitor/share": "^8.0.3",
     "@fontsource/inter-tight": "^5.3.0",
     "@fontsource/michroma": "^5.3.0",
     "dexie": "^4.4.6",
@@ -21,6 +25,8 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.6.2",
+    "@capacitor/cli": "^8.6.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@types/three": "^0.187.0",

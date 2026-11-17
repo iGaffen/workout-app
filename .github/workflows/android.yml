@@ -1,0 +1,62 @@
+name: Build Android app
+
+# Builds the APK (web app inside Capacitor plus native home-screen widgets) on every push and pull request.
+# Pushes to main publish it to the "Android app" GitHub release as gym-plan.apk. See docs/android-app.md.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Build the web app for the APK (served from the app root)
+        run: npm run build
+        env:
+          BASE_PATH: /
+      - run: npx cap sync android
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Signing key
+        env:
+          KS: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KS" ]; then echo "$KS" | base64 -d > android/app/keystore.jks; echo "Signing with the release key."; else echo "::warning::ANDROID_KEYSTORE_B64 is not set: this APK uses a temporary key and can't update an installed signed app."; fi
+      - name: Build APK
+        working-directory: android
+        env:
+          VERSION_CODE: ${{ github.run_number }}
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon --stacktrace
+          cp app/build/outputs/apk/release/app-release.apk ../gym-plan.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gym-plan-apk
+          path: gym-plan.apk
+      - name: Publish to the "Android app" release
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view android >/dev/null 2>&1 || gh release create android --title "Android app" --notes "Latest Gym plan APK. Download gym-plan.apk on your phone and install it. Built from main automatically." --target main
+          gh release upload android gym-plan.apk --clobber
+          gh release edit android --notes "Latest Gym plan APK (build ${{ github.run_number }}, $(date -u +%Y-%m-%d)). Download gym-plan.apk on your phone and install it."

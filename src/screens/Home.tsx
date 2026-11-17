@@ -10,25 +10,8 @@ import { ExerciseSheet } from "../components/ExerciseSheet";
 import { BackupButton } from "../components/BackupButton";
 import { Dial } from "../components/Dial";
 import { Glyph, Monogram } from "../components/Glyph";
-import type { Block, Exercise, WorkoutLog } from "../model/schema";
-
-type Slot = Block & { exerciseId: string };
-
-/** Today's ticks, weights and picks survive closing the app, until the day changes or you finish. */
-interface DayState {
-  date: string; done: string[]; weights: Record<string, number>; choice?: Record<string, string>; startedAt?: number;
-  /** Set while today's saved session is reopened for editing; finishing replaces that log. */
-  editing?: string;
-}
-const KEY = "gym-today";
-const fresh = (): DayState => ({ date: localDate(new Date()), done: [], weights: {} });
-function loadDay(): DayState {
-  try {
-    const s = JSON.parse(localStorage.getItem(KEY) ?? "null") as DayState | null;
-    return s && s.date === localDate(new Date()) ? s : fresh();
-  } catch { return fresh(); }
-}
-const saveDay = (s: DayState) => { try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* private mode */ } };
+import type { Exercise } from "../model/schema";
+import { DAY_EXTERNAL, chosenId, finishDay, freshDay as fresh, loadDay, optionsOf as slotOptions, saveDay, slotsOf, weightOf, type DayState, type Slot } from "../model/day";
 
 const TICK_MS = 450; // the row moves to Done after its tick animation (build pack §4)
 
@@ -45,6 +28,8 @@ export function Home() {
   const [finishing, setFinishing] = useState(false);
   const timers = useRef<number[]>([]);
   useEffect(() => saveDay(day), [day]);
+  // Widget actions applied while the app was closed change today's state from outside.
+  useEffect(() => { const f = () => setDay(loadDay()); window.addEventListener(DAY_EXTERNAL, f); return () => window.removeEventListener(DAY_EXTERNAL, f); }, []);
   useEffect(() => () => timers.current.forEach(clearTimeout), []);
 
   if (!data) return null;
@@ -61,7 +46,7 @@ export function Home() {
   const FULL = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const nextOpenDay = (() => { const d = wk.days.find((x) => !x.done); return d ? FULL[d.day] : weekdayName(); })();
 
-  const items = session.blocks.filter((b): b is Slot => b.type === "exercise" && !!b.exerciseId);
+  const items = slotsOf(routine);
   const warm = session.blocks.filter((b) => b.type === "text");
   const position = new Map(items.map((b, i) => [b.exerciseId, i + 1]));
   const isDone = (id: string) => day.done.includes(id);
@@ -69,23 +54,11 @@ export function Home() {
   const done = items.filter((b) => isDone(b.exerciseId));
   const allDone = items.length > 0 && todo.length === 0;
 
-  // Either/or slots: today's pick, else the one logged most recently, else the first.
-  const optionsOf = (b: Slot) => [b.exerciseId, ...(b.alternatives ?? [])].filter((id) => exMap.has(id));
-  const lastPicked = (opts: string[]) => {
-    for (const l of [...logs].sort((a, c) => c.date.localeCompare(a.date))) {
-      const hit = opts.find((id) => (l.sets ?? []).some((s) => s.exerciseId === id));
-      if (hit) return hit;
-    }
-    return undefined;
-  };
-  const chosen = (b: Slot) => {
-    const opts = optionsOf(b);
-    const c = day.choice?.[b.exerciseId];
-    return (c && opts.includes(c) ? c : lastPicked(opts)) ?? b.exerciseId;
-  };
+  const optionsOf = (b: Slot) => slotOptions(b, exMap);
+  const chosen = (b: Slot) => chosenId(b, day, logs, exMap);
   const choose = (key: string, id: string) => setDay((d) => ({ ...d, choice: { ...(d.choice ?? {}), [key]: id } }));
   const repsOf = (b: Slot, id: string) => (id === b.exerciseId ? repsFor(b, exMap.get(id)) : exMap.get(id)?.defaultReps ?? "");
-  const weightFor = (id: string) => day.weights[id] ?? lastWeight(logs, id)?.weightKg;
+  const weightFor = (id: string) => weightOf(id, day, logs);
   const setWeight = (id: string, v?: number) => setDay((d) => {
     const weights = { ...d.weights };
     if (v === undefined) delete weights[id]; else weights[id] = v;
@@ -106,18 +79,9 @@ export function Home() {
   const finish = async () => {
     if (finishing) return;
     if (!done.length && !confirm("Nothing is ticked yet. Save the workout anyway?")) return;
-    const sets: NonNullable<WorkoutLog["sets"]> = done.flatMap((b) => {
-      const id = chosen(b);
-      const ex = exMap.get(id);
-      const w = ex && takesWeight(ex) ? weightFor(id) : undefined;
-      return Array.from({ length: setsFor(b, settings) }, (_, i) => ({ exerciseId: id, setIndex: i + 1, ...(w !== undefined && ex ? { weightKg: w, totalKg: totalKg(ex, w) } : {}) }));
-    });
     setFinishing(true);
     await new Promise((r) => setTimeout(r, 600)); // let the gold shimmer play
-    const editedLog = day.editing ? logs.find((l) => l.id === day.editing) : undefined;
-    const durationSeconds = editedLog ? editedLog.durationSeconds : day.startedAt ? Math.round((Date.now() - day.startedAt) / 1000) : undefined;
-    const entry = { date: editedLog?.date ?? new Date().toISOString(), routineId: routine.id, sessionId: session.id, ...(durationSeconds ? { durationSeconds } : {}), ...(sets.length ? { sets } : {}) };
-    if (editedLog) await LogRepo.replace(editedLog.id, entry); else await LogRepo.add(entry);
+    await finishDay(day, { routine, settings, exMap, logs });
     setFinishing(false);
     setDay(fresh());
     scrollTo({ top: 0, behavior: "smooth" });
