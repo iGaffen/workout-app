@@ -13,11 +13,11 @@ describe("gym day list", () => {
     expect(routines).toHaveLength(1);
     expect(R.sessions).toHaveLength(1);
   });
-  it("has your 7 slots in order, shoulders as either/or", () => {
+  it("has your 8 slots in order, shoulders as either/or", () => {
     const blocks = S.blocks.filter((b) => b.type === "exercise");
-    expect(blocks.map((b) => b.exerciseId)).toEqual(["lat-pulldown", "ez-bar-preacher-curl", "triceps-rope-pushdown", "leg-press",
+    expect(blocks.map((b) => b.exerciseId)).toEqual(["lat-pulldown", "seated-cable-row", "ez-bar-preacher-curl", "triceps-rope-pushdown", "leg-press",
       "barbell-bench-press", "goblet-squat", "cable-lateral-raise"]);
-    const sh = blocks[6];
+    const sh = blocks[7];
     expect(sh.title).toBe("Shoulders");
     expect(sh.alternatives).toEqual(["shoulder-press-machine"]);
   });
@@ -27,9 +27,9 @@ describe("gym day list", () => {
       expect(b.reps).toMatch(/^10–12/);
     }
   });
-  it("fits 45 minutes, with no finisher", () => {
+  it("is about 48 minutes with no finisher (you chose to do both back exercises)", () => {
     expect(S.blocks.some((b) => /finisher/i.test(b.title ?? ""))).toBe(false);
-    expect(estimateMinutes(S, { phaseSets: 2 }, exMap)).toBeLessThanOrEqual(45);
+    expect(estimateMinutes(S, { phaseSets: 2 }, exMap)).toBe(48);
   });
   it("every slot and alternative points to a real exercise", () => {
     for (const b of S.blocks.filter((x) => x.type === "exercise"))

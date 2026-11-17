@@ -257,7 +257,7 @@ E.append(ex("shoulder-press-machine", "Shoulder press machine", ["machine"], ["f
   notes="Skip it for the cable lateral raise if your left shoulder complains"))
 
 # Only the exercises you actually do ship with the app.
-KEEP = ["lat-pulldown", "ez-bar-preacher-curl", "triceps-rope-pushdown", "leg-press", "barbell-bench-press", "goblet-squat", "cable-lateral-raise", "shoulder-press-machine"]
+KEEP = ["lat-pulldown", "seated-cable-row", "ez-bar-preacher-curl", "triceps-rope-pushdown", "leg-press", "barbell-bench-press", "goblet-squat", "cable-lateral-raise", "shoulder-press-machine"]
 E = [e for e in E if e["id"] in KEEP]
 # What the weight field means on each (researched Nov 2026; estimates can be edited in the app).
 LOAD = {
@@ -265,7 +265,7 @@ LOAD = {
   "ez-bar-preacher-curl": {"weightKind": "plates", "baseKg": 10, "baseLabel": "W bar (EZ bar)", "baseEstimate": True},
   "leg-press": {"weightKind": "plates", "baseKg": 40, "baseLabel": "Sled", "baseEstimate": True},
   "goblet-squat": {"weightKind": "dumbbell"},
-  "lat-pulldown": {"weightKind": "stack"}, "triceps-rope-pushdown": {"weightKind": "stack"},
+  "lat-pulldown": {"weightKind": "stack"}, "seated-cable-row": {"weightKind": "stack"}, "triceps-rope-pushdown": {"weightKind": "stack"},
   "cable-lateral-raise": {"weightKind": "stack"}, "shoulder-press-machine": {"weightKind": "stack"},
 }
 for e in E: e.update(LOAD.get(e["id"], {}))
@@ -286,7 +286,7 @@ WARM = {"type": "text", "title": "Warm-up", "icon": "bike", "lines": ["Bike ride
 FIN = {"type": "text", "title": "Finisher", "icon": "stairs", "lines": ["Stairmaster or incline walk, 8–10 min"]}
 R = [{"schemaVersion": 1, "id": "gym-day", "name": "Gym day", "sessions": [
   {"id": "main", "name": "Gym day", "blocks": [WARM,
-     g("lat-pulldown", "10–12"), g("ez-bar-preacher-curl", "10–12"), g("triceps-rope-pushdown", "10–12"),
+     g("lat-pulldown", "10–12"), g("seated-cable-row", "10–12"), g("ez-bar-preacher-curl", "10–12"), g("triceps-rope-pushdown", "10–12"),
      g("leg-press", "10–12"), g("barbell-bench-press", "10–12"), g("goblet-squat", "10–12"),
      {**g("cable-lateral-raise", "10–12 per arm"), "title": "Shoulders", "alternatives": ["shoulder-press-machine"]}]}]}]
 json.dump(R, open(os.path.join(OUT, "routines.json"), "w"), indent=1, ensure_ascii=False)

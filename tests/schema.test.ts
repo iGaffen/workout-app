@@ -5,8 +5,8 @@ import { ExerciseSchema, RoutineSchema } from "../src/model/schema";
 import { parsePack, previewPack, summary } from "../src/model/pack";
 
 describe("seed data", () => {
-  it("has the 8 exercises you do, all valid", () => {
-    expect(exercises).toHaveLength(8);
+  it("has the 9 exercises you do, all valid", () => {
+    expect(exercises).toHaveLength(9);
     for (const e of exercises) expect(ExerciseSchema.safeParse(e).success, e.id).toBe(true);
   });
   it("routine is valid and references real exercises", () => {

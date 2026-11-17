@@ -24,6 +24,12 @@
      },
      {
       "type": "exercise",
+      "exerciseId": "seated-cable-row",
+      "sets": 3,
+      "reps": "10–12"
+     },
+     {
+      "type": "exercise",
       "exerciseId": "ez-bar-preacher-curl",
       "sets": 3,
       "reps": "10–12"
