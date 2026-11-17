@@ -2,7 +2,7 @@
 
 A **fully branded personal app**: a small private brand built to make going to the gym feel special and keep motivation up. It's not for sale. The name is TBD, so "the app" stands in until it's chosen.
 
-Source of truth for the redesign. Built in Figma first, then in the app. Decisions marked **(decided)** came from Avi; the rest are proposals to confirm in Figma.
+Source of truth for the redesign. Designed in **Claude Design** first, then built in the app. Decisions marked **(decided)** came from Avi; the rest are proposals to confirm in Figma.
 
 ## 1. Feel
 **Dark, refined, quietly powerful.** A private members' gym or a luxury watch, not a sports app. No neon, no loud "workout" energy. Gold and purple are used sparingly, like jewellery.
@@ -51,7 +51,7 @@ A bespoke line-icon family drawn for this brand, so every icon shares the same D
 - **Actions:** tick, plus, minus, close, chevron, switch, edit, backup/share.
 - **Exercise glyphs:** a simple mark per movement type (pull, push, press, curl, legs, shoulders), used as row badges and in the Library.
 - **Achievement:** streak flame (in gold), trophy or medal, week complete.
-Deliverables: an SVG for each icon, built as Figma components with an outline and an active variant.
+Deliverables: an SVG for each icon, in an outline and an active version.
 
 ## 6. Motion (decided: refined, no vibration)
 Global: ease-out `cubic-bezier(0.2, 0.8, 0.2, 1)` for entering, ease-in `cubic-bezier(0.4, 0, 1, 1)` for leaving, spring for presses. Nothing longer than 800 ms, nothing blocks taps. With "reduce motion" on, everything becomes a 150 ms fade.
@@ -83,8 +83,8 @@ Global: ease-out `cubic-bezier(0.2, 0.8, 0.2, 1)` for entering, ease-in `cubic-b
 ## 8. Screens
 Home (checklist), exercise sheet, Library, Progress, Settings, "Workout saved" state. Phone frame 390 × 844.
 
-## 9. Figma file structure
-Pages: References, Brand (logo, wordmark, lock-ups, voice), Foundations (variables for colour with dark and light modes, type styles, spacing, radii, effects), Icons, Components (with variants for each state), Screens, Motion (a prototype for each row of the motion table).
+## 9. Design canvas structure (Claude Design)
+One canvas with sections (or pages) in this order: **References**, **Brand** (logo, wordmark, lock-ups, voice), **Foundations** (colour tokens, type, spacing, radii, glass effects), **Icons**, **Components** (every state side by side), **Screens** (390 × 844 phone frames), **Motion** (an interactive prototype for each row of the motion table). Workflow and hand-back: `docs/claude-design-brief.md`.
 
 ## 10. Brand
 ### Name
