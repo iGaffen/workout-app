@@ -1,12 +1,18 @@
-.fig .floor{stroke:var(--floor,#C4CAD3);stroke-width:2}
-.fig .body{fill:var(--fig,#172033)}
-.fig .far{fill:var(--figfar,#9AA3B2)}
-.fig .eq{fill:var(--prop,#B6BDC9)}
-.fig .eqframe{fill:var(--prop,#B6BDC9);opacity:.7}
-.fig .eqline,.fig .eqframe-line{stroke:var(--prop,#B6BDC9);stroke-width:3;stroke-linecap:round}
-.fig .eqline-fill{fill:var(--prop,#B6BDC9)}
-.fig .hub{fill:var(--card,#fff)}
-.fig .hubline{stroke:var(--card,#fff);stroke-width:1}
-.fig .load{fill:var(--accent,#2457F5)}
-.fig .load-dark{fill:var(--ink,#172033)}
-.fig .cable{stroke:var(--muted,#5B6578);stroke-width:1.4}
+/* Figure strokes from the build pack (§2.10): body in ink, working limbs in lume with an amethyst halo,
+   darker equipment, dashed cables, gold contact points. */
+.fig .floor{stroke:rgba(255,255,255,0.12);stroke-width:1.5}
+.fig .torso{fill:var(--ink-1,#F1ECF7)}
+.fig .head{fill:none;stroke:var(--ink-1,#F1ECF7);stroke-width:4.5}
+.fig .near{fill:var(--lume,#C9B4FF)}
+.fig .nearside{filter:drop-shadow(0 0 4px rgba(139,108,255,0.8))}
+.fig .far{fill:#5E566E}
+.fig .contact{fill:var(--gold,#E3C98F)}
+.fig .eq{fill:#4E4760}
+.fig .eqframe{fill:#4E4760;opacity:.8}
+.fig .eqline,.fig .eqframe-line{stroke:#4E4760;stroke-width:4;stroke-linecap:round}
+.fig .eqline-fill{fill:#4E4760}
+.fig .hub{fill:#0A0810}
+.fig .hubline{stroke:#0A0810;stroke-width:1}
+.fig .load{fill:#6A6180}
+.fig .load-dark{fill:#4E4760}
+.fig .cable{stroke:#5E566E;stroke-width:1.5;stroke-dasharray:3 4}

@@ -117,5 +117,15 @@ Logged sets keep both what you entered (`weightKg`) and the approximate total (`
 ## Changed in v3.2
 - Added the **seated cable row** (stack number) after the lat pulldown, as its own row. The list is now 8 rows, about 48 minutes.
 
+## v4.0: "Obsidian Horology" redesign
+The app was redesigned as a personal brand. The concept is a fine watch at night. The full spec is in `docs/build-pack.md`, and the original SVGs are in `src/assets/`.
+- **Home:** a watch dial fills one gold segment per finished exercise, with an amethyst lume dot marking the next. Below it are the week strip (Mon/Wed dots and the week streak) and status lines in the brand voice. Rows are numbered I–VIII, with the weight on the right and the tick ring at the far right. The Finish button turns gold once everything is ticked. After saving, the dial reads LOGGED and a saved card shows the session's minutes, exercises and new bests.
+- **Exercise sheet:** a bottom sheet with the animation frame (lilac working limbs, gold contact points, START/END still frames), a rolling weight "window" (hold − or + to repeat faster), gold PB styling for a new best, the base and total box, a front-and-back muscle panel, numbered cues and a caution box.
+- **Library, Progress and Settings** are restyled: filter chips and badges; a monthly recap (sessions, new bests, waist change); one-series charts with a crosshair tooltip and table view; gym-day circles.
+- **Brand:** an "AM" bezel monogram, 44 custom icons (outline and active), a new app icon (the letters are outlined by `scripts/outline_text.py` so they render without the font), the splash and film grain. Fonts are Michroma (instrument) and Inter Tight (reading), bundled for offline use.
+- **Motion:** press springs, tick draw with dial fill, the sheet growing in, the number roll, the gold shimmer on finish, a tab fade and the app-open splash. "Reduce motion" turns everything into 150 ms fades.
+- **New logic:** the week streak (consecutive weeks meeting the gym-day goal), personal bests (a weight above every earlier one) and the week phrases ("Two for two this week.").
+- **Light theme** is shown as "comes later"; System follows dark.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.

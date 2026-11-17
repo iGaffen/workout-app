@@ -262,13 +262,27 @@ E = [e for e in E if e["id"] in KEEP]
 # What the weight field means on each (researched Nov 2026; estimates can be edited in the app).
 LOAD = {
   "barbell-bench-press": {"weightKind": "plates", "baseKg": 20, "baseLabel": "Olympic bar"},
-  "ez-bar-preacher-curl": {"weightKind": "plates", "baseKg": 10, "baseLabel": "W bar (EZ bar)", "baseEstimate": True},
+  "ez-bar-preacher-curl": {"weightKind": "plates", "baseKg": 10, "baseLabel": "EZ bar", "baseEstimate": True},
   "leg-press": {"weightKind": "plates", "baseKg": 40, "baseLabel": "Sled", "baseEstimate": True},
   "goblet-squat": {"weightKind": "dumbbell"},
   "lat-pulldown": {"weightKind": "stack"}, "seated-cable-row": {"weightKind": "stack"}, "triceps-rope-pushdown": {"weightKind": "stack"},
   "cable-lateral-raise": {"weightKind": "stack"}, "shoulder-press-machine": {"weightKind": "stack"},
 }
 for e in E: e.update(LOAD.get(e["id"], {}))
+# Obsidian Horology redesign: names from the voice sheet, Library badges, one-arm flag, shoulder cautions.
+SHOULDER = "Stop short of any pain in the range (sensitive left shoulder)."
+EXTRA = {
+  "lat-pulldown": {"badge": "pull", "notes": SHOULDER},
+  "seated-cable-row": {"badge": "pull"},
+  "ez-bar-preacher-curl": {"badge": "curl"},
+  "triceps-rope-pushdown": {"badge": "push"},
+  "leg-press": {"badge": "legs", "name": "Leg press 45°"},
+  "barbell-bench-press": {"badge": "press", "notes": SHOULDER},
+  "goblet-squat": {"badge": "legs"},
+  "cable-lateral-raise": {"badge": "shoulders", "name": "Cable lateral raise", "unilateral": True, "notes": SHOULDER},
+  "shoulder-press-machine": {"badge": "press", "notes": SHOULDER},
+}
+for e in E: e.update(EXTRA.get(e["id"], {}))
 
 json.dump(E, open(os.path.join(OUT, "exercises.json"), "w"), indent=1, ensure_ascii=False)
 
@@ -288,6 +302,6 @@ R = [{"schemaVersion": 1, "id": "gym-day", "name": "Gym day", "sessions": [
   {"id": "main", "name": "Gym day", "blocks": [WARM,
      g("lat-pulldown", "10–12"), g("seated-cable-row", "10–12"), g("ez-bar-preacher-curl", "10–12"), g("triceps-rope-pushdown", "10–12"),
      g("leg-press", "10–12"), g("barbell-bench-press", "10–12"), g("goblet-squat", "10–12"),
-     {**g("cable-lateral-raise", "10–12 per arm"), "title": "Shoulders", "alternatives": ["shoulder-press-machine"]}]}]}]
+     {**g("cable-lateral-raise", "10–12"), "title": "Shoulders", "alternatives": ["shoulder-press-machine"]}]}]}]
 json.dump(R, open(os.path.join(OUT, "routines.json"), "w"), indent=1, ensure_ascii=False)
 print("wrote", len(E), "exercises")

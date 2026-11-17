@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ExerciseRepo, RoutineRepo, SettingsRepo } from "../db/repos";
 import { useData } from "../components/hooks";
 import { Icon } from "../components/Icons";
+import { Glyph } from "../components/Glyph";
 import type { Block, Exercise, Routine } from "../model/schema";
 import { useBackHandler } from "../components/back";
 import { ExerciseSheet } from "../components/ExerciseSheet";
@@ -30,23 +31,26 @@ export function Routines() {
 
   return (
     <>
-      <div className="top"><h1>Routines</h1></div>
+      <p className="label">{routines.length} routine{routines.length === 1 ? "" : "s"}</p>
+      <h1 className="title">Routines</h1>
+      <div className="stack">
       {routines.map((x) => (
-        <div className="card" key={x.id}>
-          <div className="blockhead">
-            <h2>{x.name}</h2>
-            {x.id === settings.activeRoutineId ? <span className="tag">Active</span> :
-              <button className="linkbtn" onClick={() => SettingsRepo.put({ ...settings, activeRoutineId: x.id })}>Make active</button>}
+        <section className="panel routine-card" key={x.id}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+            <h2 className="rname">{x.name}</h2>
+            {x.id === settings.activeRoutineId ? <span className="label gold">Active</span> :
+              <button className="link" onClick={() => SettingsRepo.put({ ...settings, activeRoutineId: x.id })}>Make active</button>}
           </div>
-          <p className="sub">{x.sessions.map((s) => `${s.name}: ${s.blocks.filter((b) => b.type === "exercise").length} exercises`).join(" · ")}</p>
-          <div className="nav">
-            <button onClick={() => setEdit(x.id)}>Edit</button>
-            <button onClick={() => duplicate(x)}>Duplicate</button>
-            <button className="danger" onClick={async () => { if (confirm(`Delete routine “${x.name}”?`)) await RoutineRepo.remove(x.id); }}>Delete</button>
+          <p className="meta">{x.sessions.map((s) => `${s.name}: ${s.blocks.filter((b) => b.type === "exercise").length} exercises`).join(" · ")}</p>
+          <div className="row-btns">
+            <button className="btn btn-primary btn-sm" onClick={() => setEdit(x.id)}>Edit</button>
+            <button className="btn btn-secondary btn-sm" onClick={() => duplicate(x)}>Duplicate</button>
           </div>
-        </div>
+          <button className="btn btn-danger" onClick={async () => { if (confirm(`Delete routine “${x.name}”?`)) await RoutineRepo.remove(x.id); }}>Delete</button>
+        </section>
       ))}
-      <button className="cta" onClick={create}>Create routine</button>
+      <button className="btn btn-secondary" onClick={create}>Create routine</button>
+      </div>
     </>
   );
 }
@@ -72,9 +76,9 @@ function Editor({ routine, onBack }: { routine: Routine; onBack: () => void }) {
 
   return (
     <>
-      <div className="top"><button className="linkbtn withicon" onClick={onBack}><Icon.back /> Routines</button></div>
-      <label className="field">Routine name
-        <input value={routine.name} onChange={(e) => save({ ...routine, name: e.target.value })} />
+      <button className="backlink" onClick={onBack}><span style={{ transform: "scaleX(-1)", display: "inline-flex" }}><Glyph name="chevron" size={16} /></span>Routines</button>
+      <label className="field"><span className="label">Rename</span>
+        <input className="window-input" value={routine.name} onChange={(e) => save({ ...routine, name: e.target.value })} />
       </label>
       <div className="seg" role="group" aria-label="Session">
         {routine.sessions.map((s) => <button key={s.id} aria-pressed={s.id === session.id} onClick={() => setSid(s.id)}>{s.name}</button>)}
@@ -85,14 +89,14 @@ function Editor({ routine, onBack }: { routine: Routine; onBack: () => void }) {
         }}>+</button>
       </div>
       {routine.sessions.length > 1 && (
-        <button className="linkbtn danger" onClick={() => { if (confirm(`Remove ${session.name}?`)) { save({ ...routine, sessions: routine.sessions.filter((s) => s.id !== session.id) }); setSid(routine.sessions[0].id); } }}>Remove {session.name}</button>
+        <button className="link" style={{ color: "var(--danger)" }} onClick={() => { if (confirm(`Remove ${session.name}?`)) { save({ ...routine, sessions: routine.sessions.filter((s) => s.id !== session.id) }); setSid(routine.sessions[0].id); } }}>Remove {session.name}</button>
       )}
 
       <ol className="blocks">
         {session.blocks.map((b, i) => (
           <li key={i} data-idx={i} className={`blockrow ${drag === i ? "dragging" : ""}`}
             onDragOver={(e) => { e.preventDefault(); }} onDrop={() => { if (drag !== null) move(drag, i); setDrag(null); }}>
-            <span className="handle" draggable aria-hidden="true"
+            <span className="handle-grip" draggable aria-hidden="true"
               onDragStart={() => setDrag(i)}
               onTouchStart={() => setDrag(i)}
               onTouchEnd={(e) => {
@@ -104,19 +108,19 @@ function Editor({ routine, onBack }: { routine: Routine; onBack: () => void }) {
             <div className="blockmain">
               {b.type === "text" ? (
                 <>
-                  <input aria-label="Text block title" value={b.title ?? ""} onChange={(e) => patch(i, { title: e.target.value })} />
-                  <textarea aria-label="Lines, one per line" rows={3} value={(b.lines ?? []).join("\n")} onChange={(e) => patch(i, { lines: e.target.value.split("\n") })} />
+                  <input className="window-input" aria-label="Text block title" value={b.title ?? ""} onChange={(e) => patch(i, { title: e.target.value })} />
+                  <textarea className="window-input" style={{ height: 90 }} aria-label="Lines, one per line" rows={3} value={(b.lines ?? []).join("\n")} onChange={(e) => patch(i, { lines: e.target.value.split("\n") })} />
                 </>
               ) : (
                 <>
-                  <button className="exrow compact" onClick={() => { const e = exercises?.find((x) => x.id === b.exerciseId); if (e) setPeek(e); }}>
-                    <span className="exrowname">{name(b.exerciseId)}</span><span className="chev" aria-hidden="true"><Icon.next /></span>
+                  <button className="blockname" onClick={() => { const e = exercises?.find((x) => x.id === b.exerciseId); if (e) setPeek(e); }}>
+                    {name(b.exerciseId)}<Glyph name="chevron" size={16} />
                   </button>
-                  <div className="row gap wrap">
+                  <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
                     <label className="mini">Reps<input value={b.reps ?? ""} placeholder="default" onChange={(e) => patch(i, { reps: e.target.value || undefined })} /></label>
                     <label className="mini">Sets
-                      <select value={String(b.sets ?? "phase")} onChange={(e) => patch(i, { sets: e.target.value === "phase" ? "phase" : Number(e.target.value) })}>
-                        <option value="phase">Phase</option>{[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}</option>)}
+                      <select value={String(typeof b.sets === "number" ? b.sets : 3)} onChange={(e) => patch(i, { sets: Number(e.target.value) })}>
+                        {[1, 2, 3, 4, 5].map((n) => <option key={n} value={n}>{n}</option>)}
                       </select>
                     </label>
                   </div>
@@ -131,23 +135,23 @@ function Editor({ routine, onBack }: { routine: Routine; onBack: () => void }) {
           </li>
         ))}
       </ol>
-      {session.blocks.length === 0 && <p className="sub">No blocks yet.</p>}
+      {session.blocks.length === 0 && <p className="meta">Nothing in this session yet.</p>}
 
       {peek && <ExerciseSheet ex={peek} onClose={() => setPeek(null)} />}
       {adding ? (
-        <div className="card">
-          <div className="blockhead"><h2>Add exercise</h2><button className="linkbtn" onClick={() => setAdding(false)}>Done</button></div>
-          <ul className="liblist">
+        <section className="panel">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}><span className="label">Add from library</span><button className="link" onClick={() => setAdding(false)}>Done</button></div>
+          <ul className="liblist" style={{ marginTop: 0 }}>
             {(exercises ?? []).map((e) => (
-              <li key={e.id}><button className="libitem" onClick={() => setBlocks([...session.blocks, { type: "exercise", exerciseId: e.id, sets: "phase" }])}>
-                <span className="libname">{e.name}</span><span className="sub">Tap to add</span></button></li>
+              <li key={e.id}><button className="librow" onClick={() => setBlocks([...session.blocks, { type: "exercise", exerciseId: e.id, sets: 3 }])}>
+                <span className="grow"><span className="lname" style={{ display: "block" }}>{e.name}</span><span className="lmeta">Tap to add</span></span><Glyph name="plus" size={18} /></button></li>
             ))}
           </ul>
-        </div>
+        </section>
       ) : (
-        <div className="nav">
-          <button onClick={() => setAdding(true)}>Add from library</button>
-          <button onClick={() => setBlocks([...session.blocks, { type: "text", title: "Note", lines: ["…"] }])}>Add text block</button>
+        <div className="row-btns">
+          <button className="btn btn-secondary btn-sm" onClick={() => setAdding(true)}>Add from library</button>
+          <button className="btn btn-secondary btn-sm" onClick={() => setBlocks([...session.blocks, { type: "text", title: "Note", lines: ["…"] }])}>Add a text block</button>
         </div>
       )}
     </>

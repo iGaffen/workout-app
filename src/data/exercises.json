@@ -2,7 +2,7 @@
  {
   "schemaVersion": 1,
   "id": "leg-press",
-  "name": "Leg press (45° linear)",
+  "name": "Leg press 45°",
   "equipment": [
    "machine"
   ],
@@ -149,7 +149,8 @@
   "weightKind": "plates",
   "baseKg": 40,
   "baseLabel": "Sled",
-  "baseEstimate": true
+  "baseEstimate": true,
+  "badge": "legs"
  },
  {
   "schemaVersion": 1,
@@ -287,7 +288,8 @@
    ],
    "loop": "cycle"
   },
-  "weightKind": "stack"
+  "weightKind": "stack",
+  "badge": "pull"
  },
  {
   "schemaVersion": 1,
@@ -450,7 +452,9 @@
    ],
    "loop": "cycle"
   },
-  "weightKind": "stack"
+  "weightKind": "stack",
+  "badge": "pull",
+  "notes": "Stop short of any pain in the range (sensitive left shoulder)."
  },
  {
   "schemaVersion": 1,
@@ -556,7 +560,8 @@
    ],
    "loop": "cycle"
   },
-  "weightKind": "dumbbell"
+  "weightKind": "dumbbell",
+  "badge": "legs"
  },
  {
   "schemaVersion": 1,
@@ -696,10 +701,11 @@
    ],
    "loop": "cycle"
   },
-  "notes": "Stop short of any pain in the range (sensitive left shoulder). Use a spotter or safety bars when going heavy",
+  "notes": "Stop short of any pain in the range (sensitive left shoulder).",
   "weightKind": "plates",
   "baseKg": 20,
-  "baseLabel": "Olympic bar"
+  "baseLabel": "Olympic bar",
+  "badge": "press"
  },
  {
   "schemaVersion": 1,
@@ -834,8 +840,9 @@
   },
   "weightKind": "plates",
   "baseKg": 10,
-  "baseLabel": "W bar (EZ bar)",
-  "baseEstimate": true
+  "baseLabel": "EZ bar",
+  "baseEstimate": true,
+  "badge": "curl"
  },
  {
   "schemaVersion": 1,
@@ -966,12 +973,13 @@
    ],
    "loop": "cycle"
   },
-  "weightKind": "stack"
+  "weightKind": "stack",
+  "badge": "push"
  },
  {
   "schemaVersion": 1,
   "id": "cable-lateral-raise",
-  "name": "Cable lateral raise (one arm)",
+  "name": "Cable lateral raise",
   "equipment": [
    "cable"
   ],
@@ -1104,8 +1112,10 @@
    ],
    "loop": "cycle"
   },
-  "notes": "Stop at shoulder height (sensitive left shoulder)",
-  "weightKind": "stack"
+  "notes": "Stop short of any pain in the range (sensitive left shoulder).",
+  "weightKind": "stack",
+  "badge": "shoulders",
+  "unilateral": true
  },
  {
   "schemaVersion": 1,
@@ -1237,7 +1247,8 @@
    ],
    "loop": "cycle"
   },
-  "notes": "Skip it for the cable lateral raise if your left shoulder complains",
-  "weightKind": "stack"
+  "notes": "Stop short of any pain in the range (sensitive left shoulder).",
+  "weightKind": "stack",
+  "badge": "press"
  }
 ]

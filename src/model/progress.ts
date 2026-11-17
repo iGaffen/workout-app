@@ -97,3 +97,49 @@ export function weightText(ex: Pick<Exercise, "weightKind" | "baseKg">, w: numbe
     default: return `${w} kg`;
   }
 }
+
+/** Complete weeks in a row (gym workouts ≥ goal), counting back from last week, plus this week once it's complete. */
+export function weekStreak(logs: WorkoutLog[], routines: Routine[], s: Settings, now = new Date()): number {
+  const goal = trainingDaysOf(s).length;
+  const perWeek = new Map<string, number>();
+  for (const l of logs) if (isGym(l, routines)) { const w = weekStart(new Date(l.date)); perWeek.set(w, (perWeek.get(w) ?? 0) + 1); }
+  const thisWeek = weekStart(now);
+  let streak = (perWeek.get(thisWeek) ?? 0) >= goal ? 1 : 0;
+  const d = new Date(now);
+  for (;;) {
+    d.setDate(d.getDate() - 7);
+    if ((perWeek.get(weekStart(d)) ?? 0) >= goal) streak++; else break;
+  }
+  return streak;
+}
+
+/** Heaviest weight ever logged for an exercise, optionally only before a date. */
+export function bestWeight(logs: WorkoutLog[], exerciseId: string, before?: string): number | undefined {
+  let best: number | undefined;
+  for (const l of logs) {
+    if (before && l.date >= before) continue;
+    for (const s of l.sets ?? []) if (s.exerciseId === exerciseId && s.weightKg !== undefined && (best === undefined || s.weightKg > best)) best = s.weightKg;
+  }
+  return best;
+}
+
+/** A new best needs an earlier record to beat. */
+export const isNewBest = (w: number | undefined, prev: number | undefined) => w !== undefined && prev !== undefined && w > prev;
+
+const ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
+export const roman = (n: number) => ROMAN[n - 1] ?? String(n);
+
+const WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven"];
+/** "Two for two this week." / "One for two this week." / "Three this week." */
+export function weekPhrase(done: number, goal: number): string {
+  const w = (n: number) => WORDS[n] ?? String(n);
+  return done > goal ? `${w(done)} this week.` : `${w(done)} for ${w(goal).toLowerCase()} this week.`;
+}
+
+/** "WED · 17 NOV" */
+export function dateLabel(d = new Date()): string {
+  const day = d.toLocaleDateString("en-GB", { weekday: "short" }).toUpperCase();
+  const mon = d.toLocaleDateString("en-GB", { month: "short" }).toUpperCase();
+  return `${day} · ${d.getDate()} ${mon}`;
+}
+export const weekdayName = (d = new Date()) => d.toLocaleDateString("en-GB", { weekday: "long" });

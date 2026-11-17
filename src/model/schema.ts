@@ -96,6 +96,10 @@ export const ExerciseSchema = z.object({
   baseLabel: z.string().optional(),
   /** True when baseKg is an estimate the user should check. */
   baseEstimate: z.boolean().optional(),
+  /** Library badge glyph. */
+  badge: z.enum(["pull", "push", "press", "curl", "legs", "shoulders"]).optional(),
+  /** Done one arm at a time (shown as "one arm" in the row). */
+  unilateral: z.boolean().optional(),
   animation: AnimationSchema,
   hidden: z.boolean().optional(),
 });

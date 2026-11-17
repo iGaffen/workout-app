@@ -134,6 +134,20 @@
           "baseEstimate": {
             "type": "boolean"
           },
+          "badge": {
+            "type": "string",
+            "enum": [
+              "pull",
+              "push",
+              "press",
+              "curl",
+              "legs",
+              "shoulders"
+            ]
+          },
+          "unilateral": {
+            "type": "boolean"
+          },
           "animation": {
             "type": "object",
             "properties": {

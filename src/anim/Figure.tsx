@@ -5,9 +5,9 @@ import { scene } from "./draw";
 import { subscribe } from "./loop";
 import { useReducedMotion } from "../components/hooks";
 
-interface Props { spec: AnimationSpec; name: string; controls?: boolean; large?: boolean }
+interface Props { spec: AnimationSpec; name: string; controls?: boolean }
 
-export function Figure({ spec, name, controls = true, large = false }: Props) {
+export function Figure({ spec, name, controls = true }: Props) {
   const g = useRef<SVGGElement>(null);
   const box = useRef<HTMLDivElement>(null);
   const label = useRef<HTMLSpanElement>(null);
@@ -29,7 +29,7 @@ export function Figure({ spec, name, controls = true, large = false }: Props) {
     const draw = () => {
       const { skel, label: lb } = sample(spec, segs, state.current.t);
       if (g.current) g.current.innerHTML = scene(skel, spec.equipment);
-      if (label.current && lb !== lastLabel) { label.current.textContent = lb; lastLabel = lb; }
+      if (label.current && !state.current.paused && lb !== lastLabel) { label.current.textContent = lb; lastLabel = lb; }
     };
     draw();
     const unsub = subscribe((now) => {
@@ -44,36 +44,32 @@ export function Figure({ spec, name, controls = true, large = false }: Props) {
   }, [spec, segs, reduce]);
 
   const still = (pose: typeof startPose) => scene(solve(pose), spec.equipment);
-
-  if (reduce) {
-    return (
-      <div className={`figure ${large ? "large" : ""}`}>
-        <div className="strip only">
-          <figure><svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name}: start position`} dangerouslySetInnerHTML={{ __html: still(startPose) }} /><figcaption>Start</figcaption></figure>
-          <figure><svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name}: end position`} dangerouslySetInnerHTML={{ __html: still(endPose) }} /><figcaption>End</figcaption></figure>
-        </div>
-      </div>
-    );
-  }
+  // START / END pills freeze the figure on that end position; tap the figure to go back to moving.
+  const [frozen, setFrozen] = useState<"start" | "end" | null>(null);
+  state.current.paused = paused || frozen !== null;
+  const view = reduce ? (frozen ?? "start") : frozen;
 
   return (
-    <div className={`figure ${large ? "large" : ""}`} ref={box}>
-      <button className="figbtn" onClick={() => setPaused((p) => !p)} aria-label={paused ? `Play ${name} animation` : `Pause ${name} animation`}>
-        <svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name} movement animation`}><g ref={g} /></svg>
-        {paused && <span className="pausebadge" aria-hidden="true">Paused</span>}
-      </button>
-      <div className="figbar">
-        <span className="phase" ref={label} aria-hidden="true" />
-        {controls && (
-          <button className="chipbtn" onClick={() => setSlow((s) => !s)} aria-pressed={slow} aria-label="Half speed">
-            {slow ? "0.5x" : "1x"}
-          </button>
+    <div className="animframe" ref={box}>
+      <div className="framehead">
+        <span className="phase" ref={label} aria-hidden="true">{view === "start" ? "Start" : view === "end" ? "End" : ""}</span>
+        {controls && !reduce && (
+          <button className="pill" onClick={() => setSlow((x) => !x)} aria-pressed={slow} aria-label="Half speed">{slow ? "0.5×" : "1×"}</button>
         )}
       </div>
-      {controls && large && (
-        <div className="strip">
-          <figure><svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name}: start position`} dangerouslySetInnerHTML={{ __html: still(startPose) }} /><figcaption>Start</figcaption></figure>
-          <figure><svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name}: end position`} dangerouslySetInnerHTML={{ __html: still(endPose) }} /><figcaption>End</figcaption></figure>
+      <button className="figbtn" onClick={() => { if (frozen) setFrozen(null); else setPaused((p) => !p); }}
+        aria-label={paused || frozen ? `Play ${name} animation` : `Pause ${name} animation`}>
+        {view
+          ? <svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name}: ${view} position`} dangerouslySetInnerHTML={{ __html: still(view === "start" ? startPose : endPose) }} />
+          : <svg className="fig" viewBox="0 0 240 170" role="img" aria-label={`${name} movement animation`}><g ref={g} /></svg>}
+      </button>
+      {controls && (
+        <div className="framefoot">
+          <span className="tap">{reduce ? "Still frames" : paused || frozen ? "Tap to play" : "Tap to pause"}</span>
+          <span style={{ display: "flex", gap: 6 }}>
+            <button className="pill pill-sm" aria-pressed={view === "start"} onClick={() => setFrozen((f) => (f === "start" && !reduce ? null : "start"))}>Start</button>
+            <button className="pill pill-sm" aria-pressed={view === "end"} onClick={() => setFrozen((f) => (f === "end" && !reduce ? null : "end"))}>End</button>
+          </span>
         </div>
       )}
     </div>

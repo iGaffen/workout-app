@@ -8,14 +8,14 @@ export function BackupButton() {
   const last = useData(() => RemindersRepo.lastExport());
   const [msg, setMsg] = useState("");
   if (last === undefined) return null;
-  if (backedUpToday(last) && !msg) return <p className="ok">Backed up today ✓</p>;
+  if (backedUpToday(last) && !msg) return <p className="ok">Backed up today.</p>;
   return (
-    <div className="backupbox">
-      <button className="secondary" onClick={async () => {
+    <div className="stack" style={{ gap: 8 }}>
+      <button className="btn btn-secondary btn-sm" onClick={async () => {
         const r = await backupNow();
-        setMsg(r === "shared" ? "Backed up ✓" : r === "downloaded" ? "Saved to Downloads ✓" : "");
+        setMsg(r === "shared" ? "Saved." : r === "downloaded" ? "Saved to Downloads." : "");
       }}>Back up now</button>
-      {msg ? <p className="ok" role="status">{msg}</p> : <p className="sub">Tap, then choose Google Drive to keep a copy in the cloud.</p>}
+      {msg ? <p className="ok" role="status">{msg}</p> : <p className="meta">Choose Google Drive to keep a copy in the cloud.</p>}
     </div>
   );
 }
