@@ -2,7 +2,7 @@
 
 A **fully branded personal app**: a small private brand built to make going to the gym feel special and keep motivation up. It's not for sale. The name is TBD, so "the app" stands in until it's chosen.
 
-Source of truth for the redesign. Designed in **Claude Design** first, then built in the app. Decisions marked **(decided)** came from Avi; the rest are proposals to confirm in Figma.
+Source of truth for the redesign. Designed in **Claude Design** first, then built in the app. Decisions marked **(decided)** came from Avi; the rest are proposals to confirm in Claude Design.
 
 ## 1. Feel
 **Dark, refined, quietly powerful.** A private members' gym or a luxury watch, not a sports app. No neon, no loud "workout" energy. Gold and purple are used sparingly, like jewellery.
