@@ -82,3 +82,18 @@ export function daysUntilDue(last: string | null | undefined, every: number, now
   if (!last) return 0;
   return Math.ceil((Date.parse(last) + every * DAY - now.getTime()) / DAY);
 }
+
+/** Approximate total actually lifted: plates plus the empty bar or sled; otherwise the entered number. */
+export function totalKg(ex: Pick<Exercise, "weightKind" | "baseKg">, entered: number): number {
+  return ex.weightKind === "plates" ? entered + (ex.baseKg ?? 0) : entered;
+}
+
+/** Short text for the list row, e.g. "40 kg plates ≈ 60 kg", "stack 35", "12 kg dumbbell". */
+export function weightText(ex: Pick<Exercise, "weightKind" | "baseKg">, w: number): string {
+  switch (ex.weightKind) {
+    case "plates": return ex.baseKg ? `${w} kg plates ≈ ${totalKg(ex, w)} kg` : `${w} kg plates`;
+    case "stack": return `stack ${w}`;
+    case "dumbbell": return `${w} kg dumbbell`;
+    default: return `${w} kg`;
+  }
+}

@@ -116,6 +116,24 @@
             "exclusiveMinimum": 0,
             "maximum": 9007199254740991
           },
+          "weightKind": {
+            "type": "string",
+            "enum": [
+              "plates",
+              "stack",
+              "dumbbell"
+            ]
+          },
+          "baseKg": {
+            "type": "number",
+            "minimum": 0
+          },
+          "baseLabel": {
+            "type": "string"
+          },
+          "baseEstimate": {
+            "type": "boolean"
+          },
           "animation": {
             "type": "object",
             "properties": {
@@ -609,6 +627,9 @@
                   "type": "number"
                 },
                 "weightKg": {
+                  "type": "number"
+                },
+                "totalKg": {
                   "type": "number"
                 },
                 "reps": {

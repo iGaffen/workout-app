@@ -145,7 +145,11 @@
     }
    ],
    "loop": "cycle"
-  }
+  },
+  "weightKind": "plates",
+  "baseKg": 40,
+  "baseLabel": "Sled",
+  "baseEstimate": true
  },
  {
   "schemaVersion": 1,
@@ -307,7 +311,8 @@
     }
    ],
    "loop": "cycle"
-  }
+  },
+  "weightKind": "stack"
  },
  {
   "schemaVersion": 1,
@@ -412,7 +417,8 @@
     }
    ],
    "loop": "cycle"
-  }
+  },
+  "weightKind": "dumbbell"
  },
  {
   "schemaVersion": 1,
@@ -552,7 +558,10 @@
    ],
    "loop": "cycle"
   },
-  "notes": "Stop short of any pain in the range (sensitive left shoulder). Use a spotter or safety bars when going heavy"
+  "notes": "Stop short of any pain in the range (sensitive left shoulder). Use a spotter or safety bars when going heavy",
+  "weightKind": "plates",
+  "baseKg": 20,
+  "baseLabel": "Olympic bar"
  },
  {
   "schemaVersion": 1,
@@ -684,7 +693,11 @@
     }
    ],
    "loop": "cycle"
-  }
+  },
+  "weightKind": "plates",
+  "baseKg": 10,
+  "baseLabel": "W bar (EZ bar)",
+  "baseEstimate": true
  },
  {
   "schemaVersion": 1,
@@ -814,7 +827,8 @@
     }
    ],
    "loop": "cycle"
-  }
+  },
+  "weightKind": "stack"
  },
  {
   "schemaVersion": 1,
@@ -952,7 +966,8 @@
    ],
    "loop": "cycle"
   },
-  "notes": "Stop at shoulder height (sensitive left shoulder)"
+  "notes": "Stop at shoulder height (sensitive left shoulder)",
+  "weightKind": "stack"
  },
  {
   "schemaVersion": 1,
@@ -1084,6 +1099,7 @@
    ],
    "loop": "cycle"
   },
-  "notes": "Skip it for the cable lateral raise if your left shoulder complains"
+  "notes": "Skip it for the cable lateral raise if your left shoulder complains",
+  "weightKind": "stack"
  }
 ]
