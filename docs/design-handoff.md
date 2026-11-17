@@ -249,10 +249,11 @@ Produce these at the end. Avi will carry them to the developer.
    3. **Screen specs:** for each screen, the layout top to bottom with the components used, plus any measurements not covered by the components.
    4. **Motion table, final version:** moment / what moves / duration (ms) / easing (cubic-bezier) / delay or stagger / reduce-motion fallback.
    5. **Voice sheet:** every user-facing string (titles, buttons, labels, empty states, toasts, errors).
-   6. **Icon and logo list:** the file name of each SVG and what it is.
+   6. **Every icon and logo as SVG code, inside this file.** One heading per asset (e.g. `### icon-home-active.svg`), then its full `<svg>…</svg>` code in a code block. This covers icons (outline and active), the monogram, lock-ups, the app icon (512 px) and the maskable app icon. Don't use zip files or separate attachments: everything goes in `build-pack.md`.
    7. **Changes from Part 3**, as a short list.
-2. **All SVGs** (icons in outline and active, monogram, lock-ups, app icon, maskable icon), in one zip or as separate files.
-3. **A screenshot (PNG) of every screen and of the component sheet.**
-4. **If the tool has a shareable link** to the design canvas, include it as well.
+2. **Screenshots (PNG) of every screen and of the component sheet.** These are optional, sent as normal images. They help, but `build-pack.md` must be enough on its own.
+3. **If the tool has a shareable link** to the design canvas, put it at the top of `build-pack.md`.
+
+If `build-pack.md` is too long to send as one file, split it into `build-pack-1.md`, `build-pack-2.md` and so on, each starting with a line saying which part it is.
 
 Keep `build-pack.md` self-contained, because the developer won't see your conversation either.
