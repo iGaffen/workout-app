@@ -114,5 +114,8 @@ Each exercise says what to type in the kg field:
 
 Logged sets keep both what you entered (`weightKg`) and the approximate total (`totalKg`).
 
+## Changed in v3.2
+- Added the **seated cable row** (stack number) after the lat pulldown, as its own row. The list is now 8 rows, about 48 minutes.
+
 ## Your data
 Everything is stored in Chrome's storage on your phone. The app asks Chrome to keep this data, but **clearing Chrome's site data for this address deletes it**. Use **Settings → Export all data** now and then to save a backup file.

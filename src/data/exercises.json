@@ -153,6 +153,144 @@
  },
  {
   "schemaVersion": 1,
+  "id": "seated-cable-row",
+  "name": "Seated cable row",
+  "equipment": [
+   "cable"
+  ],
+  "muscles": {
+   "primary": [
+    "lats",
+    "upper_back"
+   ],
+   "secondary": [
+    "rear_delts",
+    "biceps",
+    "forearms"
+   ]
+  },
+  "cues": [
+   "Chest tall, pull the handle to your belly button",
+   "Squeeze shoulder blades together, 1-second pause",
+   "Return slowly without rounding forward"
+  ],
+  "defaultReps": "10–12",
+  "animation": {
+   "view": "side",
+   "equipment": [
+    {
+     "kind": "bench",
+     "at": [
+      52,
+      134
+     ],
+     "to": [
+      180,
+      134
+     ]
+    },
+    {
+     "kind": "pad",
+     "at": [
+      150,
+      120
+     ],
+     "angle": 70
+    },
+    {
+     "kind": "pulley",
+     "at": [
+      226,
+      104
+     ]
+    },
+    {
+     "kind": "cable",
+     "attach": "hand",
+     "from": [
+      226,
+      104
+     ]
+    },
+    {
+     "kind": "handle",
+     "attach": "hand"
+    }
+   ],
+   "keyframes": [
+    {
+     "name": "Return",
+     "durationMs": 1600,
+     "pose": {
+      "torso": 14,
+      "near": {
+       "shoulder": 82,
+       "elbow": 4,
+       "hip": 102,
+       "knee": 28,
+       "ankle": -18
+      },
+      "far": {
+       "shoulder": 84,
+       "elbow": 4
+      },
+      "root": [
+       78,
+       128
+      ]
+     }
+    },
+    {
+     "name": "Pull",
+     "durationMs": 1000,
+     "pose": {
+      "torso": -4,
+      "near": {
+       "shoulder": -38,
+       "elbow": 118,
+       "hip": 84,
+       "knee": 28,
+       "ankle": -18
+      },
+      "far": {
+       "shoulder": -36,
+       "elbow": 118
+      },
+      "root": [
+       78,
+       128
+      ]
+     }
+    },
+    {
+     "name": "Squeeze",
+     "durationMs": 700,
+     "pose": {
+      "torso": -4,
+      "near": {
+       "shoulder": -40,
+       "elbow": 120,
+       "hip": 84,
+       "knee": 28,
+       "ankle": -18
+      },
+      "far": {
+       "shoulder": -38,
+       "elbow": 120
+      },
+      "root": [
+       78,
+       128
+      ]
+     }
+    }
+   ],
+   "loop": "cycle"
+  },
+  "weightKind": "stack"
+ },
+ {
+  "schemaVersion": 1,
   "id": "lat-pulldown",
   "name": "Lat pulldown",
   "equipment": [
