@@ -15,7 +15,11 @@ import type { Block, Exercise, WorkoutLog } from "../model/schema";
 type Slot = Block & { exerciseId: string };
 
 /** Today's ticks, weights and picks survive closing the app, until the day changes or you finish. */
-interface DayState { date: string; done: string[]; weights: Record<string, number>; choice?: Record<string, string>; startedAt?: number }
+interface DayState {
+  date: string; done: string[]; weights: Record<string, number>; choice?: Record<string, string>; startedAt?: number;
+  /** Set while today's saved session is reopened for editing; finishing replaces that log. */
+  editing?: string;
+}
 const KEY = "gym-today";
 const fresh = (): DayState => ({ date: localDate(new Date()), done: [], weights: {} });
 function loadDay(): DayState {
@@ -50,7 +54,7 @@ export function Home() {
   const exMap = new Map<string, Exercise>(exercises.map((e) => [e.id, e]));
   const today = localDate(new Date());
   const todayLog = [...logs].reverse().find((l) => l.routineId === routine.id && localDate(new Date(l.date)) === today);
-  const logged = !!todayLog && day.done.length === 0;
+  const logged = !!todayLog && !day.editing && day.done.length === 0;
 
   const wk = weekSummary(logs, routines, settings);
   const streak = weekStreak(logs, routines, settings);
@@ -110,8 +114,10 @@ export function Home() {
     });
     setFinishing(true);
     await new Promise((r) => setTimeout(r, 600)); // let the gold shimmer play
-    const durationSeconds = day.startedAt ? Math.round((Date.now() - day.startedAt) / 1000) : undefined;
-    await LogRepo.add({ date: new Date().toISOString(), routineId: routine.id, sessionId: session.id, ...(durationSeconds ? { durationSeconds } : {}), ...(sets.length ? { sets } : {}) });
+    const editedLog = day.editing ? logs.find((l) => l.id === day.editing) : undefined;
+    const durationSeconds = editedLog ? editedLog.durationSeconds : day.startedAt ? Math.round((Date.now() - day.startedAt) / 1000) : undefined;
+    const entry = { date: editedLog?.date ?? new Date().toISOString(), routineId: routine.id, sessionId: session.id, ...(durationSeconds ? { durationSeconds } : {}), ...(sets.length ? { sets } : {}) };
+    if (editedLog) await LogRepo.replace(editedLog.id, entry); else await LogRepo.add(entry);
     setFinishing(false);
     setDay(fresh());
     scrollTo({ top: 0, behavior: "smooth" });
@@ -139,6 +145,23 @@ export function Home() {
     if (bests) parts.push(`${bests} new best${bests === 1 ? "" : "s"}`);
     return parts.join(" · ");
   })();
+
+  /** Reopen today's saved session: ticks, weights and shoulder pick come back as they were saved. */
+  const editToday = () => {
+    if (!todayLog) return;
+    const loggedIds = new Set((todayLog.sets ?? []).map((s) => s.exerciseId));
+    const doneKeys: string[] = [];
+    const choice: Record<string, string> = {};
+    for (const b of items) {
+      const hit = optionsOf(b).find((id) => loggedIds.has(id));
+      if (hit) { doneKeys.push(b.exerciseId); if (hit !== b.exerciseId) choice[b.exerciseId] = hit; }
+    }
+    const weights: Record<string, number> = {};
+    for (const s of todayLog.sets ?? []) if (s.weightKg !== undefined) weights[s.exerciseId] = s.weightKg;
+    setDay({ date: today, done: doneKeys, weights, choice, editing: todayLog.id });
+    scrollTo({ top: 0, behavior: "smooth" });
+  };
+  const cancelEdit = () => setDay(fresh());
 
   const row = (b: Slot) => {
     const id = chosen(b);
@@ -212,6 +235,7 @@ export function Home() {
           <h2>{weekPhrase(wk.gym, wk.goal)}</h2>
           {savedStats && <p className="meta">{savedStats}</p>}
           <BackupButton />
+          <button className="link" onClick={editToday}>Edit today's session</button>
         </div>
       ) : (
         <>
@@ -220,9 +244,11 @@ export function Home() {
             <ul className="rows">{todo.map(row)}</ul>
           </>}
           <div className="finish-wrap">
+            {day.editing && <p className="meta center" style={{ marginBottom: 10 }}>Editing today's saved session. Finishing replaces it.</p>}
             <button className={`btn ${allDone ? "btn-finish sheen" : "btn-secondary"} ${finishing ? "play" : ""}`} onClick={finish}>
-              Finish workout
+              {day.editing ? "Save changes" : "Finish workout"}
             </button>
+            {day.editing && <button className="link" style={{ width: "100%", justifyContent: "center" }} onClick={cancelEdit}>Keep the saved session</button>}
           </div>
           {done.length > 0 && <>
             <p className="label section-label">Done</p>

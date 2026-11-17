@@ -85,6 +85,15 @@ export const LogRepo = {
     await db.logs.put(stamp({ ...l, id }));
     changed();
   },
+  /** Save an edited session in place of the one it was reopened from, in one step. */
+  async replace(oldId: string, l: Omit<WorkoutLog, "id">) {
+    const id = `${l.date}-${Math.random().toString(36).slice(2, 8)}`;
+    await db.transaction("rw", db.logs, async () => {
+      await db.logs.delete(oldId);
+      await db.logs.put(stamp({ ...l, id }));
+    });
+    changed();
+  },
 };
 
 export const BodyRepo = {

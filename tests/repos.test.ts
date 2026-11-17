@@ -42,3 +42,16 @@ describe("repositories", () => {
     expect((await ExerciseRepo.all()).some((e) => e.id === "cable-lateral-raise")).toBe(true);
   });
 });
+
+describe("editing a saved session", () => {
+  it("replace swaps the old log for the new one in one step", async () => {
+    await LogRepo.add({ date: "2026-11-17T09:00:00Z", routineId: "gym-day", sessionId: "main", sets: [{ exerciseId: "leg-press", setIndex: 1, weightKg: 40 }] });
+    const before = (await LogRepo.all()).find((l) => l.date === "2026-11-17T09:00:00Z")!;
+    const count = (await LogRepo.all()).length;
+    await LogRepo.replace(before.id, { date: before.date, routineId: "gym-day", sessionId: "main", sets: [{ exerciseId: "leg-press", setIndex: 1, weightKg: 45 }] });
+    const after = await LogRepo.all();
+    expect(after).toHaveLength(count);
+    expect(after.find((l) => l.id === before.id)).toBeUndefined();
+    expect(after.find((l) => l.date === before.date)!.sets![0].weightKg).toBe(45);
+  });
+});
