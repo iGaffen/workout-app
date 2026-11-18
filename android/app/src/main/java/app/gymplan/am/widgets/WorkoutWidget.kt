@@ -56,7 +56,15 @@ class WorkoutWidgetReceiver : AppWidgetProvider() {
         }
         // Redraw the tapped widget first, synchronously, so the change shows at once.
         val mgr = AppWidgetManager.getInstance(ctx)
-        if (wid != AppWidgetManager.INVALID_APPWIDGET_ID) render(ctx, mgr, wid)
+        val cardOpen = WidgetStore.getString(ctx, cardKey(wid)) == key
+        if ((op == "plus" || op == "minus") && cardOpen) {
+            // Only the weight changes: a partial update keeps the animation running smoothly.
+            WidgetStore.item(ctx, key)?.let { item ->
+                val rv = RemoteViews(ctx.packageName, R.layout.widget_workout)
+                rv.setTextViewText(R.id.c_weight, weightText(item))
+                mgr.partiallyUpdateAppWidget(wid, rv)
+            }
+        } else if (wid != AppWidgetManager.INVALID_APPWIDGET_ID) render(ctx, mgr, wid)
         ids(ctx).filter { it != wid }.forEach { render(ctx, mgr, it) }
         if (others) {
             val pending = goAsync()
@@ -215,22 +223,35 @@ class WorkoutWidgetReceiver : AppWidgetProvider() {
             rv.setTextViewText(R.id.c_cues, cueText)
             rv.setViewVisibility(R.id.c_cues, if (cueText.isEmpty()) View.GONE else View.VISIBLE)
 
-            // Animation: a flipbook of frames rendered by the app.
+            // Animation: the bundled 30 fps loop when there is one, else the app-rendered flipbook.
+            rv.removeAllViews(R.id.c_anim_host)
             rv.removeAllViews(R.id.c_anim)
-            val frames = if (animate) Frames.load(ctx, id) else null
-            if (frames != null) {
-                frames.bitmaps.forEach { bmp ->
-                    val f = RemoteViews(ctx.packageName, R.layout.widget_frame)
-                    f.setImageViewBitmap(R.id.frame, bmp)
-                    rv.addView(R.id.c_anim, f)
+            val bundled = Frames.bundledLayout(ctx, id)
+            val frames = if (animate && bundled == 0) Frames.load(ctx, id) else null
+            when {
+                animate && bundled != 0 -> {
+                    rv.addView(R.id.c_anim_host, RemoteViews(ctx.packageName, bundled))
+                    rv.setViewVisibility(R.id.c_anim_host, View.VISIBLE)
+                    rv.setViewVisibility(R.id.c_anim, View.GONE)
+                    rv.setViewVisibility(R.id.c_noanim, View.GONE)
                 }
-                rv.setInt(R.id.c_anim, "setFlipInterval", frames.intervalMs)
-                rv.setViewVisibility(R.id.c_anim, View.VISIBLE)
-                rv.setViewVisibility(R.id.c_noanim, View.GONE)
-            } else {
-                rv.setViewVisibility(R.id.c_anim, View.GONE)
-                rv.setViewVisibility(R.id.c_noanim, View.VISIBLE)
-                rv.setTextViewText(R.id.c_noanim, if (animate) "Open the app once to load the animation." else "")
+                frames != null -> {
+                    frames.bitmaps.forEach { bmp ->
+                        val f = RemoteViews(ctx.packageName, R.layout.widget_frame)
+                        f.setImageViewBitmap(R.id.frame, bmp)
+                        rv.addView(R.id.c_anim, f)
+                    }
+                    rv.setInt(R.id.c_anim, "setFlipInterval", frames.intervalMs)
+                    rv.setViewVisibility(R.id.c_anim_host, View.GONE)
+                    rv.setViewVisibility(R.id.c_anim, View.VISIBLE)
+                    rv.setViewVisibility(R.id.c_noanim, View.GONE)
+                }
+                else -> {
+                    rv.setViewVisibility(R.id.c_anim_host, View.GONE)
+                    rv.setViewVisibility(R.id.c_anim, View.GONE)
+                    rv.setViewVisibility(R.id.c_noanim, View.VISIBLE)
+                    rv.setTextViewText(R.id.c_noanim, if (animate) "Open the app once to load the animation." else "")
+                }
             }
 
             rv.setViewVisibility(R.id.c_weight_row, if (weighted) View.VISIBLE else View.GONE)

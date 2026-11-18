@@ -21,7 +21,7 @@ interface WidgetBridgePlugin {
   pushState(o: { state: string }): Promise<void>;
   takeEvents(): Promise<{ events: string }>;
   saveFrames(o: { id: string; interval: number; frames: string[] }): Promise<void>;
-  listFrames(): Promise<{ ids: string[] }>;
+  listFrames(o: { ids: string[] }): Promise<{ ids: string[] }>;
 }
 const Bridge = registerPlugin<WidgetBridgePlugin>("WidgetBridge");
 
@@ -78,8 +78,9 @@ async function ensureFrames() {
   try {
     const state = await buildWidgetState();
     if (!state) return;
-    const { ids } = await Bridge.listFrames();
-    const want = [...new Set(state.workout.items.flatMap((i) => [i.id, ...i.options.map((o) => o.id)]))].filter((id) => !ids.includes(id));
+    const all = [...new Set(state.workout.items.flatMap((i) => [i.id, ...i.options.map((o) => o.id)]))];
+    const { ids } = await Bridge.listFrames({ ids: all }); // includes exercises with a loop bundled in the app
+    const want = all.filter((id) => !ids.includes(id));
     if (!want.length) return;
     const { renderFrames } = await import("./frames");
     const exMap = new Map<string, Exercise>((await ExerciseRepo.all(true)).map((x) => [x.id, x]));

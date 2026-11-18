@@ -30,6 +30,11 @@ object Frames {
         if (cacheId == id) { cacheId = null; cache = null }
     }
 
+    /** Layout with the bundled 30 fps loop for a built-in exercise (scripts/widget-frames.mjs), or 0. */
+    @android.annotation.SuppressLint("DiscouragedApi")
+    fun bundledLayout(ctx: Context, id: String): Int =
+        ctx.resources.getIdentifier("widget_anim_" + id.lowercase().replace(Regex("[^a-z0-9]"), "_"), "layout", ctx.packageName)
+
     /** Ids with a complete set of frames. */
     fun ids(ctx: Context): List<String> =
         File(ctx.filesDir, DIR).listFiles()?.filter { File(it, "meta").exists() }?.map { it.name } ?: emptyList()
