@@ -25,6 +25,13 @@ object Look {
     val lume = Color(0xFFC9B4FF)
     val gold = Color(0xFFE3C98F)
 
+    // Plain ARGB ints for RemoteViews.
+    const val INK1 = 0xFFF1ECF7.toInt()
+    const val INK2 = 0xFFA39BB3.toInt()
+    const val INK3 = 0xFF7D748F.toInt()
+    const val GOLD = 0xFFE3C98F.toInt()
+    const val ON_ACCENT = 0xFF120A22.toInt()
+
     fun c(color: Color) = ColorProvider(color)
     fun label(color: Color = ink2) = TextStyle(color = c(color), fontSize = 10.sp, fontWeight = FontWeight.Medium)
     fun body(color: Color = ink1, size: Int = 14, bold: Boolean = false) =

@@ -23,11 +23,14 @@ import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
-import androidx.glance.appwidget.lazy.LazyColumn
-import androidx.glance.appwidget.lazy.items
 import androidx.glance.appwidget.provideContent
-import androidx.glance.appwidget.updateAll
 import androidx.glance.background
+import androidx.glance.currentState
+import androidx.glance.state.GlanceStateDefinition
+import androidx.glance.state.PreferencesGlanceStateDefinition
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
@@ -51,13 +54,32 @@ import org.json.JSONObject
 
 /** Redraw every widget after the snapshot changes. */
 suspend fun refreshAllWidgets(ctx: Context) {
-    WorkoutWidget().updateAll(ctx)
-    SummaryWidget().updateAll(ctx)
-    LiftWidget().updateAll(ctx)
-    BodyWidget().updateAll(ctx)
+    WorkoutWidgetReceiver.updateAll(ctx)
+    refreshGlance(ctx)
 }
 
-private val KEY = ActionParameters.Key<String>("key")
+/** The Glance widgets (summary, lift, body). */
+suspend fun refreshGlance(ctx: Context) {
+    redraw(ctx, SummaryWidget()); redraw(ctx, LiftWidget()); redraw(ctx, BodyWidget())
+}
+
+private val REV = longPreferencesKey("rev")
+
+/**
+ * Glance keeps a widget's composition alive between updates, so a plain update() would not re-read our data.
+ * Bumping a revision in the widget's own Glance state makes it recompose and read the fresh snapshot.
+ */
+suspend fun redraw(ctx: Context, w: GlanceAppWidget) {
+    GlanceAppWidgetManager(ctx).getGlanceIds(w.javaClass).forEach { id ->
+        updateAppWidgetState(ctx, id) { it[REV] = System.nanoTime() }
+        w.update(ctx, id)
+    }
+}
+
+/** Read inside provideContent: subscribes the composition to redraw(). */
+@Composable
+private fun watchRev() { currentState<Preferences>()[REV] }
+
 private val DELTA = ActionParameters.Key<Double>("delta")
 private val FIELD = ActionParameters.Key<String>("field")
 
@@ -86,117 +108,6 @@ private fun Empty(msg: String) {
     }
 }
 
-private fun weightText(it: JSONObject): String {
-    if (!it.has("weight")) return "—"
-    val w = it.getDouble("weight")
-    return when (it.optString("kind")) {
-        "stack" -> Look.fmt(w)
-        else -> "${Look.fmt(w)} kg"
-    }
-}
-
-// ---------------------------------------------------------------------------------------------
-// 1. Workout: tick, adjust weight, switch the either/or slot and finish, all inside the widget
-// ---------------------------------------------------------------------------------------------
-
-class WorkoutWidget : GlanceAppWidget() {
-    override val sizeMode = SizeMode.Exact
-    override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val s = WidgetStore.state(context)
-        provideContent { Shell { WorkoutContent(s) } }
-    }
-}
-
-@Composable
-private fun WorkoutContent(s: JSONObject?) {
-    if (s == null) { Empty("Open the app once to set up your workout."); return }
-    val w = s.getJSONObject("workout")
-    val arr = w.getJSONArray("items")
-    val items = (0 until arr.length()).map { arr.getJSONObject(it) }
-    val done = items.count { it.optBoolean("done") }
-    val step = w.optDouble("step", 2.5)
-    Column(GlanceModifier.fillMaxSize()) {
-        Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text("GYM DAY", style = Look.label(Look.gold), modifier = GlanceModifier.defaultWeight().clickable(actionStartActivity<MainActivity>()))
-            Text(if (w.optBoolean("logged")) "LOGGED" else "$done/${items.size}", style = Look.body(if (done == items.size && items.isNotEmpty()) Look.gold else Look.ink1, 18, true))
-        }
-        Spacer(GlanceModifier.height(6.dp))
-        if (w.optBoolean("logged")) {
-            Column(GlanceModifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically, horizontalAlignment = Alignment.CenterHorizontally) {
-                Text("Session logged.", style = Look.body(Look.gold, 18, true))
-                Spacer(GlanceModifier.height(4.dp))
-                val wk = s.getJSONObject("week")
-                Text("${wk.optInt("gym")} of ${wk.optInt("goal")} this week", style = Look.body(Look.ink2, 13))
-            }
-            return@Column
-        }
-        // Not-done first, then done, like the app.
-        val ordered = items.filter { !it.optBoolean("done") } + items.filter { it.optBoolean("done") }
-        LazyColumn(GlanceModifier.fillMaxWidth().defaultWeight()) {
-            items(ordered, itemId = { it.getString("key").hashCode().toLong() }) { item -> WorkoutRow(item, step) }
-            item {
-                Box(GlanceModifier.fillMaxWidth().padding(top = 8.dp)) {
-                    val all = done == items.size && items.isNotEmpty()
-                    Box(
-                        GlanceModifier.fillMaxWidth().height(44.dp).cornerRadius(22.dp)
-                            .background(if (all) Look.gold else if (done > 0) Look.amethyst else Look.chip)
-                            .clickable(actionRunCallback<FinishAction>()),
-                        contentAlignment = Alignment.Center,
-                    ) { Text("FINISH WORKOUT", style = Look.body(if (done > 0) Look.onAccent else Look.ink3, 13, true)) }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun WorkoutRow(it: JSONObject, step: Double) {
-    val key = it.getString("key")
-    val isDone = it.optBoolean("done")
-    val weighted = it.optString("kind") != "none"
-    val opts = it.optJSONArray("options")?.length() ?: 0
-    Column(GlanceModifier.fillMaxWidth().padding(vertical = 5.dp)) {
-        Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Column(GlanceModifier.defaultWeight()) {
-                Text(it.getString("name"), style = Look.body(if (isDone) Look.ink3 else Look.ink1, 14, true), maxLines = 1)
-                Text(if (weighted) "${it.optString("reps")} · ${weightText(it)}" else it.optString("reps"), style = Look.body(Look.ink2, 11), maxLines = 1)
-            }
-            if (weighted && !isDone) {
-                Btn("−", actionRunCallback<StepAction>(actionParametersOf(KEY to key, DELTA to -step)), 34.dp, 34.dp)
-                Spacer(GlanceModifier.width(4.dp))
-                Btn("+", actionRunCallback<StepAction>(actionParametersOf(KEY to key, DELTA to step)), 34.dp, 34.dp, Look.amethyst, Look.onAccent)
-                Spacer(GlanceModifier.width(8.dp))
-            }
-            Btn(if (isDone) "✓" else "", actionRunCallback<ToggleAction>(actionParametersOf(KEY to key)), 36.dp, 36.dp, if (isDone) Look.amethyst else Look.chip, Look.onAccent, 16)
-        }
-        if (opts > 1 && !isDone) {
-            Text("⇄ Switch exercise", style = Look.body(Look.lume, 11), modifier = GlanceModifier.padding(top = 3.dp).clickable(actionRunCallback<CycleAction>(actionParametersOf(KEY to key))))
-        }
-    }
-}
-
-class ToggleAction : ActionCallback {
-    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        WidgetStore.toggle(context, parameters[KEY] ?: return); refreshAllWidgets(context)
-    }
-}
-class StepAction : ActionCallback {
-    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        WidgetStore.step(context, parameters[KEY] ?: return, parameters[DELTA] ?: return); WorkoutWidget().updateAll(context)
-    }
-}
-class CycleAction : ActionCallback {
-    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        WidgetStore.cycle(context, parameters[KEY] ?: return); WorkoutWidget().updateAll(context)
-    }
-}
-class FinishAction : ActionCallback {
-    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
-        WidgetStore.finish(context); refreshAllWidgets(context)
-    }
-}
-
-class WorkoutWidgetReceiver : GlanceAppWidgetReceiver() { override val glanceAppWidget: GlanceAppWidget = WorkoutWidget() }
 
 // ---------------------------------------------------------------------------------------------
 // 2. Week summary: Mon/Wed, gym count, streak, latest weight and waist, weight trend
@@ -204,9 +115,9 @@ class WorkoutWidgetReceiver : GlanceAppWidgetReceiver() { override val glanceApp
 
 class SummaryWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Exact
+    override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val s = WidgetStore.state(context)
-        provideContent { Shell { SummaryContent(s) } }
+        provideContent { watchRev(); Shell { SummaryContent(WidgetStore.state(context)) } }
     }
 }
 
@@ -251,11 +162,10 @@ class SummaryWidgetReceiver : GlanceAppWidgetReceiver() { override val glanceApp
 
 class LiftWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Exact
+    override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val s = WidgetStore.state(context)
         val wid = GlanceAppWidgetManager(context).getAppWidgetId(id)
-        val idx = WidgetStore.getInt(context, "lift_$wid", 0)
-        provideContent { Shell { LiftContent(s, idx) } }
+        provideContent { watchRev(); Shell { LiftContent(WidgetStore.state(context), WidgetStore.getInt(context, "lift_$wid", 0)) } }
     }
 }
 
@@ -296,7 +206,7 @@ class LiftNavAction : ActionCallback {
         val wid = GlanceAppWidgetManager(context).getAppWidgetId(glanceId)
         val d = (parameters[DELTA] ?: 1.0).toInt()
         WidgetStore.putInt(context, "lift_$wid", WidgetStore.getInt(context, "lift_$wid", 0) + d)
-        LiftWidget().updateAll(context)
+        redraw(context, LiftWidget())
     }
 }
 
@@ -308,12 +218,16 @@ class LiftWidgetReceiver : GlanceAppWidgetReceiver() { override val glanceAppWid
 
 class BodyWidget : GlanceAppWidget() {
     override val sizeMode = SizeMode.Exact
+    override val stateDefinition: GlanceStateDefinition<*> = PreferencesGlanceStateDefinition
     override suspend fun provideGlance(context: Context, id: GlanceId) {
-        val s = WidgetStore.state(context)
-        val w = WidgetStore.getDouble(context, "draft_w") ?: WidgetStore.latestBody(s, "w")
-        val c = WidgetStore.getDouble(context, "draft_c") ?: WidgetStore.latestBody(s, "c")
-        val savedAgo = System.currentTimeMillis() - WidgetStore.getLong(context, "body_saved_at")
-        provideContent { Shell { BodyContent(s != null, w, c, savedAgo < 60_000) } }
+        provideContent {
+            watchRev()
+            val s = WidgetStore.state(context)
+            val w = WidgetStore.getDouble(context, "draft_w") ?: WidgetStore.latestBody(s, "w")
+            val c = WidgetStore.getDouble(context, "draft_c") ?: WidgetStore.latestBody(s, "c")
+            val savedAgo = System.currentTimeMillis() - WidgetStore.getLong(context, "body_saved_at")
+            Shell { BodyContent(s != null, w, c, savedAgo < 60_000) }
+        }
     }
 }
 
@@ -350,7 +264,7 @@ class BodyStepAction : ActionCallback {
         val cur = WidgetStore.getDouble(context, key) ?: WidgetStore.latestBody(s, field) ?: if (field == "w") 80.0 else 90.0
         WidgetStore.putDouble(context, key, Math.round((cur + (parameters[DELTA] ?: 0.0)) * 10) / 10.0)
         WidgetStore.putLong(context, "body_saved_at", 0)
-        BodyWidget().updateAll(context)
+        redraw(context, BodyWidget())
     }
 }
 class BodySaveAction : ActionCallback {
