@@ -107,7 +107,9 @@ class WorkoutWidgetReceiver : AppWidgetProvider() {
         fun render(ctx: Context, mgr: AppWidgetManager, wid: Int) {
             val rv = RemoteViews(ctx.packageName, R.layout.widget_workout)
             val s = WidgetStore.state(ctx)
-            rv.setOnClickPendingIntent(R.id.w_title, openApp(ctx))
+            // Anything that isn't a button opens the app.
+            listOf(R.id.w_root, R.id.w_title, R.id.w_count, R.id.c_name, R.id.c_meta, R.id.c_cues, R.id.c_count)
+                .forEach { v -> rv.setOnClickPendingIntent(v, openApp(ctx)) }
             if (s == null) {
                 showList(rv)
                 rv.setViewVisibility(R.id.w_list, View.GONE)
@@ -129,7 +131,7 @@ class WorkoutWidgetReceiver : AppWidgetProvider() {
                 // Too much bitmap memory for this launcher: show the card without the animation.
                 if (card != null) {
                     val rv2 = RemoteViews(ctx.packageName, R.layout.widget_workout)
-                    rv2.setOnClickPendingIntent(R.id.w_title, openApp(ctx))
+                    rv2.setOnClickPendingIntent(R.id.w_root, openApp(ctx))
                     renderCard(ctx, rv2, wid, s, card, items, animate = false)
                     mgr.updateAppWidget(wid, rv2)
                 }
