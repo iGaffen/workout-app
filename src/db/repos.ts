@@ -94,6 +94,8 @@ export const LogRepo = {
     });
     changed();
   },
+  /** Delete one logged session (e.g. a test that wasn't a real workout). */
+  async remove(id: string) { await db.logs.delete(id); changed(); },
 };
 
 export const BodyRepo = {

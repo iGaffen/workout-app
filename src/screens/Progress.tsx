@@ -36,6 +36,8 @@ export function Progress() {
   const [weight, setWeight] = useState("");
   const [waist, setWaist] = useState("");
   const [saved, setSaved] = useState("");
+  const [openLog, setOpenLog] = useState<string | null>(null);
+  const [confirmLog, setConfirmLog] = useState<string | null>(null);
   if (!data) return null;
   const { logs, body, routines, settings, lastPhoto, lastExport } = data;
   const wk = weekSummary(logs, routines, settings);
@@ -127,11 +129,27 @@ export function Progress() {
             const r = routines.find((x) => x.id === l.routineId);
             return (
               <li key={l.id}>
-                <span className="d num">{d.getDate()}<small>{d.toLocaleDateString("en-GB", { month: "short" }).toUpperCase()}</small></span>
-                <span>
-                  <span className="h1" style={{ display: "block" }}>{r?.name ?? "Gym day"}</span>
-                  <span className="meta">{withWeight ? `${withWeight} sets with weight logged` : "No weights logged"}{exCount ? ` · ${exCount} exercises` : ""}</span>
-                </span>
+                <button className="histrow" aria-expanded={openLog === l.id}
+                  onClick={() => { setOpenLog(openLog === l.id ? null : l.id); setConfirmLog(null); }}>
+                  <span className="d num">{d.getDate()}<small>{d.toLocaleDateString("en-GB", { month: "short" }).toUpperCase()}</small></span>
+                  <span>
+                    <span className="h1" style={{ display: "block" }}>{r?.name ?? "Gym day"}</span>
+                    <span className="meta">{withWeight ? `${withWeight} sets with weight logged` : "No weights logged"}{exCount ? ` · ${exCount} exercises` : ""}</span>
+                  </span>
+                </button>
+                {openLog === l.id && (
+                  <div className="histactions">
+                    {confirmLog === l.id ? (
+                      <>
+                        <span className="meta grow">Delete for good?</span>
+                        <button className="btn btn-secondary btn-xs" onClick={() => setConfirmLog(null)}>Keep</button>
+                        <button className="btn btn-danger btn-xs" onClick={async () => { await LogRepo.remove(l.id); setOpenLog(null); setConfirmLog(null); }}>Delete</button>
+                      </>
+                    ) : (
+                      <button className="btn btn-danger btn-xs" onClick={() => setConfirmLog(l.id)}>Delete workout</button>
+                    )}
+                  </div>
+                )}
               </li>
             );
           })}
