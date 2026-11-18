@@ -108,6 +108,12 @@
             android:layout_weight="1"
             android:background="#07060A">
 
+            <!-- Bundled 30 fps loop for built-in exercises (added at run time). -->
+            <FrameLayout
+                android:id="@+id/c_anim_host"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
             <ViewFlipper
                 android:id="@+id/c_anim"
                 android:layout_width="match_parent"

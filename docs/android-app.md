@@ -61,3 +61,12 @@ A real Android app (APK) for Avi's Galaxy S26, with four home-screen widgets tha
 - The animation is a flipbook: the app renders 24 frames per exercise from the 3D stage (`src/native/frames.ts`) and stores them through `WidgetBridge.saveFrames`; the card plays them in a `ViewFlipper`.
 - The Glance widgets (summary, lift, body) now bump a revision in their Glance state so they recompose with fresh data on every change.
 - minSdk is 31 (Android 12), needed for RemoteViews collection items.
+
+## Widget animation v3 (bundled loops)
+
+- The ViewFlipper flipbook ran at about 9 uneven frames per second on the phone, and opening a card had to send about 7 MB of bitmaps to the launcher, so the previous exercise's frames could flash first.
+- The built-in exercises now ship a 30 fps loop inside the APK, made by `node scripts/widget-frames.mjs`: about 90 frames each at 384×288, with holds merged.
+- Each loop plays in an indeterminate `ProgressBar` whose drawable is an `animation-list`, the widget-safe way to run a frame animation. Opening a card now sends only a layout id.
+- Changing the weight on an open card uses `partiallyUpdateAppWidget`, so the loop keeps running.
+- Any other exercise falls back to the app-rendered flipbook.
+- Re-run the script after changing an exercise's animation.

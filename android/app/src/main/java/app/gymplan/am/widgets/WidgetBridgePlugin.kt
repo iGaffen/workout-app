@@ -41,7 +41,10 @@ class WidgetBridgePlugin : Plugin() {
     @PluginMethod
     fun listFrames(call: PluginCall) {
         val ret = JSObject()
-        ret.put("ids", JSArray().apply { Frames.ids(context).forEach { put(it) } })
+        // Stored flipbooks, plus any asked-about exercise that has a bundled loop (no need to render those).
+        val ids = JSArray().apply { Frames.ids(context).forEach { put(it) } }
+        call.getArray("ids")?.let { asked -> for (i in 0 until asked.length()) asked.optString(i).takeIf { Frames.bundledLayout(context, it) != 0 }?.let { ids.put(it) } }
+        ret.put("ids", ids)
         call.resolve(ret)
     }
 
