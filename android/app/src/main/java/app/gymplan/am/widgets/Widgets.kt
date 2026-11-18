@@ -180,7 +180,7 @@ private fun LiftContent(s: JSONObject?, idxIn: Int) {
     val ss = l.getJSONArray("sessions")
     val values = (0 until ss.length()).map { ss.getJSONObject(it).getDouble("value") }
     val unit = if (l.optString("unit").isEmpty()) "" else " kg"
-    Column(GlanceModifier.fillMaxSize()) {
+    Column(GlanceModifier.fillMaxSize().clickable(actionStartActivity<MainActivity>())) {
         Row(GlanceModifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Btn("◀", actionRunCallback<LiftNavAction>(actionParametersOf(DELTA to -1.0)), 32.dp, 32.dp, size = 13)
             Text(l.getString("name"), style = TextStyle(color = Look.c(Look.ink1), fontSize = 14f.sp, textAlign = TextAlign.Center), maxLines = 1, modifier = GlanceModifier.defaultWeight())
@@ -234,7 +234,7 @@ class BodyWidget : GlanceAppWidget() {
 @Composable
 private fun BodyContent(ready: Boolean, w: Double?, c: Double?, justSaved: Boolean) {
     if (!ready) { Empty("Open the app once to start logging."); return }
-    Column(GlanceModifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
+    Column(GlanceModifier.fillMaxSize().clickable(actionStartActivity<MainActivity>()), verticalAlignment = Alignment.CenterVertically) {
         BodyRow("WEIGHT", w?.let { "${Look.fmt(it)} kg" } ?: "—", "w", 0.1)
         Spacer(GlanceModifier.height(6.dp))
         BodyRow("WAIST", c?.let { "${Look.fmt(it)} cm" } ?: "—", "c", 0.5)

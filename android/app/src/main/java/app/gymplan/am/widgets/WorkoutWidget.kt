@@ -107,7 +107,9 @@ class WorkoutWidgetReceiver : AppWidgetProvider() {
         fun render(ctx: Context, mgr: AppWidgetManager, wid: Int) {
             val rv = RemoteViews(ctx.packageName, R.layout.widget_workout)
             val s = WidgetStore.state(ctx)
-            rv.setOnClickPendingIntent(R.id.w_title, openApp(ctx))
+            // Anything that isn't a button opens the app.
+            listOf(R.id.w_root, R.id.w_title, R.id.w_count, R.id.c_name, R.id.c_meta, R.id.c_cues, R.id.c_count)
+                .forEach { v -> rv.setOnClickPendingIntent(v, openApp(ctx)) }
             if (s == null) {
                 showList(rv)
                 rv.setViewVisibility(R.id.w_list, View.GONE)
@@ -122,14 +124,14 @@ class WorkoutWidgetReceiver : AppWidgetProvider() {
             val arr = w.getJSONArray("items")
             val items = (0 until arr.length()).map { arr.getJSONObject(it) }
             val card = WidgetStore.getString(ctx, cardKey(wid))?.let { k -> items.firstOrNull { it.getString("key") == k } }
-            if (card != null && !w.optBoolean("logged")) renderCard(ctx, rv, wid, s, card, items) else renderList(ctx, rv, wid, s, items)
+            if (card != null) renderCard(ctx, rv, wid, s, card, items) else renderList(ctx, rv, wid, s, items)
             try {
                 mgr.updateAppWidget(wid, rv)
             } catch (e: IllegalArgumentException) {
                 // Too much bitmap memory for this launcher: show the card without the animation.
                 if (card != null) {
                     val rv2 = RemoteViews(ctx.packageName, R.layout.widget_workout)
-                    rv2.setOnClickPendingIntent(R.id.w_title, openApp(ctx))
+                    rv2.setOnClickPendingIntent(R.id.w_root, openApp(ctx))
                     renderCard(ctx, rv2, wid, s, card, items, animate = false)
                     mgr.updateAppWidget(wid, rv2)
                 }
@@ -146,18 +148,10 @@ class WorkoutWidgetReceiver : AppWidgetProvider() {
             val w = s.getJSONObject("workout")
             val done = items.count { it.optBoolean("done") }
             val all = done == items.size && items.isNotEmpty()
-            if (w.optBoolean("logged")) {
-                val wk = s.getJSONObject("week")
-                rv.setTextViewText(R.id.w_count, "LOGGED")
-                rv.setTextColor(R.id.w_count, Look.GOLD)
-                rv.setViewVisibility(R.id.w_list, View.GONE)
-                rv.setViewVisibility(R.id.w_message, View.VISIBLE)
-                rv.setTextViewText(R.id.w_message, "Session logged.\n${wk.optInt("gym")} of ${wk.optInt("goal")} this week")
-                rv.setOnClickPendingIntent(R.id.w_message, openApp(ctx))
-                return
-            }
-            rv.setTextViewText(R.id.w_count, "$done/${items.size}")
-            rv.setTextColor(R.id.w_count, if (all) Look.GOLD else Look.INK1)
+            // After a session is logged the list stays, reset, ready for the next workout.
+            val justLogged = w.optBoolean("logged") && done == 0
+            rv.setTextViewText(R.id.w_count, if (justLogged) "✓ LOGGED" else "$done/${items.size}")
+            rv.setTextColor(R.id.w_count, if (all || justLogged) Look.GOLD else Look.INK1)
             rv.setViewVisibility(R.id.w_list, View.VISIBLE)
             rv.setViewVisibility(R.id.w_message, View.GONE)
 

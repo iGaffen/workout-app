@@ -104,7 +104,6 @@ export function Home() {
       return Number.isFinite(w) && isNewBest(w, bestWeight(logs, id, todayLog.date));
     }).length;
     const parts = [];
-    if (todayLog.durationSeconds) parts.push(`${Math.max(1, Math.round(todayLog.durationSeconds / 60))} min`);
     parts.push(`${ids.length} exercise${ids.length === 1 ? "" : "s"}`);
     if (bests) parts.push(`${bests} new best${bests === 1 ? "" : "s"}`);
     return parts.join(" · ");
