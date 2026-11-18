@@ -129,7 +129,7 @@ export function Progress() {
               <li key={l.id}>
                 <span className="d num">{d.getDate()}<small>{d.toLocaleDateString("en-GB", { month: "short" }).toUpperCase()}</small></span>
                 <span>
-                  <span className="h1" style={{ display: "block" }}>{r?.name ?? "Gym day"}{l.durationSeconds ? ` · ${Math.max(1, Math.round(l.durationSeconds / 60))} min` : ""}</span>
+                  <span className="h1" style={{ display: "block" }}>{r?.name ?? "Gym day"}</span>
                   <span className="meta">{withWeight ? `${withWeight} sets with weight logged` : "No weights logged"}{exCount ? ` · ${exCount} exercises` : ""}</span>
                 </span>
               </li>
