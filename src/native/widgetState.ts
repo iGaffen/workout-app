@@ -14,7 +14,11 @@ export interface WidgetItem {
 }
 export interface WidgetState {
   version: 1; date: string; updatedAt: number;
-  workout: { title: string; logged: boolean; startedAt?: number; items: WidgetItem[]; step: number };
+  workout: {
+    title: string; logged: boolean; startedAt?: number; items: WidgetItem[]; step: number;
+    /** Card details per exercise id (chosen and alternatives): first cues and main muscles. */
+    info: Record<string, { cues: string[]; muscles: string }>;
+  };
   week: { start: string; goal: number; gym: number; streak: number; days: { day: number; name: string; done: boolean }[] };
   body: { entries: { date: string; w?: number; c?: number }[] };
   lifts: { id: string; name: string; unit: string; sessions: { date: string; value: number }[] }[];
@@ -62,9 +66,17 @@ export async function buildWidgetState(): Promise<WidgetState | null> {
     return { id, name: ex.name, unit: ex.weightKind === "stack" ? "" : "kg", sessions };
   });
 
+  const info: WidgetState["workout"]["info"] = {};
+  for (const it of items) {
+    for (const id of new Set([it.id, ...it.options.map((o) => o.id)])) {
+      const ex = exMap.get(id);
+      if (ex) info[id] = { cues: ex.cues.slice(0, 3), muscles: ex.muscles.primary.slice(0, 3).map((m) => m.replace(/-/g, " ")).join(", ") };
+    }
+  }
+
   return {
     version: 1, date: today, updatedAt: Date.now(),
-    workout: { title: routine.name, logged: loggedToday, startedAt: day.startedAt, items, step: 2.5 },
+    workout: { title: routine.name, logged: loggedToday, startedAt: day.startedAt, items, step: 2.5, info },
     week: { start: weekStart(new Date()), goal: wk.goal, gym: wk.gym, streak: weekStreak(logs, routines, settings), days: wk.days.map((d) => ({ day: d.day, name: d.name, done: d.done })) },
     body: { entries: body.slice(-120).map((b) => ({ date: b.date, ...(b.weightKg !== undefined ? { w: b.weightKg } : {}), ...(b.waistCm !== undefined ? { c: b.waistCm } : {}) })) },
     lifts,

@@ -20,6 +20,8 @@ export type WidgetEvent =
 interface WidgetBridgePlugin {
   pushState(o: { state: string }): Promise<void>;
   takeEvents(): Promise<{ events: string }>;
+  saveFrames(o: { id: string; interval: number; frames: string[] }): Promise<void>;
+  listFrames(): Promise<{ ids: string[] }>;
 }
 const Bridge = registerPlugin<WidgetBridgePlugin>("WidgetBridge");
 
@@ -65,7 +67,32 @@ async function sync() {
     if (list.length) await applyEvents(list);
   } catch { /* plugin missing: nothing to apply */ }
   await push();
+  framesSoon();
 }
+
+/** Make sure every exercise in today's plan has its widget animation; renders missing ones in the background. */
+let framesBusy = false;
+async function ensureFrames() {
+  if (framesBusy) return;
+  framesBusy = true;
+  try {
+    const state = await buildWidgetState();
+    if (!state) return;
+    const { ids } = await Bridge.listFrames();
+    const want = [...new Set(state.workout.items.flatMap((i) => [i.id, ...i.options.map((o) => o.id)]))].filter((id) => !ids.includes(id));
+    if (!want.length) return;
+    const { renderFrames } = await import("./frames");
+    const exMap = new Map<string, Exercise>((await ExerciseRepo.all(true)).map((x) => [x.id, x]));
+    for (const id of want) {
+      const ex = exMap.get(id);
+      if (!ex || document.hidden) continue;
+      const { frames, interval } = await renderFrames(ex);
+      await Bridge.saveFrames({ id, interval, frames });
+    }
+  } catch { /* no WebGL or plugin: the card shows without animation */ }
+  finally { framesBusy = false; }
+}
+const framesSoon = () => window.setTimeout(ensureFrames, 1500);
 
 export function startWidgetBridge() {
   sync();

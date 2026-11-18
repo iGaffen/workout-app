@@ -52,3 +52,12 @@ A real Android app (APK) for Avi's Galaxy S26, with four home-screen widgets tha
 - **Install:** download the APK on the phone and allow "Install unknown apps" for the browser once.
 - **Updates:** download the new APK and install it over the old one (same key). Data is kept.
 - **Moving data from the web app:** Settings → Export in the web app, then Import in the new app.
+
+
+## Workout widget v2 (live)
+
+- Built on plain RemoteViews (not Glance): a tap is a broadcast to `WorkoutWidgetReceiver`, which edits the snapshot and redraws the tapped widget at once.
+- Tapping an exercise name opens its card inside the widget: looping animation, reps and muscles, weight − / +, cues, Switch, Mark done (returns to the list), Back.
+- The animation is a flipbook: the app renders 24 frames per exercise from the 3D stage (`src/native/frames.ts`) and stores them through `WidgetBridge.saveFrames`; the card plays them in a `ViewFlipper`.
+- The Glance widgets (summary, lift, body) now bump a revision in their Glance state so they recompose with fresh data on every change.
+- minSdk is 31 (Android 12), needed for RemoteViews collection items.

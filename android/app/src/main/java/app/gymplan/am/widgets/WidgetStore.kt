@@ -198,6 +198,12 @@ object WidgetStore {
     fun putDouble(ctx: Context, key: String, v: Double?) {
         if (v == null) prefs(ctx).edit().remove(key).apply() else prefs(ctx).edit().putLong(key, java.lang.Double.doubleToRawLongBits(v)).apply()
     }
+    fun getString(ctx: Context, key: String): String? = prefs(ctx).getString(key, null)
+    fun putString(ctx: Context, key: String, v: String?) {
+        if (v == null) prefs(ctx).edit().remove(key).apply() else prefs(ctx).edit().putString(key, v).apply()
+    }
+    /** Today's item for a slot key. */
+    fun item(ctx: Context, key: String): JSONObject? = state(ctx)?.let { item(it, key) }
     fun putLong(ctx: Context, key: String, v: Long) = prefs(ctx).edit().putLong(key, v).apply()
     fun getLong(ctx: Context, key: String) = prefs(ctx).getLong(key, 0L)
 
