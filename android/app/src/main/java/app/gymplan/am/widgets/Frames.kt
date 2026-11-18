@@ -11,7 +11,7 @@ import java.io.File
  * a short loop of images per exercise (src/native/frames.ts); the widget plays them as a flipbook.
  */
 object Frames {
-    private const val DIR = "widget_frames_v1"
+    private const val DIR = "widget_frames_v2"
 
     class Loop(val bitmaps: List<Bitmap>, val intervalMs: Int)
 
@@ -22,6 +22,7 @@ object Frames {
 
     @Synchronized
     fun save(ctx: Context, id: String, intervalMs: Int, frames: List<String>) {
+        File(ctx.filesDir, "widget_frames_v1").deleteRecursively() // older, choppier set
         val d = dir(ctx, id)
         d.deleteRecursively(); d.mkdirs()
         frames.forEachIndexed { i, url -> File(d, "$i.img").writeBytes(Base64.decode(url.substringAfter(","), Base64.DEFAULT)) }
@@ -40,7 +41,9 @@ object Frames {
         val meta = File(d, "meta").takeIf { it.exists() }?.readText()?.split(" ") ?: return null
         val n = meta[0].toIntOrNull() ?: return null
         val ms = meta.getOrNull(1)?.toIntOrNull() ?: 130
-        val bmps = (0 until n).mapNotNull { BitmapFactory.decodeFile(File(d, "$it.img").path) }
+        // Frames are opaque (background baked in), so 16-bit bitmaps: half the memory, twice the frames.
+        val opts = BitmapFactory.Options().apply { inPreferredConfig = Bitmap.Config.RGB_565 }
+        val bmps = (0 until n).mapNotNull { BitmapFactory.decodeFile(File(d, "$it.img").path, opts) }
         if (bmps.isEmpty()) return null
         return Loop(bmps, ms).also { cacheId = id; cache = it }
     }
